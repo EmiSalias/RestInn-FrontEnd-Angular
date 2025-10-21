@@ -1,23 +1,106 @@
 footer {
-    background-color: var(--color-footer);
-    width: 100%;
-    padding: 15px;
-    border-top: 1px solid var(--color-border);
-    text-align: center;
-    position: fixed;
-    bottom: 0;
+  background-color: var(--color-footer);
+  width: 100%;
+  padding: 10px;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
 }
 
-.footer-content {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-start;
-  max-width: 1200px;
-  margin: auto;
+.footer-brand {
+  text-align: center;
+  margin-bottom: 0.5rem;
 }
 
 .footer-links {
-    display: flex;
-    justify-content:space-evenly;
+  display: flex;
+  justify-content: center; /* 🔹 centra horizontalmente */
+  align-items: center;
+  gap: 2rem; /* espacio entre los links */
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.footer-links a,
+.dropdown-title {
+  color: var(--color-text-secondary, #f5deb3);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover,
+.dropdown-title:hover {
+  color: var(--color-accent, #fff);
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Hacemos que el área hover incluya también el contenido desplegable */
+.dropdown:hover .dropdown-content,
+.dropdown-content:hover {
+  display: block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 110%; /* Se abre a la derecha */
+  transform: translateY(-50%);
+  background-color: var(--color-footer);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  min-width: 160px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+/* Reducimos el espacio entre el título y el menú */
+.dropdown-content {
+  margin-left: -4px; /* 🔹 esto evita el “salto” del mouse */
+}
+
+.dropdown-content li {
+  padding: 0.4rem 1rem;
+}
+
+.dropdown-content li a {
+  color: var(--color-text-secondary, #f5deb3);
+  display: block;
+}
+
+.dropdown-content li a:hover {
+  color: var(--color-accent, #fff);
+}
+
+/* Animación más suave */
+.dropdown:hover .dropdown-content {
+  animation: slideRight 0.25s ease-in-out;
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translate(10px, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+.footer-bottom {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  color: var(--color-text-secondary, #d6c293);
 }
