@@ -1,0 +1,23 @@
+footer {
+    background-color: var(--color-footer);
+    width: 100%;
+    padding: 15px;
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.footer-links {
+    display: flex;
+    justify-content:space-evenly;
+}
