@@ -44,6 +44,8 @@ import { PrivacyPolicyComponent } from './pages/normasLegales/privacy-policy-com
 import { TermsConditionsComponent } from './pages/normasLegales/terms-conditions-component/terms-conditions-component';
 import { CancelPolicyComponent } from './pages/normasLegales/cancel-policy-component/cancel-policy-component';
 import { CookiesPolicyComponent } from './pages/normasLegales/cookies-policy-component/cookies-policy-component';
+import { Nosotros } from './pages/nosotros/nosotros';
+import { Contact } from './pages/contact/contact';
 
 
 
@@ -365,6 +367,34 @@ export const routes: Routes = [
     // #endregion
 
 
+    // #region Footer
+    {
+        path: 'nosotros',
+        component: Nosotros
+    },
+    {
+        path: 'politica-privacidad',
+        component: PrivacyPolicyComponent
+    },
+    {
+        path: 'politica-cancelacion',
+        component: CancelPolicyComponent
+    },
+    {
+        path: 'politica-cookies',
+        component: CookiesPolicyComponent
+    },
+    {
+        path: 'terminos-condiciones',
+        component: TermsConditionsComponent
+    },
+    {
+        path: 'contacto',
+        component: Contact
+    },
+    // #endregion
+
+
     // #region Errores
     {
         path: '',
@@ -374,24 +404,6 @@ export const routes: Routes = [
     {
         path: '**',
         redirectTo: ''
-    },
-    // #endregion
-
-    // #region Políticas, privacidad, términos y condiciones
-    {
-        path: 'politica-privacidad',
-        component: PrivacyPolicyComponent
-    },
-    {
-        path: 'terminos-condiciones',
-        component: TermsConditionsComponent
-    },
-    {
-        path: 'politica-cancelacion',
-        component: CancelPolicyComponent
-    },
-    {
-        path: 'politica-cookies',
-        component: CookiesPolicyComponent
     }
+    // #endregion
 ];

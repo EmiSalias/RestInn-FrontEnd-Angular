@@ -1,0 +1,4 @@
+# Forzar detección de lenguajes para Angular
+*.ts linguist-language=TypeScript
+*.html linguist-language=HTML
+*.css linguist-language=CSS
