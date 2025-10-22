@@ -1,5 +1,5 @@
 footer {
-  background-color: var(--color-footer);
+  background-color: var(--color-h-f);
   width: 100%;
   padding: 10px;
   border-top: 1px solid var(--color-border);
@@ -54,7 +54,7 @@ footer {
   top: 50%;
   left: 110%; /* Se abre a la derecha */
   transform: translateY(-50%);
-  background-color: var(--color-footer);
+  background-color: var(--color-h-f);
   border: 1px solid var(--color-border);
   border-radius: 6px;
   list-style: none;
