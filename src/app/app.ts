@@ -1,10 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CookiesBannerComponent } from "./components/cookies-banner/cookies-banner";
+import { CookiesBanner } from "./components/cookies-banner/cookies-banner";
+import { Footer } from './components/footer/footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CookiesBannerComponent],
+  imports: [RouterOutlet, Headers, Footer, CookiesBanner, CookiesBanner],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

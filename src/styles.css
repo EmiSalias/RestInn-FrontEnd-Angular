@@ -1,1 +1,91 @@
-/* You can add global styles to this file, and also import other style files */
+/* Fondo principal ---	            #1E1A16 --- Marrón muy oscuro, casi negro cálido (base del modo oscuro).
+Fondo secundario / tarjetas ---     #2A241E --- Un tono más claro para diferenciar paneles o cards.
+Primario (botones, encabezados) --- #CBB26A --- Dorado suave, destaca sobre el fondo sin ser estridente.
+Secundario / acento ---             #8C704B --- Marrón dorado, ideal para hover o bordes destacados.
+Texto principal ---                 #F5F2ED --- Blanco cálido, buena legibilidad sobre fondo oscuro.
+Texto secundario ---                #B8B0A3 --- Gris cálido, para subtítulos o descripciones.
+Éxito ---                           #4CAF50 --- Verde moderado (confirmaciones).
+Error ---                           #E57373 --- Rojo suave, no agresivo.
+Advertencia ---                     #D6B85A --- Amarillo dorado.
+Bordes y líneas ---                 #3A332C --- Sutil contraste para separar elementos. */
+
+:root {
+  --color-bg: #1E1A16;
+  --color-h-f: #5e4731;
+  --color-surface: #2A241E;
+  --color-primary: #CBB26A;
+  --color-secondary: #8C704B;
+  --color-text: #f3e9d9;
+  --color-text-muted: #B8B0A3;
+  --color-success: #4CAF50;
+  --color-error: #E57373;
+  --color-warning: #D6B85A;
+  --color-border: #3A332C;
+
+  --font-family-base: 'Poppins', 'Roboto', sans-serif;
+  --font-size-base: 16px;
+  --font-family-heading: 'Playfair Display', 'Poppins', sans-serif;
+}
+
+body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-family-base);
+}
+
+app-root {
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4, h5 {
+    color: var(--color-primary);
+    font-family: var(--font-family-heading);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+p {
+    color: var(--color-text-muted);
+}
+
+button {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--color-secondary);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+}

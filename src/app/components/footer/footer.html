@@ -1,9 +1,32 @@
-<footer class="footer">
-  <p>© 2025 RestInn - Todos los derechos reservados</p>
-  <nav class="footer-links">
-    <a routerLink="/politica-privacidad">Política de Privacidad</a> |
-    <a routerLink="/terminos-condiciones">Términos y Condiciones</a> |
-    <a routerLink="/politica-cancelacion">Política de Cancelación</a> |
-    <a routerLink="/politica-cookies">Política de Cookies</a>
-  </nav>
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-brand">
+      <h2>RestInn</h2>
+
+      <p>Sistema integral de gestión hotelera</p>
+    </div>
+
+    <nav class="footer-links">
+      <a routerLink="/nosotros">Sobre Nosotros</a>
+
+      <div class="dropdown">
+        <p class="dropdown-title">Políticas</p>
+    
+        <ul class="dropdown-content">
+          <li><a routerLink="/politica-privacidad">Privacidad</a></li>
+          <li><a routerLink="/politica-cancelacion">Cancelación</a></li>
+          <li><a routerLink="/politica-cookies">Cookies</a></li>
+        </ul>
+      </div>
+
+      <a routerLink="/terminos-condiciones">Términos y Condiciones</a>
+
+      <a routerLink="/contacto">Contacto</a>
+    </nav>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2025 RestInn. Todos los derechos reservados. Desarrollado como Proyecto de Tesis.</p>
+  </div>
 </footer>
