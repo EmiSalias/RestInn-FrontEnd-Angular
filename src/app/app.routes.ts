@@ -39,11 +39,14 @@ import { PerfilUsuario } from './pages/usuarios/perfil-usuario/perfil-usuario';
 import { EditarPerfilUsuario } from './pages/usuarios/editar-perfil-usuario/editar-perfil-usuario';
 // #endregion
 import { Routes } from '@angular/router';
+
+import { PrivacyPolicy } from './pages/User-Policy/privacy-policy/privacy-policy';
+import { TermsConditions } from './pages/User-Policy/terms-conditions/terms-conditions';
+import { CancelPolicy } from './pages/User-Policy/cancel-policy/cancel-policy';
+import { CookiesPolicy } from './pages/User-Policy/cookies-policy/cookies-policy';
+
+
 import { AuthGuard } from './auth-guard';
-import { PrivacyPolicyComponent } from './pages/normasLegales/privacy-policy-component/privacy-policy-component';
-import { TermsConditionsComponent } from './pages/normasLegales/terms-conditions-component/terms-conditions-component';
-import { CancelPolicyComponent } from './pages/normasLegales/cancel-policy-component/cancel-policy-component';
-import { CookiesPolicyComponent } from './pages/normasLegales/cookies-policy-component/cookies-policy-component';
 import { Nosotros } from './pages/nosotros/nosotros';
 import { Contact } from './pages/contact/contact';
 
@@ -374,19 +377,19 @@ export const routes: Routes = [
     },
     {
         path: 'politica-privacidad',
-        component: PrivacyPolicyComponent
+        component: PrivacyPolicy
     },
     {
         path: 'politica-cancelacion',
-        component: CancelPolicyComponent
+        component: CancelPolicy
     },
     {
         path: 'politica-cookies',
-        component: CookiesPolicyComponent
+        component: CookiesPolicy
     },
     {
         path: 'terminos-condiciones',
-        component: TermsConditionsComponent
+        component: TermsConditions
     },
     {
         path: 'contacto',
