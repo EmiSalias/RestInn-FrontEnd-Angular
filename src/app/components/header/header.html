@@ -1,16 +1,34 @@
 <header>
-    <div>
-        <h1>RestInn</h1>
-    </div>
+    <nav class="nav">
+        <div class="nav_container">
+            <label class="nav_toggle">
+                <input type="checkbox" id="menu_input" class="nav_input">
+                <figure class="nav_menu">
+                <img src="assets/icons/menu-open.png" class="menu-open-icon">
+            </figure>
+            </label>
 
-    <nav>
-        <ul>
-            <li><a routerLink="/">Inicio</a></li>
-            <li><a routerLink="/">Habitaciones</a></li>
-            <li><a routerLink="/">Consumos</a></li>
-            <li><a routerLink="/">Facturacion</a></li>
-            <li><a routerLink="/">Reservas</a></li>
-            <li><a routerLink="/">Usuario</a></li>
-        </ul>
+            <ul class="nav_list">
+                <li class="nav_item">
+                    <a routerLink="/" class="nav_link">Inicio</a>
+                </li>
+                <li class="nav_item">
+                    <a routerLink="/" class="nav_link">Habitaciones</a>
+                </li>
+                <li class="nav_item">
+                    <a routerLink="/" class="nav_link">Consumos</a>
+                </li>
+                <li class="nav_item">
+                <a routerLink="/" class="nav_link">Facturacion</a>
+                </li>
+                <li class="nav_item">
+                    <a routerLink="/" class="nav_link">Reservas</a>
+                </li>
+            </ul>
+
+            <figure class="nav_figure">
+                <img src="assets/logos/logo-header.png" alt="Logo RestInn, gestión hotelera" class="nav_logo">
+            </figure>
+        </div>
     </nav>
 </header>

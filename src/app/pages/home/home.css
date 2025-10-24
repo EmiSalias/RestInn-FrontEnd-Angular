@@ -1,0 +1,44 @@
+div {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: var(--color-secondary);
+    border-radius: 20px;
+    line-height: 1.6;
+    margin-bottom: 300px;
+}
+
+h2 {
+    font-size: 2em;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+ul p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--color-h-f);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+ul p:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+div p:last-child {
+    text-align: center;
+}
