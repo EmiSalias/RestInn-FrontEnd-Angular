@@ -14,7 +14,7 @@ header {
 }
 
 .nav_container:has(.nav_input:checked) {
-    /*background-image: url("assets/menu-close.png");*/
+    /*background-image: url("assets/icons/menu-close.png");*/
     background-color: var(--color-surface);
     --transform-menu-show: translate(0%)
 }
@@ -42,7 +42,7 @@ a:hover {
   color: var(--color-text);
 }
 
-.nav_figure,
+.nav_figure, .nav_menu
 .nav_toggle {
     z-index: 10;
 }
@@ -54,11 +54,18 @@ a:hover {
     align-items: center;
 }
 
+.nav_menu {
+    margin: 10px 5px 0 0;
+    width: 50px;
+    display: flex;
+    align-items: center;
+}
+
 .nav_toggle {
     margin-top: 30px;
     width: 100px;
     height: 100px;
-    background-image: image("assets/menu-open.png");
+    /*background-image: url("assets/icons/menu-open.png");*/
     background-size: cover;
     cursor: pointer;
     transition: background-image .5s;
