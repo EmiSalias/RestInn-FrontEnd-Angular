@@ -17,16 +17,16 @@ footer {
 
 .footer-links {
   display: flex;
-  justify-content: center; /* 🔹 centra horizontalmente */
+  justify-content: center;
   align-items: center;
-  gap: 2rem; /* espacio entre los links */
+  gap: 2rem;
   flex-wrap: wrap;
   position: relative;
 }
 
 .footer-links a,
 .dropdown-title {
-  color: var(--color-text-secondary, #f5deb3);
+  color: var(--color-text-secondary);
   text-decoration: none;
   cursor: pointer;
   transition: color 0.3s ease;
@@ -34,7 +34,7 @@ footer {
 
 .footer-links a:hover,
 .dropdown-title:hover {
-  color: var(--color-accent, #fff);
+  color: var(--color-text);
 }
 
 .dropdown {
@@ -42,7 +42,6 @@ footer {
   display: inline-block;
 }
 
-/* Hacemos que el área hover incluya también el contenido desplegable */
 .dropdown:hover .dropdown-content,
 .dropdown-content:hover {
   display: block;
@@ -52,7 +51,7 @@ footer {
   display: none;
   position: absolute;
   top: 50%;
-  left: 110%; /* Se abre a la derecha */
+  left: 110%;
   transform: translateY(-50%);
   background-color: var(--color-h-f);
   border: 1px solid var(--color-border);
@@ -65,9 +64,8 @@ footer {
   z-index: 10;
 }
 
-/* Reducimos el espacio entre el título y el menú */
 .dropdown-content {
-  margin-left: -4px; /* 🔹 esto evita el “salto” del mouse */
+  margin-left: -4px;
 }
 
 .dropdown-content li {
@@ -75,15 +73,14 @@ footer {
 }
 
 .dropdown-content li a {
-  color: var(--color-text-secondary, #f5deb3);
+  color: var(--color-text-secondary);
   display: block;
 }
 
 .dropdown-content li a:hover {
-  color: var(--color-accent, #fff);
+  color: var(--color-text);
 }
 
-/* Animación más suave */
 .dropdown:hover .dropdown-content {
   animation: slideRight 0.25s ease-in-out;
 }
@@ -102,5 +99,5 @@ footer {
 .footer-bottom {
   font-size: 0.85rem;
   margin-top: 0.5rem;
-  color: var(--color-text-secondary, #d6c293);
+  color: var(--color-text-secondary);
 }
