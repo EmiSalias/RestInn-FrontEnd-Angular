@@ -3,26 +3,55 @@
         <div class="nav_container">
             <label class="nav_toggle">
                 <input type="checkbox" id="menu_input" class="nav_input">
-                <figure class="nav_menu">
-                <img src="assets/icons/menu-open.png" class="menu-open-icon">
-            </figure>
             </label>
 
             <ul class="nav_list">
                 <li class="nav_item">
-                    <a routerLink="/" class="nav_link">Inicio</a>
+                    <a routerLink="/" class="nav_link"><fa-icon [icon]="faHome"></fa-icon>Inicio</a>
                 </li>
+
                 <li class="nav_item">
-                    <a routerLink="/" class="nav_link">Habitaciones</a>
+                    <button class="nav_link" (click)="toggleSubmenu('habitaciones')" [attr.aria-expanded]="openSubmenu === 'habitaciones'">
+                        <fa-icon [icon]="faBed"></fa-icon> Habitaciones
+                        <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
+                    </button>
+                    <ul class="submenu" [class.open]="openSubmenu === 'habitaciones'">
+                        <li><a routerLink="/listado_habitaciones">Ver todas</a></li>
+                        <li><a routerLink="/crear_habitacion/form">Agregar nueva</a></li>
+                    </ul>
                 </li>
+
                 <li class="nav_item">
-                    <a routerLink="/" class="nav_link">Consumos</a>
+                    <button class="nav_link" (click)="toggleSubmenu('reservas')" [attr.aria-expanded]="openSubmenu === 'reservas'">
+                        <fa-icon [icon]="faCalendarCheck"></fa-icon> Reservas
+                        <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
+                    </button>
+                    <ul class="submenu" [class.open]="openSubmenu === 'reservas'">
+                        <li><a routerLink="/listado_reservas">Ver reservas</a></li>
+                        <li><a routerLink="/crear_reserva/form">Nueva reserva</a></li>
+                    </ul>
                 </li>
+
                 <li class="nav_item">
-                <a routerLink="/" class="nav_link">Facturacion</a>
+                    <button class="nav_link" (click)="toggleSubmenu('consumos')" [attr.aria-expanded]="openSubmenu === 'consumos'">
+                        <fa-icon [icon]="faUtensils"></fa-icon> Consumos
+                        <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
+                    </button>
+                    <ul class="submenu" [class.open]="openSubmenu === 'consumos'">
+                        <li><a routerLink="/consumos_reserva/:id">Listado por reserva</a></li>
+                        <li><a routerLink="/crear_consumo/form/:reservaId">Nuevo consumo</a></li>
+                    </ul>
                 </li>
+
                 <li class="nav_item">
-                    <a routerLink="/" class="nav_link">Reservas</a>
+                    <button class="nav_link" (click)="toggleSubmenu('facturacion')" [attr.aria-expanded]="openSubmenu === 'facturacion'">
+                        <fa-icon [icon]="faFileInvoice"></fa-icon> Facturación
+                        <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
+                    </button>
+                    <ul class="submenu" [class.open]="openSubmenu === 'facturacion'">
+                        <li><a routerLink="/listado_facturas">Ver facturas</a></li>
+                        <li><a routerLink="/facturas_reserva/:id">Ver facturas por reserva</a></li>
+                    </ul>
                 </li>
             </ul>
 
