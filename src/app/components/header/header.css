@@ -14,23 +14,32 @@ header {
 }
 
 .nav_container:has(.nav_input:checked) {
-    /*background-image: url("assets/icons/menu-close.png");*/
-    background-color: var(--color-surface);
     --transform-menu-show: translate(0%)
+}
+
+.nav_container:has(.nav_input:checked) .nav_toggle {
+  background-image: url("../../../assets/icons/menu-close.png");
+  
 }
 
 .nav_list {
     transform: var(--transform-menu-show);
     position: fixed;
-    inset: 0;
-    display: grid;
-    place-content: center;
-    text-align: center;
+    top: 65px;
+    left: 0;
+    height: 40%;
+    width: 20%;
     gap: 30px;
-    padding: 20px 5%;
-    background-color: var(--color-surface);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 30px;
+    background-color: var(--color-h-f);
     list-style: none;
     transition: .5s transform;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
 }
 
 a {
@@ -39,17 +48,17 @@ a {
 }
 
 a:hover {
-  color: var(--color-text);
+    color: var(--color-text);
 }
 
-.nav_figure, .nav_menu
-.nav_toggle {
+.nav_figure,
+.nav_menu .nav_toggle {
     z-index: 10;
 }
 
 .nav_figure {
     margin: 0;
-    width: 300px;
+    width: 270px;
     display: flex;
     align-items: center;
 }
@@ -62,11 +71,14 @@ a:hover {
 }
 
 .nav_toggle {
-    margin-top: 30px;
-    width: 100px;
-    height: 100px;
-    /*background-image: url("assets/icons/menu-open.png");*/
-    background-size: cover;
+    margin-right: 70px;
+    width: 40px;
+    height: 40px;
+    background-image: url("../../../assets/icons/menu-open.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
     cursor: pointer;
     transition: background-image .5s;
 }
@@ -77,4 +89,65 @@ a:hover {
 
 .menu_open {
     width: 100px auto;
+}
+
+.nav_link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.nav_link:hover {
+  color: var(--color-text);
+}
+
+/* 🔽 Submenú animado */
+.submenu {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+.submenu.open {
+  max-height: 200px; /* ajusta según el tamaño de tus submenús */
+  opacity: 1;
+}
+
+.submenu a {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-decoration: none;
+  display: block;
+  padding: 4px 0;
+}
+
+.submenu a:hover {
+  color: var(--color-text);
+}
+
+/* 🔽 Chevron rotatorio */
+.chevron {
+  transition: transform 0.3s;
+}
+
+.nav_item button[aria-expanded='true'] .chevron {
+  transform: rotate(180deg);
+}
+
+/* 🔽 Animación general del contenedor */
+.nav_container:has(.nav_input:checked) .nav_list {
+  height: auto;
 }

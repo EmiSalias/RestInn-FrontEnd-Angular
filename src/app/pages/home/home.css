@@ -1,15 +1,3 @@
-/* wrapper general para dar aire */
-.home-wrapper {
-  max-width: 1200px;
-  padding: 2rem 1rem 4rem;
-  margin: 0 auto;
-  color: var(--color-text);
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-  line-height: 1.5;
-}
-
 /* -------------------- */
 /* HERO / bienvenida    */
 /* -------------------- */
