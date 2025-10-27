@@ -1,4 +1,4 @@
-// #region ACCESO PÚBLICO - IMPORTS
+// #region Acceso público - IMPORTS
 import { Home } from './pages/home/home';
 import { SignUpUsuario } from './pages/usuarios/sign-up-usuario/sign-up-usuario';
 // #endregion
@@ -38,19 +38,19 @@ import { CambiarEstadoFactura } from './pages/facturaciones/cambiar-estado-factu
 import { PerfilUsuario } from './pages/usuarios/perfil-usuario/perfil-usuario';
 import { EditarPerfilUsuario } from './pages/usuarios/editar-perfil-usuario/editar-perfil-usuario';
 // #endregion
-import { Routes } from '@angular/router';
-import { AuthGuard } from './auth-guard';
+// #region Normas         - IMPORTS
 import { PrivacyPolicyComponent } from './pages/normasLegales/privacy-policy-component/privacy-policy-component';
 import { TermsConditionsComponent } from './pages/normasLegales/terms-conditions-component/terms-conditions-component';
 import { CancelPolicyComponent } from './pages/normasLegales/cancel-policy-component/cancel-policy-component';
 import { CookiesPolicyComponent } from './pages/normasLegales/cookies-policy-component/cookies-policy-component';
 import { Nosotros } from './pages/nosotros/nosotros';
 import { Contact } from './pages/contact/contact';
-
-
+// #endregion
+import { Routes } from '@angular/router';
+import { AuthGuard } from './auth-guard';
 
 export const routes: Routes = [
-    // #region ACCESO PÚBLICO
+    // #region Acceso público
     {
         path:'',
         component: Home
