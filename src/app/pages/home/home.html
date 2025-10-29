@@ -1,17 +1,99 @@
-<div>
+<div class="home-wrapper">
+
+  <!-- HERO / BIENVENIDA -->
+  <section class="hero">
     <h2>¡Bienvenido a RestInn! 🌟</h2>
-    <p>Tu experiencia en hoteles empieza aquí. 🏨✨</p>
-    
-    <p>Con RestInn podés:</p>
-    <ul>
-        <p>📅 <strong>Reservar habitaciones</strong> de manera rápida y sencilla.</p>
-        <p>💳 <strong>Gestionar facturas y consumos</strong> durante la estadía.</p>
-        <p>🛎️ <strong>Acceder a servicios adicionales</strong> como desayuno, spa o transporte.</p>
-        <p>⭐ <strong>Marcar tus favoritos</strong> y volver a ellos cuando quieras.</p>
-        <p>📊 <strong>Consultar tu historial</strong> de reservas y consumos en un solo lugar.</p>
+    <p class="intro">Tu experiencia en hoteles empieza aquí. 🏨✨</p>
+
+    <p class="lead">Con RestInn podés:</p>
+
+    <ul class="features-list">
+      <li>📅 <strong>Reservar habitaciones</strong> de manera rápida y sencilla.</li>
+      <li>💳 <strong>Gestionar facturas y consumos</strong> durante la estadía.</li>
+      <li>🛎️ <strong>Acceder a servicios adicionales</strong> como desayuno, spa o transporte.</li>
+      <li>⭐ <strong>Marcar tus favoritos</strong> y volver a ellos cuando quieras.</li>
+      <li>📊 <strong>Consultar tu historial</strong> de reservas y consumos en un solo lugar.</li>
     </ul>
 
-    <p>Todo esto desde una plataforma fácil de usar, pensada para que disfrutes de tu estadía sin complicaciones. 🛏️🍹</p>
-    
-    <p>¡Explorá, reservá y hacé de cada visita una experiencia única con RestInn!</p>
+    <p class="closing">
+      Todo esto desde una plataforma fácil de usar, pensada para que disfrutes de tu estadía sin complicaciones. 🛏️🍹
+      <br />
+      <strong>Explorá, reservá y hacé de cada visita una experiencia única con RestInn.</strong>
+    </p>
+  </section>
+
+  <!-- LOADING / ERROR -->
+  <section class="status" *ngIf="loading || errorMsg">
+    <div *ngIf="loading" class="loading">Cargando habitaciones...</div>
+    <div *ngIf="!loading && errorMsg" class="error">{{ errorMsg }}</div>
+  </section>
+
+  <!-- GRID DE HABITACIONES -->
+  <section class="habitaciones-section" *ngIf="!loading && !errorMsg">
+    <h3 class="section-title">Habitaciones disponibles</h3>
+
+    <div class="habitaciones-grid">
+      <div class="habitacion-card" *ngFor="let hab of habitaciones">
+
+        <!-- IMAGEN -->
+        <div class="habitacion-card__image-wrapper">
+          <img
+            *ngIf="getMainImageDataUrl(hab) as imgData; else noImg"
+            [src]="imgData"
+            [alt]="'Habitación ' + hab.numero"
+            class="habitacion-card__image"
+          />
+          <ng-template #noImg>
+            <div class="habitacion-card__image habitacion-card__image--placeholder">
+              Sin imagen
+            </div>
+          </ng-template>
+
+          <span class="habitacion-card__badge">
+            {{ hab.estado }}
+          </span>
+        </div>
+
+        <!-- INFO -->
+        <div class="habitacion-card__body">
+          <div class="habitacion-card__header">
+            <div class="habitacion-card__title">
+              Hab. #{{ hab.numero }}
+            </div>
+            <div class="habitacion-card__sub">
+              Piso {{ hab.piso }} · {{ hab.tipo }}
+            </div>
+          </div>
+
+          <div class="habitacion-card__details">
+            <div class="detail-row">
+              <span class="label">Capacidad:</span>
+              <span class="value">{{ hab.capacidad }} huésped(es)</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="label">Camas:</span>
+              <span class="value">{{ hab.cantCamas }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="label">Precio/noche:</span>
+              <span class="value price">${{ hab.precioNoche }}</span>
+            </div>
+
+            <div class="detail-row" *ngIf="hab.comentario">
+              <span class="label">Nota:</span>
+              <span class="value">{{ hab.comentario }}</span>
+            </div>
+          </div>
+
+          <button class="reservar-btn">
+            Reservar →
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
 </div>

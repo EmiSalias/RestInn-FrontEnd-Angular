@@ -1,5 +1,6 @@
 export default interface Imagen {
-  id : string,
-  url : string,
-  descripcion? : string   // opcional
+  id: number;
+  nombre: string;
+  tipo: string;
+  datos: string; // viene como base64 del backend (el byte[])
 }

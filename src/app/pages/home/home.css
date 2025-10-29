@@ -1,44 +1,300 @@
-div {
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: var(--color-secondary);
-    border-radius: 20px;
-    line-height: 1.6;
-    margin-top: 100px;
+/* -------------------- */
+/* HERO / bienvenida    */
+/* -------------------- */
+
+.hero {
+  background-color: var(--color-secondary);
+  border-radius: 20px;
+  padding: 2rem 2rem 2.5rem;
+  box-shadow: 0 16px 32px rgba(0,0,0,0.4);
+  border: 1px solid var(--color-border);
 }
 
-h2 {
-    font-size: 2em;
-    margin-bottom: 15px;
-    text-align: center;
+.hero h2 {
+  font-size: 1.8rem;
+  text-align: center;
+  margin: 0 0 0.5rem;
+  color: var(--color-primary);
 }
 
-p {
-    margin-bottom: 15px;
+.hero .intro {
+  text-align: center;
+  margin: 0 0 1rem;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
+.hero .lead {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--color-text);
 }
 
-ul p {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: var(--color-h-f);
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
 }
 
-ul p:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+.features-list li {
+  background-color: var(--color-h-f);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  color: var(--color-text);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  border: 1px solid var(--color-border);
 }
 
-div p:last-child {
-    text-align: center;
+.features-list li strong {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.features-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.6);
+  transition: 0.15s ease;
+}
+
+.closing {
+  text-align: center;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5rem;
+}
+
+.closing strong {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* -------------------- */
+/* LOADING / ERROR      */
+/* -------------------- */
+
+.status {
+  text-align: center;
+}
+
+.loading {
+  color: var(--color-warning);
+  font-weight: 500;
+}
+
+.error {
+  color: var(--color-error);
+  font-weight: 500;
+}
+
+/* -------------------- */
+/* GRID HABITACIONES    */
+/* -------------------- */
+
+.habitaciones-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.section-title {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.habitaciones-grid {
+  display: grid;
+  gap: 1.5rem;
+  /* responsive columns */
+  grid-template-columns: repeat(auto-fill, minmax(min(320px,100%), 1fr));
+}
+
+/* Card individual */
+.habitacion-card {
+  background-color: var(--color-surface);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* Imagen arriba */
+.habitacion-card__image-wrapper {
+  position: relative;
+  width: 100%;
+  background-color: #4442; /* fallback mientras carga */
+  aspect-ratio: 4 / 3; /* fuerza proporción 4:3 para todas las cards */
+  overflow: hidden;
+}
+
+.habitacion-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.habitacion-card__image--placeholder {
+  width: 100%;
+  height: 100%;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  background-color: var(--color-h-f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+}
+
+/* badge de estado (DISPONIBLE, etc.) */
+.habitacion-card__badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background-color: rgba(0,0,0,0.6);
+  color: var(--color-success);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+
+/* Body de la card */
+.habitacion-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1rem 1.25rem;
+  gap: 1rem;
+}
+
+.habitacion-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.habitacion-card__title {
+  color: var(--color-text);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3rem;
+}
+
+.habitacion-card__sub {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  line-height: 1rem;
+}
+
+/* detalles internos */
+.habitacion-card__details {
+  display: grid;
+  row-gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--color-text);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  column-gap: 0.5rem;
+}
+
+.label {
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.value {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.price {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* CTA botón reservar */
+.reservar-btn {
+  align-self: flex-start;
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1rem;
+  transition: 0.15s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+.reservar-btn:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-bg);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.7);
+  transform: translateY(-1px);
+}
+
+/* responsive tweaks */
+@media (min-width: 600px) {
+  .hero h2 {
+    font-size: 2rem;
+  }
+
+  .features-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .closing {
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (min-width: 900px) {
+  .features-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .closing {
+    max-width: 60%;
+  }
+}
+.home-wrapper {
+  /* lo que ya tenés */
+  max-width: 1200px;
+  padding: 2rem 1rem 4rem;
+  margin: 0 auto;
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  line-height: 1.5;
+
+  /* NUEVO: empuja todo para abajo para que no quede tapado */
+  margin-top: 4.5rem; /* ajustá el número hasta que quede joya */
 }
