@@ -151,3 +151,18 @@ a:hover {
 .nav_container:has(.nav_input:checked) .nav_list {
   height: auto;
 }
+
+/* Que el contenedor ocupe todo el ancho del header */
+.nav_container {
+  width: 100%;
+}
+
+/* Empuja las acciones a la derecha */
+.nav_actions{
+  margin-left: auto;          /* ← clave */
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  /* opcional si el menú lateral las tapa al abrirse: */
+  /* z-index: 1001; */
+}

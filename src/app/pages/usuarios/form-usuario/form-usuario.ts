@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../services/auth-service';
 
 @Component({
   selector: 'app-form-usuario',
@@ -7,5 +8,9 @@ import { Component } from '@angular/core';
   styleUrl: './form-usuario.css'
 })
 export class FormUsuario {
-
+  constructor(private auth:AuthService){}
+  
+  hasRole() {
+      return this.auth.isLoggedIn();
+  }
 }

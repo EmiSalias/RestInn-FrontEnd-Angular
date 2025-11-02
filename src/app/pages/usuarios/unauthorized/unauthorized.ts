@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './unauthorized.css'
 })
 export class Unauthorized {
-
+  
 }

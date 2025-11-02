@@ -6,22 +6,15 @@ import { AuthService } from '../services/auth-service';
 export class AuthGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
-    if (!this.auth.isLoggedIn()) {
-      this.router.navigate(['/sign_in']);
-      return false;
-    }
+  canActivate(route: ActivatedRouteSnapshot): boolean | import('@angular/router').UrlTree {
+    if (!this.auth.isLoggedIn()) return this.router.parseUrl('/sign_in');
 
-    const allowedRoles = route.data['roles'] as string[] | undefined;
-    const userRole = this.auth.getUserRole();
+    const allowed = (route.data['roles'] as string[] | undefined)?.map(r => r.toUpperCase());
+    if (!allowed || allowed.length === 0) return true;
 
-    const hasAccess = !allowedRoles || (userRole !== null && allowedRoles.includes(userRole));
+    const roles = this.auth.getUserRoles().map(r => r.toUpperCase());
+    const hasAccess = roles.some(r => allowed.includes(r));
 
-    if (hasAccess) {
-      return true;
-    }
-
-    this.router.navigate(['/unauthorized']);
-    return false;
+    return hasAccess ? true : this.router.parseUrl('/unauthorized');
   }
 }

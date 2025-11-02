@@ -1,45 +1,45 @@
-// #region Acceso público - IMPORTS
+// region Acceso público - IMPORTS
 import { Home } from './pages/home/home';
 import { SignUp } from './pages/usuarios/sign-up/sign-up';
 import { SignIn } from './pages/usuarios/sign-in/sign-in';
 // #endregion
-// #region Usuarios       - IMPORTS
+// region Usuarios       - IMPORTS
 import { ListadoUsuarios } from './pages/usuarios/listado-usuarios/listado-usuarios';
 import { DetallesUsuario } from './pages/usuarios/detalles-usuario/detalles-usuario';
 import { FormUsuario } from './pages/usuarios/form-usuario/form-usuario';
 // #endregion
-// #region CLIENTEs       - IMPORTS
+// region CLIENTEs       - IMPORTS
 import { FormCliente } from './pages/usuarios/clientes/form-cliente/form-cliente'; 
 import { DetallesCliente } from './pages/usuarios/clientes/detalles-cliente/detalles-cliente'; 
 import { ListadoClientes } from './pages/usuarios/clientes/listado-clientes/listado-clientes'; 
 // #endregion
-// #region Habitaciones   - IMPORTS
+// region Habitaciones   - IMPORTS
 import { ListadoHabitaciones } from './pages/habitaciones/listado-habitaciones/listado-habitaciones';
 import { DetallesHabitacion } from './pages/habitaciones/detalles-habitacion/detalles-habitacion';
 import { FormHabitacion } from './pages/habitaciones/form-habitacion/form-habitacion';
 import { InhabilitarHabitacion } from './pages/habitaciones/inhabilitar-habitacion/inhabilitar-habitacion';
 // #endregion
-// #region Reservas       - IMPORTS
+// region Reservas       - IMPORTS
 import { ListadoReservas } from './pages/reservas/listado-reservas/listado-reservas';
 import { DetallesReserva } from './pages/reservas/detalles-reserva/detalles-reserva';
 import { FormReserva } from './pages/reservas/form-reserva/form-reserva';
 import { ReservasCliente } from './pages/reservas/reservas-cliente/reservas-cliente';
 // #endregion
-// #region Consumos       - IMPORTS
+// region Consumos       - IMPORTS
 import { ListadoConsumos } from './pages/consumos/listado-consumos/listado-consumos';
 import { FormConsumo } from './pages/consumos/form-consumo/form-consumo';
 // #endregion
-// #region Facturación    - IMPORTS
+// region Facturación    - IMPORTS
 import { FacturaReserva } from './pages/facturaciones/factura-reserva/factura-reserva';
 import { ListadoFacturas } from './pages/facturaciones/listado-facturas/listado-facturas';
 import { DetalleFactura } from './pages/facturaciones/detalle-factura/detalle-factura';
 import { CambiarEstadoFactura } from './pages/facturaciones/cambiar-estado-factura/cambiar-estado-factura';
 // #endregion
-// #region Perfil         - IMPORTS
+// region Perfil         - IMPORTS
 import { PerfilUsuario } from './pages/usuarios/perfil-usuario/perfil-usuario';
 import { EditarPerfilUsuario } from './pages/usuarios/editar-perfil-usuario/editar-perfil-usuario';
 // #endregion
-// #region Normas         - IMPORTS
+// region Normas         - IMPORTS
 import { PrivacyPolicy } from './pages/User-Policy/privacy-policy/privacy-policy';
 import { CancelPolicy } from './pages/User-Policy/cancel-policy/cancel-policy';
 import { CookiesPolicy } from './pages/User-Policy/cookies-policy/cookies-policy';import { TermsConditions } from './pages/User-Policy/terms-conditions/terms-conditions';
@@ -51,23 +51,13 @@ import { AuthGuard } from './guards/auth-guard';
 import { Unauthorized } from './pages/usuarios/unauthorized/unauthorized';
 
 export const routes: Routes = [
-    // #region Acceso público
-    {
-        path:'',
-        component: Home
-    },
-    {
-        path: 'sign_in',
-        component: SignIn
-    },
-    {
-        path: 'sign_up',
-        component: SignUp
-    },
-    // #endregion
+    // region Acceso público
+    { path: '', component: Home },
+    { path: 'sign_in', component: SignIn },
+    { path: 'sign_up', component: SignUp },
+    // endregion
 
-
-    // #region Usuarios - CRUD
+    // region Usuarios - CRUD
     {
         path: 'listado_usuarios',
         component: ListadoUsuarios,
@@ -102,8 +92,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-
-    // #region CLIENTEs - CRUD
+    // region CLIENTEs - CRUD
     {
         path: 'listado_CLIENTEs',
         component: ListadoClientes,
@@ -135,10 +124,9 @@ export const routes: Routes = [
             roles: ['RECEPCIONISTA']
         }
     },
-    // #endregion
+    // endregion
 
-
-    // #region Habitaciones - CRUD
+    // region Habitaciones - CRUD
     { path: 'listado_habitaciones',
         component: ListadoHabitaciones,
         canActivate: [AuthGuard],
@@ -192,10 +180,9 @@ export const routes: Routes = [
             ]
         }
     },
-    // #endregion
+    // endregion
 
-
-    // #region Reservas - CRUD
+    // region Reservas - CRUD
     {
         path: 'listado_reservas',
         component: ListadoReservas,
@@ -250,10 +237,9 @@ export const routes: Routes = [
             roles: ['CLIENTE']
         }
     },
-    // #endregion
+    // endregion
 
-
-    // #region Consumos - CRUD
+    // region Consumos - CRUD
     {
         path: 'consumos_reserva/:id',
         component: ListadoConsumos,
@@ -290,8 +276,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-
-    // #region Facturación
+    // region Facturación
     {
         path: 'facturas_reserva/:id',
         component: FacturaReserva,
@@ -340,8 +325,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-
-    // #region Perfil
+    // region Perfil
     { path: 'mi_perfil',
         component: PerfilUsuario,
         canActivate: [AuthGuard],
@@ -371,8 +355,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-
-    // #region Footer
+    // region Footer
     {
         path: 'nosotros',
         component: Nosotros
@@ -399,8 +382,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-
-    // #region Errores
+    // region Errores
     {
         path: '',
         redirectTo: '/',

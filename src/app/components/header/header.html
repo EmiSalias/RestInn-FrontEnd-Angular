@@ -58,6 +58,16 @@
             <figure class="nav_figure">
                 <img src="assets/logos/logo-header.png" alt="Logo RestInn, gestión hotelera" class="nav_logo">
             </figure>
+
+            <div class="nav_actions">
+                @if (hasRole()) {
+                <button (click)="logout()">LOGOUT</button>
+                }
+                @else {
+                <button routerLink="/sign_in">Iniciar Sesión</button>
+                <button routerLink="/sign_up">Registrarse</button>
+                }
+            </div>
         </div>
     </nav>
 </header>
