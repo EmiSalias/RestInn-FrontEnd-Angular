@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faHome, faBed, faUtensils, faFileInvoice, faCalendarCheck, faChevronDown } from '@fortawesome/free-solid-svg-icons';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth-service';
+import { routes } from '../../app.routes';
 
 @Component({
   selector: 'app-header',
@@ -23,4 +25,15 @@ export class Header {
   toggleSubmenu(menu: string) {
     this.openSubmenu = this.openSubmenu === menu ? null : menu;
   }
+
+    constructor(private auth:AuthService,private router: Router){}
+    
+    hasRole() {
+        return this.auth.isLoggedIn();
+    }
+
+    logout(){
+      this.auth.logout();
+    }
+
 }
