@@ -1,16 +1,17 @@
-// #region ACCESO PÚBLICO - IMPORTS
+// #region Acceso público - IMPORTS
 import { Home } from './pages/home/home';
-import { SignUpUsuario } from './pages/usuarios/sign-up-usuario/sign-up-usuario';
+import { SignUp } from './pages/usuarios/sign-up/sign-up';
+import { SignIn } from './pages/usuarios/sign-in/sign-in';
 // #endregion
 // #region Usuarios       - IMPORTS
 import { ListadoUsuarios } from './pages/usuarios/listado-usuarios/listado-usuarios';
 import { DetallesUsuario } from './pages/usuarios/detalles-usuario/detalles-usuario';
 import { FormUsuario } from './pages/usuarios/form-usuario/form-usuario';
 // #endregion
-// #region Clientes       - IMPORTS
-import { FormCliente } from './pages/usuarios/clientes/form-cliente/form-cliente';
-import { DetallesCliente } from './pages/usuarios/clientes/detalles-cliente/detalles-cliente';
-import { ListadoClientes } from './pages/usuarios/clientes/listado-clientes/listado-clientes';
+// #region CLIENTEs       - IMPORTS
+import { FormCliente } from './pages/usuarios/clientes/form-cliente/form-cliente'; 
+import { DetallesCliente } from './pages/usuarios/clientes/detalles-cliente/detalles-cliente'; 
+import { ListadoClientes } from './pages/usuarios/clientes/listado-clientes/listado-clientes'; 
 // #endregion
 // #region Habitaciones   - IMPORTS
 import { ListadoHabitaciones } from './pages/habitaciones/listado-habitaciones/listado-habitaciones';
@@ -38,29 +39,30 @@ import { CambiarEstadoFactura } from './pages/facturaciones/cambiar-estado-factu
 import { PerfilUsuario } from './pages/usuarios/perfil-usuario/perfil-usuario';
 import { EditarPerfilUsuario } from './pages/usuarios/editar-perfil-usuario/editar-perfil-usuario';
 // #endregion
-import { Routes } from '@angular/router';
-
+// #region Normas         - IMPORTS
 import { PrivacyPolicy } from './pages/User-Policy/privacy-policy/privacy-policy';
-import { TermsConditions } from './pages/User-Policy/terms-conditions/terms-conditions';
 import { CancelPolicy } from './pages/User-Policy/cancel-policy/cancel-policy';
-import { CookiesPolicy } from './pages/User-Policy/cookies-policy/cookies-policy';
-
-
-import { AuthGuard } from './auth-guard';
+import { CookiesPolicy } from './pages/User-Policy/cookies-policy/cookies-policy';import { TermsConditions } from './pages/User-Policy/terms-conditions/terms-conditions';
 import { Nosotros } from './pages/nosotros/nosotros';
 import { Contact } from './pages/contact/contact';
-
-
+// #endregion
+import { Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth-guard'; 
+import { Unauthorized } from './pages/usuarios/unauthorized/unauthorized';
 
 export const routes: Routes = [
-    // #region ACCESO PÚBLICO
+    // #region Acceso público
     {
         path:'',
         component: Home
     },
     {
         path: 'sign_in',
-        component: SignUpUsuario
+        component: SignIn
+    },
+    {
+        path: 'sign_up',
+        component: SignUp
     },
     // #endregion
 
@@ -71,7 +73,7 @@ export const routes: Routes = [
         component: ListadoUsuarios,
         canActivate: [AuthGuard],
         data: {
-            roles: ['admin']
+            roles: ['ADMINISTRADOR']
         }
     },
     {
@@ -79,7 +81,7 @@ export const routes: Routes = [
         component: DetallesUsuario,
         canActivate: [AuthGuard],
         data: {
-            roles: ['admin']
+            roles: ['ADMINISTRADOR']
         }
     },
     {
@@ -87,7 +89,7 @@ export const routes: Routes = [
         component: FormUsuario,
         canActivate: [AuthGuard],
         data: {
-            roles: ['admin']
+            roles: ['ADMINISTRADOR']
         }
     },
     {
@@ -95,42 +97,42 @@ export const routes: Routes = [
         component: FormUsuario,
         canActivate: [AuthGuard],
         data: {
-            roles: ['admin']
+            roles: ['ADMINISTRADOR']
         }
     },
     // #endregion
 
 
-    // #region Clientes - CRUD
+    // #region CLIENTEs - CRUD
     {
-        path: 'listado_clientes',
+        path: 'listado_CLIENTEs',
         component: ListadoClientes,
         canActivate: [AuthGuard],
         data: {
-            roles: ['recepcionista']
+            roles: ['RECEPCIONISTA']
         }
     },
-    { path: 'cliente/:id',
+    { path: 'CLIENTE/:id',
         component: DetallesCliente,
         canActivate: [AuthGuard],
         data: {
-            roles: ['recepcionista']
+            roles: ['RECEPCIONISTA']
         }
     },
     {
-        path: 'crear_cliente/form',
+        path: 'crear_CLIENTE/form',
         component: FormCliente,
         canActivate: [AuthGuard],
         data: {
-            roles: ['recepcionista']
+            roles: ['RECEPCIONISTA']
         }
     },
     {
-        path: 'editar_cliente/:id',
+        path: 'editar_CLIENTE/:id',
         component: FormCliente,
         canActivate: [AuthGuard],
         data: {
-            roles: ['recepcionista']
+            roles: ['RECEPCIONISTA']
         }
     },
     // #endregion
@@ -142,10 +144,10 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista',
-                'conserje',
-                'limpieza'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
+                'CONSERJE',
+                'LIMPIEZA'
             ]
         }
     },
@@ -155,11 +157,11 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista',
-                'conserje',
-                'limpieza',
-                'cliente'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
+                'CONSERJE',
+                'LIMPIEZA',
+                'CLIENTE'
             ]
         }
     },
@@ -168,7 +170,7 @@ export const routes: Routes = [
         component: FormHabitacion,
         canActivate: [AuthGuard],
         data: {
-            roles: ['admin']
+            roles: ['ADMINISTRADOR']
         }
     },
     {
@@ -176,7 +178,7 @@ export const routes: Routes = [
         component: FormHabitacion,
         canActivate: [AuthGuard],
         data: {
-            roles: ['admin']
+            roles: ['ADMINISTRADOR']
         }
     },
     {
@@ -185,8 +187,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'conserje',
-                'limpieza'
+                'CONSERJE',
+                'LIMPIEZA'
             ]
         }
     },
@@ -200,8 +202,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA'
             ]
         }
     },
@@ -211,9 +213,9 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista',
-                'cliente'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
+                'CLIENTE'
             ]
         }
     },
@@ -223,9 +225,9 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista',
-                'cliente'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
+                'CLIENTE'
             ]
         }
     },
@@ -235,8 +237,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA'
             ]
         }
     },
@@ -245,7 +247,7 @@ export const routes: Routes = [
         component: ReservasCliente,
         canActivate: [AuthGuard],
         data: {
-            roles: ['cliente']
+            roles: ['CLIENTE']
         }
     },
     // #endregion
@@ -258,9 +260,9 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista',
-                'cliente'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
+                'CLIENTE'
             ]
         }
     },
@@ -270,8 +272,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA'
             ]
         }
     },
@@ -281,8 +283,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA'
             ]
         }
     },
@@ -296,9 +298,9 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista',
-                'cliente'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
+                'CLIENTE'
             ]
         }
     },
@@ -308,8 +310,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA'
             ]
         }
     },
@@ -319,9 +321,9 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista',
-                'cliente'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
+                'CLIENTE'
             ]
         }
     },
@@ -331,8 +333,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA'
             ]
         }
     },
@@ -345,11 +347,11 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista',
-                'conserje',
-                'limpieza',
-                'cliente'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
+                'CONSERJE',
+                'LIMPIEZA',
+                'CLIENTE'
             ]
         }
     },
@@ -359,11 +361,11 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
-                'admin',
-                'recepcionista',
-                'conserje',
-                'limpieza',
-                'cliente'
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
+                'CONSERJE',
+                'LIMPIEZA',
+                'CLIENTE'
             ]
         }
     },
@@ -407,6 +409,10 @@ export const routes: Routes = [
     {
         path: '**',
         redirectTo: ''
-    }
+    },
+    {
+        path: 'unauthorized',
+        component: Unauthorized
+    },
     // #endregion
 ];

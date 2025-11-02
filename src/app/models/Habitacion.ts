@@ -1,5 +1,5 @@
-import { H_Estado } from "../enums/H_Estado";
-import { H_Tipo } from "../enums/H_Tipo";
+import { H_Estado } from "./enums/H_Estado";
+import { H_Tipo } from "./enums/H_Tipo";
 
 // Tiene que matchear el DTO ImagenBase64DTO del backend
 export interface BackendImagen {
