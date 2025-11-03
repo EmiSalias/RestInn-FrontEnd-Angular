@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root' // hace que Angular lo registre solo
 })
-export class HabitacionesService {
+export class HabitacionService {
 
   private http = inject(HttpClient);
 
