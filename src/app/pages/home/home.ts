@@ -3,9 +3,7 @@ import { CommonModule, NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import Habitacion from '../../models/Habitacion';
-import { HabitacionesService } from '../../services/habitaciones.service';
-import { AuthService } from '../../services/auth-service';
-import { ReservasService } from '../../services/reservas-service';
+import { HabitacionService } from '../../services/habitacion-service';
 
 @Component({
   selector: 'app-home',
@@ -16,10 +14,7 @@ import { ReservasService } from '../../services/reservas-service';
 })
 export class Home implements OnInit {
 
-  private habitacionesService = inject(HabitacionesService);
-  private reservasService = inject(ReservasService);
-  private router = inject(Router);
-  private auth = inject(AuthService);
+  private habService = inject(HabitacionService);
 
   habitaciones: Habitacion[] = [];
   visibles: Habitacion[] = [];
@@ -34,7 +29,7 @@ export class Home implements OnInit {
   rangeError = false;
 
   ngOnInit(): void {
-    this.habitacionesService.getHabitacionesActivas().subscribe({
+    this.habService.getHabitaciones().subscribe({
       next: (data) => {
         this.habitaciones = data;
         this.visibles = data;       // por defecto, todas
