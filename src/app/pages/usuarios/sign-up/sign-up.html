@@ -1,1 +1,84 @@
-<p>sign-up works!</p>
+<!-- src/app/pages/auth/sign-up/sign-up.html -->
+<main class="auth-card">
+  <h2>Crear cuenta</h2>
+
+  <!-- Paso 1: Formulario -->
+  <section *ngIf="step === 'form'">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="grid-2">
+        <label>Nombre
+          <input formControlName="nombre" placeholder="Nombre">
+          <small class="err" *ngIf="f.nombre.touched && f.nombre.invalid">Requerido (≥2)</small>
+        </label>
+
+        <label>Apellido
+          <input formControlName="apellido" placeholder="Apellido">
+          <small class="err" *ngIf="f.apellido.touched && f.apellido.invalid">Requerido (≥2)</small>
+        </label>
+
+        <label>Usuario
+          <input formControlName="nombreLogin" placeholder="usuario">
+          <small class="err" *ngIf="f.nombreLogin.touched && f.nombreLogin.invalid">
+            3–30 caracteres
+          </small>
+        </label>
+
+        <label>Email
+          <input formControlName="email" placeholder="nombre@dominio.com">
+          <small class="err" *ngIf="f.email.touched && f.email.invalid">Email inválido</small>
+        </label>
+
+        <label>DNI
+          <input formControlName="dni" placeholder="Solo números (7–10)">
+          <small class="err" *ngIf="f.dni.touched && f.dni.invalid">Formato inválido</small>
+        </label>
+
+        <label>Teléfono
+          <input formControlName="phoneNumber" placeholder="+54 11 5555 5555">
+          <small class="err" *ngIf="f.phoneNumber.touched && f.phoneNumber.invalid">Formato inválido</small>
+        </label>
+
+        <label>CUIT
+          <input formControlName="cuit" placeholder="11 dígitos">
+          <small class="err" *ngIf="f.cuit.touched && f.cuit.invalid">11 dígitos</small>
+        </label>
+
+        <div formGroupName="passGroup">
+          <label>Contraseña
+            <input type="password" formControlName="password" placeholder="Mínimo 8">
+          </label>
+          <label>Repetir contraseña
+            <input type="password" formControlName="confirm" placeholder="Repetir">
+          </label>
+          <small class="err" *ngIf="pass.password.touched && pass.password.invalid">Min. 8</small>
+          <small class="err" *ngIf="(form.get('passGroup')?.touched || pass.confirm.touched) && form.get('passGroup')?.errors?.['mismatch']">
+            Las contraseñas no coinciden
+          </small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" [disabled]="loading">Crear cuenta</button>
+        <span class="hint" *ngIf="loading">Enviando…</span>
+        <small class="err" *ngIf="!loading && errorMsg">{{ errorMsg }}</small>
+      </div>
+    </form>
+  </section>
+
+  <!-- Paso 2: Verificación -->
+  <section *ngIf="step === 'verify'">
+    <p>Te enviamos un código de verificación al correo. Ingrésalo para activar tu cuenta.</p>
+    <div class="verify-row">
+      <input [formControl]="codeCtrl" placeholder="Código de 6 dígitos" maxlength="6">
+      <button type="button" (click)="onVerify()" [disabled]="loading">Verificar</button>
+    </div>
+    <small class="err" *ngIf="!loading && errorMsg">{{ errorMsg }}</small>
+  </section>
+
+  <!-- Paso 3: Éxito -->
+  <section *ngIf="step === 'success'">
+    <h3>¡Cuenta activada!</h3>
+    <p>Ya podés iniciar sesión.</p>
+    <button type="button" (click)="goToSignIn()">Ir a Iniciar sesión</button>
+  </section>
+</main>

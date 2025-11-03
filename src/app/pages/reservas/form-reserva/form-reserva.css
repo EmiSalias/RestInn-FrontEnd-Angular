@@ -1,0 +1,228 @@
+/* Evita que el header fijo tape el contenido (header ~80px) */
+.page-reserva {
+  padding: 96px 16px 32px; /* top = 80 + margen de respiro */
+}
+
+/* Tarjeta del formulario, acorde a tu paleta */
+.form-card {
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+
+/* Campos */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-text-secondary);
+}
+
+.field input, .field select {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+/* Layout */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Huéspedes */
+.block-title {
+  display: block;
+  margin: 8px 0;
+  color: var(--color-primary);
+}
+.huespedes { margin-top: 8px; }
+
+.huesped-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Botón “Quitar” con estilo más liviano sin pisar el global */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text);
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+.btn-ghost:hover {
+  background: var(--color-surface);
+}
+
+/* Mensajes */
+.error { color: var(--color-error); }
+.row-errors { grid-column: 1 / -1; }
+
+/* Acciones */
+.actions {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+/* === Huéspedes: que usen el mismo estilo que .field input === */
+.huesped-row input {
+  width: 100%;
+  height: 40px;
+  padding: 10px 12px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.huesped-row input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.huesped-row input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.huesped-row input.ng-invalid.ng-touched {
+  border-color: var(--color-error);
+}
+/* Evita que el header fijo tape el contenido (header ~80px) */
+.page-reserva { padding: 96px 16px 32px; }
+
+/* Tarjeta */
+.form-card {
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+
+/* Título informativo de habitación */
+.habit-header { margin: 6px 0 14px; }
+.habit-header .eyebrow {
+  display: block;
+  font-size: 13px;
+  letter-spacing: .08em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+.habit-title {
+  margin: 2px 0 0;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Campos */
+.field { margin-bottom: 14px; }
+.field label { display: block; margin-bottom: 6px; color: var(--color-text-secondary); }
+.field input, .field select {
+  width: 100%; padding: 10px 12px; background: var(--color-bg); color: var(--color-text);
+  border: 1px solid var(--color-border); border-radius: 8px;
+}
+
+/* Layout fechas: 2 columnas */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Huéspedes (mismo look que inputs de .field) */
+.block-title { display: block; margin: 8px 0; color: var(--color-primary); }
+.huespedes { margin-top: 8px; }
+.huesped-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: center; margin-bottom: 10px;
+}
+.huesped-row input {
+  width: 100%; height: 40px; padding: 10px 12px; background: var(--color-bg); color: var(--color-text);
+  border: 1px solid var(--color-border); border-radius: 8px;
+}
+.huesped-row input::placeholder { color: var(--color-text-muted); }
+.huesped-row input:focus { outline: none; border-color: var(--color-primary); }
+.huesped-row input.ng-invalid.ng-touched { border-color: var(--color-error); }
+
+.btn-ghost { background: transparent; color: var(--color-text); padding: 6px 10px; border: 1px solid var(--color-border); border-radius: 8px; }
+.btn-ghost:hover { background: var(--color-surface); }
+
+/* Mensajes y acciones */
+.error { color: var(--color-error); }
+.row-errors { grid-column: 1 / -1; }
+.actions { margin-top: 16px; display: flex; align-items: center; gap: 12px; }
+/* ======== GALERÍA ======== */
+.galeria {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.galeria__main {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  /* Alto controlado y recorte */
+  height: 280px;            /* tamaño por defecto */
+  box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+  border: 1px solid var(--color-border);
+}
+
+.galeria__main img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;        /* que no deforme */
+  display: block;
+}
+
+.galeria__thumbs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.galeria__thumbs .thumb {
+  width: 96px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  flex: 0 0 auto;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  opacity: 0.85;
+  transition: transform .15s ease, opacity .15s ease;
+}
+
+.galeria__thumbs .thumb:hover { transform: translateY(-1px); opacity: 1; }
+.galeria__thumbs .thumb.active { outline: 2px solid var(--color-primary); opacity: 1; }
+
+.galeria__thumbs .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Responsive: subir/bajar alto del main */
+@media (max-width: 640px) {
+  .galeria__main { height: 220px; }
+}
+@media (min-width: 1100px) {
+  .galeria__main { height: 340px; }
+}

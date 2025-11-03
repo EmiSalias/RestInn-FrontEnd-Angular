@@ -71,3 +71,19 @@ button:disabled {
   text-align: center;
   font-weight: 500;
 }
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.link-btn {
+  background: transparent;
+  color: var(--color-primary);
+  border: none;
+  padding: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.link-btn:hover { color: var(--color-text); }
