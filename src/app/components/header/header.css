@@ -1,13 +1,19 @@
 header {
-    background-color: var(--color-h-f);
-    position: fixed;
-    width: 100%;
+  background-color: var(--color-h-f);
+  position: fixed;
+  top: 0;                /* 👈 anclar arriba explícitamente */
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: var(--header-h);   /* 👈 que el header tenga altura definida */
+  z-index: 1000;             /* por encima del contenido */
 }
 
 .nav_container {
     margin: 0 auto;
     display: flex;
     align-items: center;
+    height: var(--header-h);
     height: 80px;
     padding: 0 20px;
     --transform-menu-show: translate(-100%)

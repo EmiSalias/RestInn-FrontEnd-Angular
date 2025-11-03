@@ -26,38 +26,35 @@ export class SignIn {
   }
 
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
+  if (this.loginForm.invalid) return;
 
-    const { username, password } = this.loginForm.value;
+  const { username, password } = this.loginForm.value;
 
-    this.auth.login(username, password).subscribe({
-      next: () => {
-        const qp = this.route.snapshot.queryParamMap;
+  this.auth.login(username, password).subscribe({
+    next: () => {
+      const qp = this.route.snapshot.queryParamMap;
 
-        const returnUrl = qp.get('returnUrl') || '/';
-        const habitacionId = qp.get('habitacionId');
+      const returnUrl = qp.get('returnUrl') || '/';
 
-        // ⬇️ Propagamos fechas (aceptamos alias por las dudas)
-        const ingreso = qp.get('ingreso') ?? qp.get('fechaIngreso') ?? qp.get('fi');
-        const salida = qp.get('salida') ?? qp.get('fechaSalida') ?? qp.get('fs');
+      const forward: any = {};
+      ['habitacionId', 'capacidad', 'ingreso', 'salida', 'fechaIngreso', 'fechaSalida']
+        .forEach(k => { const v = qp.get(k); if (v) forward[k] = v; });
 
-        const queryParams: any = {};
-        if (habitacionId) queryParams.habitacionId = habitacionId;
-        if (ingreso) queryParams.ingreso = ingreso;   // YYYY-MM-DD
-        if (salida) queryParams.salida = salida;
+      this.router.navigate([returnUrl], { queryParams: forward });
+    },
+    error: err => {
+      this.errorMessage = err.error?.message || 'Credenciales inválidas';
+    }
+  });
+}
 
-        const forward: any = {};
-        ['habitacionId', 'capacidad', 'ingreso', 'salida', 'fechaIngreso', 'fechaSalida']
-          .forEach(k => { const v = qp.get(k); if (v) forward[k] = v; });
+goToRecovery(): void {
+  const qp = this.route.snapshot.queryParamMap;
+  const forward: any = {};
+  ['habitacionId', 'capacidad', 'ingreso', 'salida', 'fechaIngreso', 'fechaSalida', 'returnUrl']
+    .forEach(k => { const v = qp.get(k); if (v) forward[k] = v; });
 
-        this.router.navigate([returnUrl], { queryParams: forward });
-        // Si querés ser ultra-tolerante con URLs que ya traigan params:
-        // this.router.navigate([returnUrl], { queryParams, queryParamsHandling: 'merge' });
-      },
-      error: err => {
-        this.errorMessage = err.error?.message || 'Credenciales inválidas';
-      }
-    });
-  }
+  this.router.navigate(['/recovery'], { queryParams: forward });
+}
 
 }

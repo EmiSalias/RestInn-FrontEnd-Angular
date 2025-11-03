@@ -55,6 +55,7 @@ export const routes: Routes = [
     { path: '', component: Home },
     { path: 'sign_in', component: SignIn },
     { path: 'sign_up', component: SignUp },
+    { path: 'recovery', loadComponent: () => import('./pages/usuarios/recovery/recovery').then(m => m.Recovery) },
     // endregion
 
     // region Usuarios - CRUD
