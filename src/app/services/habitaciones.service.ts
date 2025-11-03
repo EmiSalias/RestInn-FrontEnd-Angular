@@ -31,4 +31,10 @@ export class HabitacionesService {
     const url = `${this.apiBaseUrl}/api/habitaciones/${id}`;
     return this.http.get<Habitacion>(url);
   }
+
+  // src/app/services/habitaciones.service.ts
+getPorId(id: number) {
+  return this.http.get<Habitacion>(`${this.apiBaseUrl}/habitaciones/${id}`);
+}
+
 }

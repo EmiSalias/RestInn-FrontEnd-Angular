@@ -46,4 +46,10 @@ export class AuthService {
     try { return JSON.parse(localStorage.getItem('user_roles') || '[]'); }
     catch { return []; }
   }
+
+  hasAnyRole(roles: string[]): boolean {
+  const mine = this.getUserRoles().map(r => r.toUpperCase());
+  const needed = roles.map(r => r.toUpperCase());
+  return mine.some(r => needed.includes(r));
+}
 }

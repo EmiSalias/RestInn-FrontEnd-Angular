@@ -389,12 +389,13 @@ export const routes: Routes = [
         pathMatch: 'full'
     },
     {
-        path: '**',
-        redirectTo: ''
-    },
-    {
         path: 'unauthorized',
         component: Unauthorized
     },
+    {
+        path: '**',
+        redirectTo: ''
+    }
+
     // #endregion
 ];

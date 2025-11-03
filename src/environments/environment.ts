@@ -1,3 +1,3 @@
 export const environment = {
-  API_BASE_URL: 'http://localhost:8081' // backend Spring en docker
+  API_BASE_URL: 'http://localhost' // backend Spring en docker
 };

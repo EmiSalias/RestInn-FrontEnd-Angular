@@ -1,1 +1,95 @@
-<p>form-reserva works!</p>
+<main class="page-reserva">
+  <section class="form-card">
+    <h2>Crear reserva</h2>
+
+    <header class="habit-header">
+      <span class="eyebrow">Habitación</span>
+      <h3 class="habit-title">#{{ form.get('habitacionId')?.value }}</h3>
+    </header>
+
+    <!-- GALERÍA -->
+    <section class="galeria" *ngIf="imgUrls.length; else sinFotos">
+      <div class="galeria__main">
+        <img [src]="imgUrls[selectedIdx]" [alt]="'Habitación #' + (hab?.numero ?? '')">
+      </div>
+      <div class="galeria__thumbs">
+        <button
+          type="button"
+          class="thumb"
+          *ngFor="let url of imgUrls; let i = index"
+          [class.active]="i === selectedIdx"
+          (click)="selectedIdx = i">
+          <img [src]="url" [alt]="'Foto ' + (i + 1)">
+        </button>
+      </div>
+    </section>
+    <ng-template #sinFotos>
+      <div class="galeria galeria--empty">Sin imágenes disponibles</div>
+    </ng-template>
+
+    <!-- FORM -->
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <input type="hidden" formControlName="habitacionId" />
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Fecha de ingreso</label>
+          <input type="date" formControlName="fechaIngreso" [attr.min]="todayStr" />
+          <small class="error" *ngIf="form.get('fechaIngreso')?.touched && form.get('fechaIngreso')?.invalid">
+            Obligatorio
+          </small>
+        </div>
+
+        <div class="field">
+          <label>Fecha de salida</label>
+          <input type="date" formControlName="fechaSalida" [attr.min]="form.value.fechaIngreso || todayStr" />
+          <small class="error" *ngIf="form.get('fechaSalida')?.touched && form.get('fechaSalida')?.invalid">
+            Obligatorio
+          </small>
+          <small class="error" *ngIf="form.errors?.['rangoInvalido']">
+            La fecha de salida debe ser posterior a la fecha de ingreso.
+          </small>
+        </div>
+      </div>
+
+      <div formArrayName="huespedes" class="huespedes">
+    <label class="block-title">
+        Huéspedes
+        <span class="muted">({{ huespedesFA.length }} / {{ capacidadMaxLabel }})</span>
+    </label>
+    <button type="button" (click)="addHuesped()" [disabled]="!canAddGuest" title="Capacidad máxima alcanzada">
+        + Agregar huésped
+    </button>
+    <small class="error" *ngIf="huespedesFA.errors?.['maxHuespedes']">
+    Máximo {{ capacidadMaxLabel }} huésped(es) para esta habitación.
+    </small>
+
+  <div class="huesped-row" *ngFor="let h of huespedesFA.controls; let i = index" [formGroupName]="i">
+    <input placeholder="Nombre" formControlName="nombre" />
+    <input placeholder="Apellido" formControlName="apellido" />
+    <input placeholder="DNI (7-10 dígitos)" formControlName="dni" />
+    <button type="button" class="btn-ghost" (click)="removeHuesped(i)" *ngIf="huespedesFA.length > 1">
+      Quitar
+    </button>
+
+    <div class="row-errors">
+      <small class="error" *ngIf="h.get('nombre')?.touched && h.get('nombre')?.invalid">Nombre inválido</small>
+      <small class="error" *ngIf="h.get('apellido')?.touched && h.get('apellido')?.invalid">Apellido inválido</small>
+      <small class="error" *ngIf="h.get('dni')?.touched && h.get('dni')?.invalid">DNI inválido</small>
+    </div>
+  </div>
+
+  <small class="error" *ngIf="huespedesFA.errors?.['maxHuespedes']">
+    Máximo {{ hab?.capacidad }} huésped(es) para esta habitación.
+  </small>
+</div>
+
+
+      <div class="actions">
+        <button type="submit" [disabled]="loading">Confirmar reserva</button>
+        <span *ngIf="loading">Guardando...</span>
+        <span class="error" *ngIf="!loading && errorMsg">{{ errorMsg }}</span>
+      </div>
+    </form>
+  </section>
+</main>

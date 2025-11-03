@@ -298,3 +298,96 @@
   /* NUEVO: empuja todo para abajo para que no quede tapado */
   margin-top: 4.5rem; /* ajustá el número hasta que quede joya */
 }
+/* -------------------- */
+/* DISPONIBILIDAD       */
+/* -------------------- */
+
+.dispo-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 16px 32px rgba(0,0,0,0.5);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dispo-title {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.dispo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto; /* ingreso | salida | botón */
+  gap: 0.75rem;
+  align-items: end;
+}
+
+
+.dispo-actions .dispo-btn {
+  width: 100%;
+  height: 44px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  /* usa el <button> global (color/hover) */
+}
+
+.dispo-error {
+  color: var(--color-error);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Responsive: apilar en mobile */
+@media (max-width: 720px) {
+  .dispo-grid {
+    grid-template-columns: 1fr;
+  }
+  .dispo-actions .dispo-btn {
+    width: 100%;
+  }
+}
+/* Disponibilidad compacto */
+.availability { margin-top: 1rem; }
+.availability__form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 280px)) auto; /* 2 campos + botón */
+  gap: .75rem;
+  align-items: end;
+  justify-content: flex-start;
+  width: max-content; /* que no ocupe 100% */
+}
+
+.availability__form .field { min-width: 220px; max-width: 280px; }
+.availability__form .field label {
+  display: block;
+  margin: 0 0 6px;
+  color: var(--color-text-secondary);
+}
+.availability__form .field input[type="date"] {
+  padding: 10px 12px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  outline: none;
+  color-scheme: dark;
+}
+.availability__form .field input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.9);
+  opacity: .9;
+  cursor: pointer;
+}
+
+/* Mobile: apilado */
+@media (max-width: 720px) {
+  .availability__form { grid-template-columns: 1fr; width: 100%; }
+  .availability__form .field { max-width: 100%; }
+  .availability__form button { width: 100%; }
+}
