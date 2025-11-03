@@ -22,74 +22,89 @@
     </p>
   </section>
 
+   <!-- FILTRO POR FECHAS -->
+  <!-- DISPONIBILIDAD -->
+<section class="availability">
+  <form class="availability__form" (submit)="$event.preventDefault()">
+    <div class="field">
+      <label>Fecha de ingreso</label>
+      <input
+        type="date"
+        name="ingreso"
+        [(ngModel)]="filtro.ingreso"
+        [attr.min]="todayStr"
+        (ngModelChange)="onFechaChange()"
+        required>
+    </div>
+
+    <div class="field">
+      <label>Fecha de salida</label>
+      <input
+        type="date"
+        name="salida"
+        [(ngModel)]="filtro.salida"
+        [attr.min]="filtro.ingreso || todayStr"
+        (ngModelChange)="onFechaChange()"
+        required>
+    </div>
+
+    <button
+      type="button"
+      class="btn-ghost"
+      (click)="limpiarFiltro()"
+      *ngIf="filtro.ingreso || filtro.salida">
+      Limpiar
+    </button>
+  </form>
+
+  <small class="error" *ngIf="rangeError">
+    La fecha de salida debe ser posterior a la fecha de ingreso.
+  </small>
+
+  <div class="availability__info" *ngIf="filtro.ingreso && filtro.salida && !rangeError">
+    Mostrando del {{ filtro.ingreso | date:'dd/MM/yyyy' }} al {{ filtro.salida | date:'dd/MM/yyyy' }} —
+    {{ visibles.length }} resultado(s).
+  </div>
+</section>
+
+
   <!-- LOADING / ERROR -->
   <section class="status" *ngIf="loading || errorMsg">
     <div *ngIf="loading" class="loading">Cargando habitaciones...</div>
     <div *ngIf="!loading && errorMsg" class="error">{{ errorMsg }}</div>
   </section>
 
-  <!-- GRID DE HABITACIONES -->
+  <!-- GRID DE HABITACIONES (usa 'visibles' en lugar de 'habitaciones') -->
   <section class="habitaciones-section" *ngIf="!loading && !errorMsg">
     <h3 class="section-title">Habitaciones disponibles</h3>
 
     <div class="habitaciones-grid">
-      <div class="habitacion-card" *ngFor="let hab of habitaciones">
+      <div class="habitacion-card" *ngFor="let hab of visibles">
 
-        <!-- IMAGEN -->
         <div class="habitacion-card__image-wrapper">
-          <img
-            *ngIf="getMainImageDataUrl(hab) as imgData; else noImg"
-            [src]="imgData"
-            [alt]="'Habitación ' + hab.numero"
-            class="habitacion-card__image"
-          />
+          <img *ngIf="getMainImageDataUrl(hab) as imgData; else noImg"
+               [src]="imgData" [alt]="'Habitación ' + hab.numero"
+               class="habitacion-card__image"/>
           <ng-template #noImg>
-            <div class="habitacion-card__image habitacion-card__image--placeholder">
-              Sin imagen
-            </div>
+            <div class="habitacion-card__image habitacion-card__image--placeholder">Sin imagen</div>
           </ng-template>
-
-          <span class="habitacion-card__badge">
-            {{ hab.estado }}
-          </span>
+          <span class="habitacion-card__badge">{{ hab.estado }}</span>
         </div>
 
-        <!-- INFO -->
         <div class="habitacion-card__body">
           <div class="habitacion-card__header">
-            <div class="habitacion-card__title">
-              Hab. #{{ hab.numero }}
-            </div>
-            <div class="habitacion-card__sub">
-              Piso {{ hab.piso }} · {{ hab.tipo }}
-            </div>
+            <div class="habitacion-card__title">Hab. #{{ hab.numero }}</div>
+            <div class="habitacion-card__sub">Piso {{ hab.piso }} · {{ hab.tipo }}</div>
           </div>
 
           <div class="habitacion-card__details">
-            <div class="detail-row">
-              <span class="label">Capacidad:</span>
-              <span class="value">{{ hab.capacidad }} huésped(es)</span>
-            </div>
-
-            <div class="detail-row">
-              <span class="label">Camas:</span>
-              <span class="value">{{ hab.cantCamas }}</span>
-            </div>
-
-            <div class="detail-row">
-              <span class="label">Precio/noche:</span>
-              <span class="value price">${{ hab.precioNoche }}</span>
-            </div>
-
-            <div class="detail-row" *ngIf="hab.comentario">
-              <span class="label">Nota:</span>
-              <span class="value">{{ hab.comentario }}</span>
-            </div>
+            <div class="detail-row"><span class="label">Capacidad:</span><span class="value">{{ hab.capacidad }} huésped(es)</span></div>
+            <div class="detail-row"><span class="label">Camas:</span><span class="value">{{ hab.cantCamas }}</span></div>
+            <div class="detail-row"><span class="label">Precio/noche:</span><span class="value price">${{ hab.precioNoche }}</span></div>
+            <div class="detail-row" *ngIf="hab.comentario"><span class="label">Nota:</span><span class="value">{{ hab.comentario }}</span></div>
           </div>
 
-          <button class="reservar-btn">
-            Reservar →
-          </button>
+          <button class="reservar-btn" (click)="reservar(hab)">Reservar →</button>
         </div>
 
       </div>
