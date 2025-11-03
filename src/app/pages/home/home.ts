@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
 import Habitacion from '../../models/Habitacion';
-import { HabitacionesService } from '../../services/habitaciones.service';
+import { HabitacionService } from '../../services/habitacion-service';
 
 @Component({
   selector: 'app-home',
@@ -12,14 +12,14 @@ import { HabitacionesService } from '../../services/habitaciones.service';
 })
 export class Home implements OnInit {
 
-  private habitacionesService = inject(HabitacionesService);
+  private habService = inject(HabitacionService);
 
   habitaciones: Habitacion[] = [];
   loading = true;
   errorMsg: string | null = null;
 
   ngOnInit(): void {
-    this.habitacionesService.getHabitacionesActivas().subscribe({
+    this.habService.getHabitaciones().subscribe({
       next: (data) => {
         this.habitaciones = data;
         this.loading = false;

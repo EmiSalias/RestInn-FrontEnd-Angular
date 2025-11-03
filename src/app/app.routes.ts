@@ -135,7 +135,8 @@ export const routes: Routes = [
                 'ADMINISTRADOR',
                 'RECEPCIONISTA',
                 'CONSERJE',
-                'LIMPIEZA'
+                'LIMPIEZA',
+                'CLIENTE'
             ]
         }
     },
@@ -175,6 +176,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: [
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
                 'CONSERJE',
                 'LIMPIEZA'
             ]
