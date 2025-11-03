@@ -1,0 +1,55 @@
+<!-- src/app/pages/auth/recovery/recovery.html -->
+<main class="auth-card">
+  <h2>Recuperar contraseña</h2>
+
+  <!-- Paso 1: ingresar email -->
+  <section *ngIf="step === 'email'">
+    <label>Email
+      <input [formControl]="emailCtrl" placeholder="nombre@dominio.com">
+      <small class="err" *ngIf="emailCtrl.touched && emailCtrl.invalid">Email inválido</small>
+    </label>
+
+    <div class="actions">
+      <button type="button" (click)="onStart()" [disabled]="loading">Enviar código</button>
+      <span class="hint" *ngIf="loading">Enviando…</span>
+      <small class="err" *ngIf="!loading && errorMsg">{{ errorMsg }}</small>
+      <small class="info" *ngIf="!loading && infoMsg">{{ infoMsg }}</small>
+    </div>
+  </section>
+
+  <!-- Paso 2: validar código -->
+  <section *ngIf="step === 'code'">
+    <p>Ingresá el código de 6 dígitos que te enviamos por correo.</p>
+    <div class="verify-row">
+      <input [formControl]="codeCtrl" maxlength="6" placeholder="Código de 6 dígitos">
+      <button type="button" (click)="onVerifyCode()" [disabled]="loading">Verificar</button>
+    </div>
+    <small class="err" *ngIf="!loading && errorMsg">{{ errorMsg }}</small>
+  </section>
+
+  <!-- Paso 3: nueva contraseña -->
+  <section *ngIf="step === 'reset'">
+    <div [formGroup]="passForm" class="grid-2">
+      <label>Nueva contraseña
+        <input type="password" formControlName="password" placeholder="Mínimo 8">
+      </label>
+      <label>Repetir contraseña
+        <input type="password" formControlName="confirm" placeholder="Repetir">
+      </label>
+      <small class="err" *ngIf="passForm.touched && passForm.errors?.['mismatch']">Las contraseñas no coinciden</small>
+    </div>
+
+    <div class="actions">
+      <button type="button" (click)="onReset()" [disabled]="loading">Actualizar</button>
+      <span class="hint" *ngIf="loading">Guardando…</span>
+      <small class="err" *ngIf="!loading && errorMsg">{{ errorMsg }}</small>
+    </div>
+  </section>
+
+  <!-- Paso 4: listo -->
+  <section *ngIf="step === 'done'">
+    <h3>¡Contraseña actualizada!</h3>
+    <p>Ya podés iniciar sesión con tu nueva contraseña.</p>
+    <button type="button" (click)="goToSignIn()">Ir a Iniciar sesión</button>
+  </section>
+</main>
