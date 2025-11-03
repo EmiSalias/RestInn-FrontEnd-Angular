@@ -7,7 +7,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReservasService, ReservaRequest } from '../../../services/reservas-service';
 import Habitacion from '../../../models/Habitacion';
-import { HabitacionesService } from '../../../services/habitaciones.service';
+import { HabitacionService } from '../../../services/habitacion-service';
 import { ImagenesService } from '../../../services/imagenes.service';
 
 /** Valida que fechaSalida > fechaIngreso */
@@ -40,7 +40,7 @@ export class FormReserva implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private reservasSrv = inject(ReservasService);
-  private habSrv = inject(HabitacionesService);
+  private habSrv = inject(HabitacionService);
   private imgSrv = inject(ImagenesService);
 
   form: FormGroup = this.fb.group({

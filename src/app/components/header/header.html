@@ -1,73 +1,48 @@
 <header>
-    <nav class="nav">
-        <div class="nav_container">
-            <label class="nav_toggle">
-                <input type="checkbox" id="menu_input" class="nav_input">
-            </label>
+  <nav class="nav">
+    <div class="nav_container">
+      <label class="nav_toggle">
+        <input type="checkbox" id="menu_input" class="nav_input">
+      </label>
 
-            <ul class="nav_list">
-                <li class="nav_item">
-                    <a routerLink="/" class="nav_link"><fa-icon [icon]="faHome"></fa-icon>Inicio</a>
-                </li>
+      <ul class="nav_list">
+        <li class="nav_item" *ngFor="let item of (menu$ | async)">
+          <!-- Item sin hijos -->
+          <a *ngIf="!item.children"
+             [routerLink]="item.link"
+             class="nav_link">
+            <fa-icon *ngIf="item.icon" [icon]="item.icon"></fa-icon>{{ item.label }}
+          </a>
 
-                <li class="nav_item">
-                    <button class="nav_link" (click)="toggleSubmenu('habitaciones')" [attr.aria-expanded]="openSubmenu === 'habitaciones'">
-                        <fa-icon [icon]="faBed"></fa-icon> Habitaciones
-                        <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
-                    </button>
-                    <ul class="submenu" [class.open]="openSubmenu === 'habitaciones'">
-                        <li><a routerLink="/listado_habitaciones">Ver todas</a></li>
-                        <li><a routerLink="/crear_habitacion/form">Agregar nueva</a></li>
-                    </ul>
-                </li>
+          <!-- Item con hijos -->
+          <ng-container *ngIf="item.children">
+            <button class="nav_link"
+                    (click)="toggle(item.label)"
+                    [attr.aria-expanded]="openLabel === item.label">
+              <fa-icon *ngIf="item.icon" [icon]="item.icon"></fa-icon> {{ item.label }}
+              <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
+            </button>
 
-                <li class="nav_item">
-                    <button class="nav_link" (click)="toggleSubmenu('reservas')" [attr.aria-expanded]="openSubmenu === 'reservas'">
-                        <fa-icon [icon]="faCalendarCheck"></fa-icon> Reservas
-                        <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
-                    </button>
-                    <ul class="submenu" [class.open]="openSubmenu === 'reservas'">
-                        <li><a routerLink="/listado_reservas">Ver reservas</a></li>
-                        <li><a routerLink="/crear_reserva/form">Nueva reserva</a></li>
-                    </ul>
-                </li>
-
-                <li class="nav_item">
-                    <button class="nav_link" (click)="toggleSubmenu('consumos')" [attr.aria-expanded]="openSubmenu === 'consumos'">
-                        <fa-icon [icon]="faUtensils"></fa-icon> Consumos
-                        <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
-                    </button>
-                    <ul class="submenu" [class.open]="openSubmenu === 'consumos'">
-                        <li><a routerLink="/consumos_reserva/:id">Listado por reserva</a></li>
-                        <li><a routerLink="/crear_consumo/form/:reservaId">Nuevo consumo</a></li>
-                    </ul>
-                </li>
-
-                <li class="nav_item">
-                    <button class="nav_link" (click)="toggleSubmenu('facturacion')" [attr.aria-expanded]="openSubmenu === 'facturacion'">
-                        <fa-icon [icon]="faFileInvoice"></fa-icon> Facturación
-                        <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
-                    </button>
-                    <ul class="submenu" [class.open]="openSubmenu === 'facturacion'">
-                        <li><a routerLink="/listado_facturas">Ver facturas</a></li>
-                        <li><a routerLink="/facturas_reserva/:id">Ver facturas por reserva</a></li>
-                    </ul>
-                </li>
+            <ul class="submenu" [class.open]="openLabel === item.label">
+              <li *ngFor="let sub of item.children">
+                <a [routerLink]="sub.link">{{ sub.label }}</a>
+              </li>
             </ul>
+          </ng-container>
+        </li>
+      </ul>
 
-            <figure class="nav_figure">
-                <img src="assets/logos/logo-header.png" alt="Logo RestInn, gestión hotelera" class="nav_logo">
-            </figure>
+      <figure class="nav_figure">
+        <img src="assets/logos/logo-header.png" alt="Logo RestInn, gestión hotelera" class="nav_logo">
+      </figure>
 
-            <div class="nav_actions">
-                @if (hasRole()) {
-                <button (click)="logout()">LOGOUT</button>
-                }
-                @else {
-                <button routerLink="/sign_in">Iniciar Sesión</button>
-                <button routerLink="/sign_up">Registrarse</button>
-                }
-            </div>
-        </div>
-    </nav>
+      <div class="nav_actions">
+        <button *ngIf="(isLoggedIn$ | async); else guest" (click)="logout()">LOGOUT</button>
+        <ng-template #guest>
+          <button routerLink="/sign_in">Iniciar Sesión</button>
+          <button routerLink="/sign_up">Registrarse</button>
+        </ng-template>
+      </div>
+    </div>
+  </nav>
 </header>
