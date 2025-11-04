@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import Habitacion from '../../models/Habitacion';
 import { HabitacionService } from '../../services/habitacion-service';
+import { ReservasService } from '../../services/reservas-service';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +16,10 @@ import { HabitacionService } from '../../services/habitacion-service';
 })
 export class Home implements OnInit {
 
-  private habService = inject(HabitacionService);
+  private HabitacionService = inject(HabitacionService);
+  private reservasService = inject(ReservasService);
+  private router = inject(Router);
+  private auth = inject(AuthService);
 
   habitaciones: Habitacion[] = [];
   visibles: Habitacion[] = [];
@@ -29,7 +34,8 @@ export class Home implements OnInit {
   rangeError = false;
 
   ngOnInit(): void {
-    this.habService.getHabitaciones().subscribe({
+    this.HabitacionService.getHabitaciones().subscribe({
+
       next: (data) => {
         this.habitaciones = data;
         this.visibles = data;       // por defecto, todas
@@ -52,22 +58,22 @@ export class Home implements OnInit {
 
   // === Buscar disponibilidad ===
   buscarDisponibles(): void {
-  if (!this.filtro.ingreso || !this.filtro.salida || this.rangeError) return;
+    if (!this.filtro.ingreso || !this.filtro.salida || this.rangeError) return;
 
-  this.buscando = true;
-  this.reservasService.getHabitacionesOcupadas(this.filtro.ingreso, this.filtro.salida)
-    .subscribe({
-      next: (ocupadas) => {
-        const occ = new Set(ocupadas || []);
-        this.visibles = this.habitaciones.filter(h => !occ.has(h.id));
-        this.buscando = false;
-      },
-      error: (err) => {
-        console.error('Error consultando ocupación', err);
-        this.errorMsg = 'No pudimos verificar disponibilidad.';
-        this.buscando = false;
-      }
-    });
+    this.buscando = true;
+    this.reservasService.getHabitacionesOcupadas(this.filtro.ingreso, this.filtro.salida)
+      .subscribe({
+        next: (ocupadas) => {
+          const occ = new Set(ocupadas || []);
+          this.visibles = this.habitaciones.filter(h => !occ.has(h.id));
+          this.buscando = false;
+        },
+        error: (err) => {
+          console.error('Error consultando ocupación', err);
+          this.errorMsg = 'No pudimos verificar disponibilidad.';
+          this.buscando = false;
+        }
+      });
   }
 
   limpiarFiltro(): void {
@@ -81,14 +87,14 @@ export class Home implements OnInit {
 
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/sign_in'], {
-          queryParams: {
-            returnUrl: '/crear_reserva/form',
-            habitacionId: hab.id,
-            capacidad: hab.capacidad,           // 👈 NUEVO
-            ingreso: this.filtro.ingreso || null,
-            salida:  this.filtro.salida  || null
-          }
-        });
+        queryParams: {
+          returnUrl: '/crear_reserva/form',
+          habitacionId: hab.id,
+          capacidad: hab.capacidad,           // 👈 NUEVO
+          ingreso: this.filtro.ingreso || null,
+          salida: this.filtro.salida || null
+        }
+      });
       return;
     }
 
@@ -101,27 +107,27 @@ export class Home implements OnInit {
 
     // OK → al form con id + (opcional) fechas para prefilling
     this.router.navigate(['/crear_reserva/form'], {
-        queryParams: {
-          habitacionId: hab.id,
-          capacidad: hab.capacidad,           // 👈 NUEVO
-          ingreso: this.filtro.ingreso || null,
-          salida:  this.filtro.salida  || null
-        }
-      });
+      queryParams: {
+        habitacionId: hab.id,
+        capacidad: hab.capacidad,           // 👈 NUEVO
+        ingreso: this.filtro.ingreso || null,
+        salida: this.filtro.salida || null
+      }
+    });
   }
-onFechaChange(): void {
-  // si no hay ambas fechas, reseteo vista y errores
-  if (!this.filtro.ingreso || !this.filtro.salida) {
-    this.rangeError = false;
-    this.visibles = this.habitaciones.slice();
-    return;
-  }
-  this.rangeError = new Date(this.filtro.salida) <= new Date(this.filtro.ingreso);
-  if (this.rangeError) return;
+  onFechaChange(): void {
+    // si no hay ambas fechas, reseteo vista y errores
+    if (!this.filtro.ingreso || !this.filtro.salida) {
+      this.rangeError = false;
+      this.visibles = this.habitaciones.slice();
+      return;
+    }
+    this.rangeError = new Date(this.filtro.salida) <= new Date(this.filtro.ingreso);
+    if (this.rangeError) return;
 
-  // todo OK → consultar ocupadas y filtrar
-  this.buscarDisponibles();
-}
+    // todo OK → consultar ocupadas y filtrar
+    this.buscarDisponibles();
+  }
 
 
 
