@@ -35,6 +35,7 @@ export class Home implements OnInit {
 
   ngOnInit(): void {
     this.HabitacionService.getHabitaciones().subscribe({
+
       next: (data) => {
         this.habitaciones = data;
         this.visibles = data;       // por defecto, todas
