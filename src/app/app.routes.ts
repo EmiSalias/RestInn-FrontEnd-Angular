@@ -51,6 +51,7 @@ import { AuthGuard } from './guards/auth-guard';
 import { Unauthorized } from './pages/usuarios/unauthorized/unauthorized';
 
 export const routes: Routes = [
+    
     // region Acceso público
     { path: '', component: Home },
     { path: 'sign_in', component: SignIn },
@@ -93,7 +94,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-    // region CLIENTEs - CRUD
+    // region CLIENTES - CRUD
     {
         path: 'listado_CLIENTEs',
         component: ListadoClientes,
