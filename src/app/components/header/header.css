@@ -1,12 +1,12 @@
 header {
   background-color: var(--color-h-f);
   position: fixed;
-  top: 0;                /* 👈 anclar arriba explícitamente */
+  top: 0;                
   left: 0;
   right: 0;
   width: 100%;
-  height: var(--header-h);   /* 👈 que el header tenga altura definida */
-  z-index: 1000;             /* por encima del contenido */
+  height: var(--header-h);  
+  z-index: 1000;             
 }
 
 .nav_container {
@@ -113,7 +113,7 @@ a:hover {
   color: var(--color-text);
 }
 
-/* 🔽 Submenú animado */
+/* Submenú animado */
 .submenu {
   list-style: none;
   margin: 0;
@@ -144,7 +144,7 @@ a:hover {
   color: var(--color-text);
 }
 
-/* 🔽 Chevron rotatorio */
+/* Chevron rotatorio */
 .chevron {
   transition: transform 0.3s;
 }
@@ -153,7 +153,8 @@ a:hover {
   transform: rotate(180deg);
 }
 
-/* 🔽 Animación general del contenedor */
+
+/* Animación general del contenedor */
 .nav_container:has(.nav_input:checked) .nav_list {
   height: auto;
 }

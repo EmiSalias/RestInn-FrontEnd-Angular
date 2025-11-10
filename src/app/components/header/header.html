@@ -37,11 +37,13 @@
       </figure>
 
       <div class="nav_actions">
-        <button *ngIf="(isLoggedIn$ | async); else guest" (click)="logout()">LOGOUT</button>
-        <ng-template #guest>
+        @if (isLoggedIn$ | async) {
+          <button (click)="logout()">LOGOUT</button>
+          <button routerLink="/mi_perfil">Mi perfil</button>
+        } @else {
           <button routerLink="/sign_in">Iniciar Sesión</button>
           <button routerLink="/sign_up">Registrarse</button>
-        </ng-template>
+        }
       </div>
     </div>
   </nav>
