@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
-export class ImagenesService {
+export class ImagenService {
   private base = environment.API_BASE_URL ?? '';
 
   constructor(private http: HttpClient) {}
@@ -22,4 +22,8 @@ export class ImagenesService {
         )
       );
   }
+
+  postImagen(habitacionId: number, payload: { archivo: string }) {
+  return this.http.post(`${this.base}/api/imagenes/${habitacionId}`, payload);
+}
 }

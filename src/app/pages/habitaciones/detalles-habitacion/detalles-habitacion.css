@@ -125,5 +125,5 @@
 
 .buttons button:nth-child(1) { background-color: var(--color-primary); }
 .buttons button:nth-child(2) { background-color: var(--color-secondary); }
-.buttons button:nth-child(3) { background-color: #e6b800; color: #222; }
-.buttons button:nth-child(4) { background-color: var(--color-error); }
+.buttons button:nth-child(3) { background-color: var(--color-error); }
+.buttons button:nth-child(4) { background-color: #e6b800; color: #222; }

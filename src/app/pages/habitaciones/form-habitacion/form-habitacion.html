@@ -4,7 +4,7 @@
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-      <!-- Datos básicos -->
+      <!-- DATOS BÁSICOS -->
       <div class="grid-2">
         <div class="field">
           <label>Número</label>
@@ -31,7 +31,7 @@
 
         <div class="field">
           <label>Precio por noche</label>
-          <input type="number" formControlName="precioNoche" min="0" />
+          <input type="number" formControlName="precioNoche" min="0" step="0.01" />
         </div>
 
         <div class="field">
@@ -56,19 +56,19 @@
         </div>
       </div>
 
-      <!-- Comentario -->
+      <!-- COMENTARIO -->
       <div class="field">
         <label>Comentario</label>
         <textarea rows="2" formControlName="comentario"></textarea>
       </div>
 
-      <!-- Imágenes -->
+      <!-- IMÁGENES -->
       <div class="field">
         <label>Imágenes</label>
         <input type="file" multiple (change)="onFilesSelected($event)" accept="image/*" />
       </div>
 
-      <!-- Galería -->
+      <!-- GALERÍA -->
       @if (imagenesPreview.length > 0) {
         <section class="galeria">
           <div class="galeria__thumbs">
@@ -84,12 +84,16 @@
         <div class="galeria galeria--empty">Sin imágenes cargadas</div>
       }
 
-      <!-- Botones -->
+      <!-- BOTONES -->
       <div class="actions">
         <button type="submit" [disabled]="loading">
           {{ editMode ? 'Guardar cambios' : 'Crear habitación' }}
         </button>
         <button type="button" class="btn-ghost" (click)="volver()">Cancelar</button>
+
+        @if (loading) {
+          <span class="muted">Guardando...</span>
+        }
       </div>
     </form>
   </section>

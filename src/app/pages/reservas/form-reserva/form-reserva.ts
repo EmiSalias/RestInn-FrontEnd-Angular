@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReservasService, ReservaRequest } from '../../../services/reservas-service';
 import Habitacion from '../../../models/Habitacion';
 import { HabitacionService } from '../../../services/habitacion-service';
-import { ImagenesService } from '../../../services/imagenes.service';
+import { ImagenService } from '../../../services/imagen-service';
 
 
 function rangoFechasValidator(group: AbstractControl) {
@@ -41,7 +41,7 @@ export class FormReserva implements OnInit {
   private router = inject(Router);
   private reservasSrv = inject(ReservasService);
   private habSrv = inject(HabitacionService);
-  private imgSrv = inject(ImagenesService);
+  private imgSrv = inject(ImagenService);
 
   form: FormGroup = this.fb.group({
     habitacionId: [null, Validators.required],
