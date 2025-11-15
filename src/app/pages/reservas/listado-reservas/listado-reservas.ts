@@ -51,6 +51,37 @@ export class ListadoReservas implements OnInit {
 
   orden: 'ingresoDesc' | 'ingresoAsc' | 'estado' = 'ingresoDesc';
 
+  // =======================
+  //  HELPER ERRORES
+  // =======================
+  private getBackendErrorMessage(err: any, fallback: string): string {
+    const httpErr = err as any;
+
+    if (!httpErr || httpErr.status === 0) {
+      return 'No se pudo conectar con el servidor. Intentalo de nuevo más tarde.';
+    }
+
+    const body = httpErr.error;
+
+    if (typeof body === 'string') {
+      return body || fallback;
+    }
+
+    if (body) {
+      if (body.mensaje) return body.mensaje;    // 👈 lo que armamos en el Handler
+      if (body.message) return body.message;    // por si viene ErrorDetails
+      if (body.detail) return body.detail;     // formato ProblemDetail
+    }
+
+    if (httpErr.status >= 500) {
+      return 'Error interno del servidor';
+    }
+
+    return fallback;
+  }
+
+
+
   ngOnInit(): void {
     const modoRuta = this.route.snapshot.data['modo'] as 'admin' | 'cliente' | undefined;
 
@@ -280,13 +311,20 @@ export class ListadoReservas implements OnInit {
         },
         error: (err) => {
           console.error('Error cancelando reserva', err);
-          const msg = err?.error?.message || 'No se pudo cancelar la reserva.';
+
+          const msg = this.getBackendErrorMessage(
+            err,
+            'No se pudo cancelar la reserva.'
+          );
+
           Swal.fire({
             icon: 'error',
             title: 'No se pudo cancelar',
             text: msg
           });
         }
+
+
       });
     });
   }
