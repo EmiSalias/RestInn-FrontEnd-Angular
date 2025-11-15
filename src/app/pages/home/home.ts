@@ -1,134 +1,226 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule, NgForOf, NgIf } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+// src/app/pages/home/home.ts
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  inject
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import Habitacion from '../../models/Habitacion';
-import { HabitacionService } from '../../services/habitacion-service';
-import { ReservasService } from '../../services/reservas-service';
 import { AuthService } from '../../services/auth-service';
+import { ListadoHabitaciones } from '../habitaciones/listado-habitaciones/listado-habitaciones';
+
+type HeroKey = 'default' | 'reservas' | 'habitaciones' | 'historial' | 'favoritos';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NgForOf, NgIf, FormsModule],
+  imports: [CommonModule, ListadoHabitaciones],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home implements OnInit {
+export class Home implements OnInit, OnDestroy {
 
-  private HabitacionService = inject(HabitacionService);
-  private reservasService = inject(ReservasService);
   private router = inject(Router);
   private auth = inject(AuthService);
 
-  habitaciones: Habitacion[] = [];
-  visibles: Habitacion[] = [];
+  // --- texto dinámico ---
+  heroTextMap: Record<HeroKey, string> = {
+    default: 'Pasá el cursor sobre una opción para ver qué podés hacer desde acá.',
+    reservas: 'Realizá una nueva reserva usando el buscador de fechas o revisá las que ya hiciste.',
+    habitaciones: 'Explorá todas las habitaciones, mirá fotos y detalles antes de reservar.',
+    historial: 'Consultá el historial de tus reservas y consumos según tu usuario.',
+    favoritos: 'Próximamente vas a poder guardar tus habitaciones preferidas como favoritas.'
+  };
 
-  loading = true;
-  errorMsg: string | null = null;
+  currentHeroKey: HeroKey = 'default';
+  typedHeroText = '';
+  private typingIntervalId: any = null;
 
-  // filtro fechas
-  todayStr = new Date().toISOString().split('T')[0];
-  filtro: { ingreso?: string; salida?: string } = {};
-  buscando = false;
-  rangeError = false;
+  // --- referencia al contenedor de cards ---
+  @ViewChild('heroCards', { static: true })
+  heroCardsRef?: ElementRef<HTMLDivElement>;
+
+  // --- estado de auto-scroll ---
+  private heroScrollDir: 'left' | 'right' | null = null;
+  private heroScrollId: number | null = null;
 
   ngOnInit(): void {
-    this.HabitacionService.getHabitaciones().subscribe({
+    this.startHeroTyping('default');
+  }
 
-      next: (data) => {
-        this.habitaciones = data;
-        this.visibles = data;       // por defecto, todas
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error pidiendo habitaciones', err);
-        this.errorMsg = 'No se pudieron cargar las habitaciones 😢';
-        this.loading = false;
+  ngOnDestroy(): void {
+    if (this.typingIntervalId) {
+      clearInterval(this.typingIntervalId);
+    }
+    this.stopHeroScroll();
+  }
+
+  // ---------------------------
+  // TEXTO TIP "typewriter"
+  // ---------------------------
+
+  setHeroText(key: HeroKey): void {
+    this.startHeroTyping(key);
+  }
+
+  private startHeroTyping(key: HeroKey): void {
+    const text = this.heroTextMap[key];
+    this.currentHeroKey = key;
+
+    if (!text) return;
+
+    if (this.typingIntervalId) {
+      clearInterval(this.typingIntervalId);
+      this.typingIntervalId = null;
+    }
+
+    this.typedHeroText = '';
+    let index = 0;
+
+    this.typingIntervalId = setInterval(() => {
+      if (index >= text.length) {
+        clearInterval(this.typingIntervalId);
+        this.typingIntervalId = null;
+        return;
       }
-    });
+
+      this.typedHeroText += text.charAt(index);
+      index++;
+    }, 4);
   }
 
-  getMainImageDataUrl(hab: Habitacion): string | null {
-    if (!hab.imagenes?.length) return null;
-    const primera = hab.imagenes[0];
-    if (!primera?.datosBase64 || !primera?.tipo) return null;
-    return `data:${primera.tipo};base64,${primera.datosBase64}`;
+  // ---------------------------
+  // AUTO-SCROLL DE CARDS
+  // ---------------------------
+
+  onHeroMouseMove(ev: MouseEvent): void {
+    // en mobile no hacemos nada
+    if (window.innerWidth < 720) {
+      this.stopHeroScroll();
+      return;
+    }
+
+    const el = this.heroCardsRef?.nativeElement;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const x = ev.clientX - rect.left;
+    const width = rect.width;
+    const edgeZone = Math.min(120, width / 4); // zona sensible
+
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 0) {
+      this.stopHeroScroll();
+      return;
+    }
+
+    if (x < edgeZone && el.scrollLeft > 0) {
+      this.startHeroScroll('left');
+    } else if (x > width - edgeZone && el.scrollLeft < maxScroll) {
+      this.startHeroScroll('right');
+    } else {
+      this.stopHeroScroll();
+    }
   }
 
-  // === Buscar disponibilidad ===
-  buscarDisponibles(): void {
-    if (!this.filtro.ingreso || !this.filtro.salida || this.rangeError) return;
+  private startHeroScroll(dir: 'left' | 'right'): void {
+    const el = this.heroCardsRef?.nativeElement;
+    if (!el) return;
 
-    this.buscando = true;
-    this.reservasService.getHabitacionesOcupadas(this.filtro.ingreso, this.filtro.salida)
-      .subscribe({
-        next: (ocupadas) => {
-          const occ = new Set(ocupadas || []);
-          this.visibles = this.habitaciones.filter(h => !occ.has(h.id));
-          this.buscando = false;
-        },
-        error: (err) => {
-          console.error('Error consultando ocupación', err);
-          this.errorMsg = 'No pudimos verificar disponibilidad.';
-          this.buscando = false;
+    if (this.heroScrollDir === dir && this.heroScrollId !== null) return;
+
+    this.heroScrollDir = dir;
+
+    if (this.heroScrollId !== null) {
+      cancelAnimationFrame(this.heroScrollId);
+    }
+
+    const step = 22; // velocidad de desplazamiento (px por frame)
+
+    const tick = () => {
+      const maxScroll = el.scrollWidth - el.clientWidth;
+
+      if (dir === 'right') {
+        el.scrollLeft = Math.min(maxScroll, el.scrollLeft + step);
+        if (el.scrollLeft >= maxScroll) {
+          this.stopHeroScroll();
+          return;
         }
-      });
+      } else {
+        el.scrollLeft = Math.max(0, el.scrollLeft - step);
+        if (el.scrollLeft <= 0) {
+          this.stopHeroScroll();
+          return;
+        }
+      }
+
+      this.heroScrollId = requestAnimationFrame(tick);
+    };
+
+    this.heroScrollId = requestAnimationFrame(tick);
   }
 
-  limpiarFiltro(): void {
-    this.filtro = {};
-    this.rangeError = false;
-    this.visibles = this.habitaciones.slice();
+  stopHeroScroll(): void {
+    if (this.heroScrollId !== null) {
+      cancelAnimationFrame(this.heroScrollId);
+      this.heroScrollId = null;
+    }
+    this.heroScrollDir = null;
   }
 
-  reservar(hab: Habitacion) {
-    const habitacionId = hab.id;
+  // ---------------------------
+  // NAVEGACIÓN DE CARDS
+  // ---------------------------
+
+  goToReservas(event?: Event): void {
+    event?.preventDefault();
 
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/sign_in'], {
-        queryParams: {
-          returnUrl: '/crear_reserva/form',
-          habitacionId: hab.id,
-          capacidad: hab.capacidad,           // 👈 NUEVO
-          ingreso: this.filtro.ingreso || null,
-          salida: this.filtro.salida || null
-        }
+        queryParams: { returnUrl: '/crear_reserva/form' }
       });
       return;
     }
 
-    // roles permitidos
     const allowed = ['CLIENTE', 'ADMINISTRADOR', 'RECEPCIONISTA'];
     if (!this.auth.hasAnyRole(allowed)) {
       this.router.navigate(['/unauthorized']);
       return;
     }
 
-    // OK → al form con id + (opcional) fechas para prefilling
-    this.router.navigate(['/crear_reserva/form'], {
-      queryParams: {
-        habitacionId: hab.id,
-        capacidad: hab.capacidad,           // 👈 NUEVO
-        ingreso: this.filtro.ingreso || null,
-        salida: this.filtro.salida || null
-      }
-    });
+    this.router.navigate(['/crear_reserva/form']);
   }
-  onFechaChange(): void {
-    // si no hay ambas fechas, reseteo vista y errores
-    if (!this.filtro.ingreso || !this.filtro.salida) {
-      this.rangeError = false;
-      this.visibles = this.habitaciones.slice();
+
+  goToHistorial(event?: Event): void {
+    event?.preventDefault();
+
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/sign_in'], {
+        queryParams: { returnUrl: '/reservas/historial' }
+      });
       return;
     }
-    this.rangeError = new Date(this.filtro.salida) <= new Date(this.filtro.ingreso);
-    if (this.rangeError) return;
 
-    // todo OK → consultar ocupadas y filtrar
-    this.buscarDisponibles();
+    const esCliente = this.auth.hasAnyRole(['CLIENTE']);
+    const target = esCliente
+      ? '/reservas_cliente/listado'
+      : '/reservas/listado';
+
+    this.router.navigate([target]);
   }
 
+  goToHabitaciones(event?: Event): void {
+    event?.preventDefault();
+    const section = document.getElementById('habitaciones-home');
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
-
+  goToFavoritos(event?: Event): void {
+    event?.preventDefault();
+    // placeholder por ahora
+    // this.router.navigate(['/favoritos']);
+  }
 }

@@ -1,0 +1,94 @@
+.reservas-hub {
+  padding: 110px 40px 40px; /* espacio por el header fijo */
+  color: var(--color-text);
+}
+
+.reservas-hub h1 {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.reservas-hub .subtitle {
+  margin-bottom: 24px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* layout de las cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+/* cada card es un “botón grande” */
+.card {
+  background-color: #21160d;
+  border-radius: 24px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  background-color: #2b1c10;
+}
+
+/* icono grande */
+.icon-wrapper {
+  width: 140px;
+  height: 140px;
+  border-radius: 32px;
+  background: linear-gradient(135deg, #f1c36f, #e09b3a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.icon-wrapper fa-icon {
+  font-size: 64px;
+  color: #2b2219;
+}
+
+.card:hover .icon-wrapper {
+  transform: scale(1.05);
+  box-shadow: 0 0 22px rgba(241, 195, 111, 0.9);
+}
+
+.card h2 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.card p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}

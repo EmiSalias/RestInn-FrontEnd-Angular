@@ -1,9 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HabitacionService } from '../../../services/habitacion-service';
 import Habitacion from '../../../models/Habitacion';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../services/auth-service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-listado-habitaciones',
@@ -12,9 +14,12 @@ import { CommonModule } from '@angular/common';
   templateUrl: './listado-habitaciones.html',
   styleUrl: './listado-habitaciones.css'
 })
-export class ListadoHabitaciones implements OnInit {
+export class ListadoHabitaciones implements OnInit, OnDestroy {
   private habService = inject(HabitacionService);
   private router = inject(Router);
+  private auth = inject(AuthService);
+
+  private subs = new Subscription();
 
   habitaciones: Habitacion[] = [];
   habitacionesFiltradas: Habitacion[] = [];
@@ -23,6 +28,8 @@ export class ListadoHabitaciones implements OnInit {
   rangeError = false;
   loading = false;
   errorMsg = '';
+  isCliente = false;
+  puedeGestionarHabitaciones = false;
 
   filtros = {
     estado: '',
@@ -37,7 +44,26 @@ export class ListadoHabitaciones implements OnInit {
   orden = '';
 
   ngOnInit(): void {
-    this.getHabitaciones();
+    const s = this.auth.state$.subscribe(state => {
+      const roles = state.roles ?? [];
+      const logged = state.isLoggedIn;
+
+      this.isCliente = logged && roles.includes('CLIENTE');
+      this.puedeGestionarHabitaciones = logged && roles.some(r =>
+        ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA'].includes(r)
+      );
+
+      // Solo la primera vez pedimos las habitaciones
+      if (this.habitaciones.length === 0 && !this.loading) {
+        this.getHabitaciones();
+      }
+    });
+
+    this.subs.add(s);
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 
   abrirFiltros() {
@@ -75,8 +101,12 @@ export class ListadoHabitaciones implements OnInit {
     this.loading = true;
     this.habService.getHabitaciones().subscribe({
       next: (data) => {
-        this.habitaciones = data;
-        this.habitacionesFiltradas = [...data];
+        // 👇 si es cliente, solo mostramos las disponibles
+        this.habitaciones = this.isCliente
+          ? data.filter(h => h.estado === 'DISPONIBLE')
+          : data;
+
+        this.habitacionesFiltradas = [...this.habitaciones];
         this.loading = false;
       },
       error: (err) => {
@@ -132,11 +162,35 @@ export class ListadoHabitaciones implements OnInit {
     return `data:${primera.tipo};base64,${primera.datosBase64}`;
   }
 
-  reservarHabitacion(hab: Habitacion) {
-      this.router.navigate(['/crear_reserva/form'], {
-        queryParams: { habitacionId: hab.id }
+    reservarHabitacion(hab: Habitacion) {
+    // si no está logueado → login
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/sign_in'], {
+        queryParams: {
+          returnUrl: '/crear_reserva/form',
+          habitacionId: hab.id,
+          capacidad: hab.capacidad
+        }
       });
+      return;
     }
+
+    // roles permitidos
+    const allowed = ['CLIENTE', 'ADMINISTRADOR', 'RECEPCIONISTA'];
+    if (!this.auth.hasAnyRole(allowed)) {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
+
+    // ok, va al form de reserva
+    this.router.navigate(['/crear_reserva/form'], {
+      queryParams: {
+        habitacionId: hab.id,
+        capacidad: hab.capacidad
+      }
+    });
+  }
+
 
   editHabitacion(hab: Habitacion) {
     this.router.navigate(['/editar_habitacion', hab.id]);

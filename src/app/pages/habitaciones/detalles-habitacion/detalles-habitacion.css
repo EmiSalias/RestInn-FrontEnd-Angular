@@ -111,19 +111,28 @@
   padding: 1rem;
   background-color: var(--color-h-f);
   border-top: 1px solid var(--color-border);
+  gap: 0.75rem;
 }
 
 .buttons button {
   border: none;
   border-radius: 8px;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   color: var(--color-bg);
+  min-width: 110px;
+  text-align: center;
 }
 
-.buttons button:nth-child(1) { background-color: var(--color-primary); }
-.buttons button:nth-child(2) { background-color: var(--color-secondary); }
-.buttons button:nth-child(3) { background-color: var(--color-error); }
-.buttons button:nth-child(4) { background-color: #e6b800; color: #222; }
+/* Colores por clase, no por posición */
+.btn-primary   { background-color: var(--color-primary); }
+.btn-secondary { background-color: var(--color-secondary); }
+.btn-danger    { background-color: var(--color-error); }
+.btn-back      { background-color: #e6b800; color: #222; }
+
+.buttons button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.45);
+}

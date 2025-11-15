@@ -9,6 +9,7 @@ import { ReservasService, ReservaRequest } from '../../../services/reservas-serv
 import Habitacion from '../../../models/Habitacion';
 import { HabitacionService } from '../../../services/habitacion-service';
 import { ImagenService } from '../../../services/imagen-service';
+import Swal from 'sweetalert2';
 
 
 function rangoFechasValidator(group: AbstractControl) {
@@ -58,7 +59,7 @@ export class FormReserva implements OnInit {
   hab: Habitacion | null = null;
   imgUrls: string[] = [];
   selectedIdx = 0;
-  capacidadMax = Number.MAX_SAFE_INTEGER;   // se fija al cargar la habitación
+  capacidadMax = Number.MAX_SAFE_INTEGER;
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(qp => {
@@ -160,11 +161,32 @@ export class FormReserva implements OnInit {
   removeHuesped(idx: number) { if (this.huespedesFA.length > 1) this.huespedesFA.removeAt(idx); }
 
   submit() {
+    // Validación de capacidad
     if (this.huespedesFA.length > this.capacidadMax) {
       this.errorMsg = `Máximo ${this.capacidadMax} huésped(es) para esta habitación.`;
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Capacidad superada',
+        text: this.errorMsg,
+      });
+
       return;
     }
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+
+    // Validación de formulario
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Formulario incompleto',
+        text: 'Revisá los campos marcados en rojo.',
+      });
+
+      return;
+    }
+
     const raw = this.form.value;
     const dto: ReservaRequest = {
       fechaIngreso: raw.fechaIngreso,
@@ -172,17 +194,41 @@ export class FormReserva implements OnInit {
       habitacionId: Number(raw.habitacionId),
       huespedes: raw.huespedes
     };
-    this.loading = true; this.errorMsg = null;
+
+    this.loading = true;
+    this.errorMsg = null;
+
     this.reservasSrv.crearReserva(dto).subscribe({
-      next: (res) => this.router.navigate(['/reserva', res.id]),
-      error: (err) => {
-        console.error('Error creando reserva', err);
-        this.errorMsg = err?.error?.message || 'No se pudo crear la reserva. Verificá fechas y disponibilidad.';
+      next: (res) => {
         this.loading = false;
+
+        // Popup de éxito + luego navegación al detalle
+        Swal.fire({
+          icon: 'success',
+          title: 'Reserva creada',
+          text: `Tu reserva se creó correctamente. Código: #${res.id}`,
+          confirmButtonText: 'Ver detalle'
+        }).then(() => {
+          this.router.navigate(['/reserva', res.id]); // ruta que ya usabas
+        });
+      },
+      error: (err) => {
+        this.loading = false;
+        const msg =
+          err?.error?.message ||
+          'No se pudo crear la reserva. Verificá fechas y disponibilidad.';
+
+        this.errorMsg = msg;
+
+        Swal.fire({
+          icon: 'error',
+          title: 'No se pudo crear la reserva',
+          text: msg,
+        });
       }
     });
-
   }
+
 
   private cargarImagenes(habitacionId: number) {
     this.imgSrv.getUrlsPorHabitacion(habitacionId).subscribe({
