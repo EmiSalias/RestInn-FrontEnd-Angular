@@ -1,8 +1,7 @@
 .habitaciones-list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  margin: 110px 30px;
+  gap: 20px;
 }
 
 .section-title {
@@ -16,14 +15,16 @@
 
 /* FILTROS */
 .filtros {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  background-color: var(--color-surface);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.filtros.activo {
+  max-height: 600px;
+  opacity: 1;
   padding: 1rem;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-  border: 1px solid var(--color-border);
 }
 
 .filtros-row {
@@ -185,7 +186,98 @@
   color: var(--color-warning);
 }
 
+.filtros-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filtros-toggle button {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filtros-toggle button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+.filtros.ng-star-inserted {
+  max-height: 600px;
+  opacity: 1;
+  padding: 1rem;
+}
+
+.filtros-bottom {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.filtros-bottom button {
+  background-color: var(--color-secondary);
+  color: var(--color-bg);
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.filtros-bottom button:hover {
+  transform: translateY(-2px);
+}
+
+/* Filtros - fechas y validación */
+.filtros input[type="date"] {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-h-f);
+  color: var(--color-text);
+}
+
 .error {
-  text-align: center;
   color: var(--color-error);
+  text-align: center;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.filtros-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.filtros-toggle button {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filtros-toggle button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+.filtros-bottom {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
 }

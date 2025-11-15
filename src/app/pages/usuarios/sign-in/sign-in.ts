@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth-service';
-import { ActivatedRoute, Router } from '@angular/router';   // 👈 agrega ActivatedRoute
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
@@ -17,7 +17,7 @@ export class SignIn {
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
-    private route: ActivatedRoute            // 👈 inyéctalo
+    private route: ActivatedRoute
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -33,7 +33,6 @@ export class SignIn {
   this.auth.login(username, password).subscribe({
     next: () => {
       const qp = this.route.snapshot.queryParamMap;
-
       const returnUrl = qp.get('returnUrl') || '/';
 
       const forward: any = {};
@@ -48,13 +47,13 @@ export class SignIn {
   });
 }
 
-goToRecovery(): void {
-  const qp = this.route.snapshot.queryParamMap;
-  const forward: any = {};
-  ['habitacionId', 'capacidad', 'ingreso', 'salida', 'fechaIngreso', 'fechaSalida', 'returnUrl']
-    .forEach(k => { const v = qp.get(k); if (v) forward[k] = v; });
+  goToRecovery(): void {
+    const qp = this.route.snapshot.queryParamMap;
+    const forward: any = {};
+    ['habitacionId', 'capacidad', 'ingreso', 'salida', 'fechaIngreso', 'fechaSalida', 'returnUrl']
+      .forEach(k => { const v = qp.get(k); if (v) forward[k] = v; });
 
-  this.router.navigate(['/recovery'], { queryParams: forward });
-}
+    this.router.navigate(['/recovery'], { queryParams: forward });
+  }
 
 }

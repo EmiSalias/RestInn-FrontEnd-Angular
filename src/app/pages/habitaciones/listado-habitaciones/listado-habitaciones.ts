@@ -1,20 +1,28 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HabitacionService } from '../../../services/habitacion-service';
 import Habitacion from '../../../models/Habitacion';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-listado-habitaciones',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './listado-habitaciones.html',
   styleUrl: './listado-habitaciones.css'
 })
 export class ListadoHabitaciones implements OnInit {
+  private habService = inject(HabitacionService);
+  private router = inject(Router);
 
   habitaciones: Habitacion[] = [];
   habitacionesFiltradas: Habitacion[] = [];
+
+  filtrosVisibles = false;
+  rangeError = false;
+  loading = false;
+  errorMsg = '';
 
   filtros = {
     estado: '',
@@ -22,21 +30,45 @@ export class ListadoHabitaciones implements OnInit {
     capacidadMax: null as number | null,
     precioMin: null as number | null,
     precioMax: null as number | null,
-    cantCamas: null as number | null,
-    tipo: ''
+    fechaDesde: '',
+    fechaHasta: ''
   };
 
-  orden: string = '';
-  loading = false;
-  errorMsg = '';
-
-  constructor(
-    public habService: HabitacionService,
-    private router: Router
-  ) {}
+  orden = '';
 
   ngOnInit(): void {
     this.getHabitaciones();
+  }
+
+  abrirFiltros() {
+    this.filtrosVisibles = !this.filtrosVisibles;
+  }
+
+  cancelarFiltros() {
+    this.filtrosVisibles = false;
+  }
+
+  aplicarFiltros() {
+    this.filtrarHabitaciones();
+    this.filtrosVisibles = false;
+  }
+
+  limpiarFiltros() {
+    this.filtros = {
+      estado: '',
+      capacidadMin: null,
+      capacidadMax: null,
+      precioMin: null,
+      precioMax: null,
+      fechaDesde: '',
+      fechaHasta: ''
+    };
+    this.habitacionesFiltradas = [...this.habitaciones];
+    this.orden = '';
+  }
+
+  agregarNueva() {
+    this.router.navigate(['/crear_habitacion/form']);
   }
 
   getHabitaciones() {
@@ -48,7 +80,7 @@ export class ListadoHabitaciones implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar habitaciones: ', err);
+        console.error('Error al cargar habitaciones:', err);
         this.errorMsg = 'Error al cargar las habitaciones.';
         this.loading = false;
       }
@@ -56,28 +88,30 @@ export class ListadoHabitaciones implements OnInit {
   }
 
   filtrarHabitaciones() {
+    // Validación de rango de fechas
+    if (this.filtros.fechaDesde && this.filtros.fechaHasta) {
+      const desde = new Date(this.filtros.fechaDesde);
+      const hasta = new Date(this.filtros.fechaHasta);
+      this.rangeError = hasta < desde;
+      if (this.rangeError) return;
+    }
+
     this.habitacionesFiltradas = this.habitaciones.filter(h => {
       return (
         (!this.filtros.estado || h.estado === this.filtros.estado) &&
         (!this.filtros.capacidadMin || h.capacidad >= +this.filtros.capacidadMin) &&
-      (!this.filtros.capacidadMax || h.capacidad <= +this.filtros.capacidadMax) &&
-      (!this.filtros.precioMin || h.precioNoche >= +this.filtros.precioMin) &&
-      (!this.filtros.precioMax || h.precioNoche <= +this.filtros.precioMax) &&
-        (!this.filtros.cantCamas || h.cantCamas === this.filtros.cantCamas) &&
-        (!this.filtros.tipo || h.tipo === this.filtros.tipo)
+        (!this.filtros.capacidadMax || h.capacidad <= +this.filtros.capacidadMax) &&
+        (!this.filtros.precioMin || h.precioNoche >= +this.filtros.precioMin) &&
+        (!this.filtros.precioMax || h.precioNoche <= +this.filtros.precioMax)
       );
     });
+
     this.ordenarHabitaciones();
   }
 
-
-  limpiarFiltros() {
-    this.filtros = { estado: '', capacidadMin: null, capacidadMax: null, precioMin: null, precioMax: null, cantCamas: null, tipo: '' };
-    this.habitacionesFiltradas = [...this.habitaciones];
-    this.orden = 'numero';
-  }
-
   ordenarHabitaciones() {
+    if (!this.orden) return;
+
     this.habitacionesFiltradas.sort((a, b) => {
       switch (this.orden) {
         case 'Numero asc': return a.numero - b.numero;
@@ -98,6 +132,16 @@ export class ListadoHabitaciones implements OnInit {
     return `data:${primera.tipo};base64,${primera.datosBase64}`;
   }
 
+  reservarHabitacion(hab: Habitacion) {
+      this.router.navigate(['/crear_reserva/form'], {
+        queryParams: { habitacionId: hab.id }
+      });
+    }
+
+  editHabitacion(hab: Habitacion) {
+    this.router.navigate(['/editar_habitacion', hab.id]);
+  }
+
   deleteHabitacion(id: number) {
     if (confirm('¿Seguro que quieres eliminar esta habitación?')) {
       this.habService.deleteHabitacion(id).subscribe({
@@ -113,15 +157,7 @@ export class ListadoHabitaciones implements OnInit {
     }
   }
 
-  editHabitacion(hab: Habitacion) {
-    this.router.navigate(['/editar_habitacion', hab.id]);
-  }
-
   detailHabitacion(hab: Habitacion) {
     this.router.navigate(['/habitacion', hab.id]);
-  }
-
-  reservarHabitacion() {
-    this.router.navigate(['/crear_reserva/form']);
   }
 }
