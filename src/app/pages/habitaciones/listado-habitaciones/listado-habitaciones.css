@@ -1,0 +1,191 @@
+.habitaciones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 110px 30px;
+}
+
+.section-title {
+  color: var(--color-primary);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* FILTROS */
+.filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background-color: var(--color-surface);
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  border: 1px solid var(--color-border);
+}
+
+.filtros-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.filtros input,
+.filtros select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-h-f);
+  color: var(--color-text);
+  font-size: 0.9rem;
+}
+
+.filtros button {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filtros button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+}
+
+/* ORDENAMIENTO */
+.orden {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  color: var(--color-text);
+}
+
+.orden select {
+  background-color: var(--color-h-f);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  color: var(--color-text);
+}
+
+/* LISTADO */
+.habitaciones-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+}
+
+/* Reutilizamos tus estilos de cards anteriores */
+.habitacion-card {
+  background-color: var(--color-surface);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  transition: 0.2s ease;
+}
+
+.habitacion-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.habitacion-card__image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background-color: #4442;
+}
+
+.habitacion-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.habitacion-card__image--placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-h-f);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.habitacion-card__badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background-color: rgba(0,0,0,0.6);
+  color: var(--color-success);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+}
+
+.filtro {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.filtro label {
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.filtro input {
+  width: 70px;
+  padding: 0.3rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-h-f);
+  color: var(--color-text);
+  text-align: center;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem;
+  background-color: var(--color-h-f);
+  border-top: 1px solid var(--color-border);
+}
+
+.buttons button {
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--color-bg);
+}
+
+.buttons button:nth-child(1) { background-color: var(--color-primary); }
+.buttons button:nth-child(2) { background-color: var(--color-secondary); }
+.buttons button:nth-child(3) { background-color: #e6b800; color: #222; }
+.buttons button:nth-child(4) { background-color: var(--color-error); }
+
+.loading {
+  text-align: center;
+  color: var(--color-warning);
+}
+
+.error {
+  text-align: center;
+  color: var(--color-error);
+}
