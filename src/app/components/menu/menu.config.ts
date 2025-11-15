@@ -69,7 +69,7 @@ export const MENU: MenuItem[] = [
       },
       {
         label: 'Nueva reserva',
-        link: '/listado_habitaciones',
+        link: '/crear_reserva',
         allowedRoles: ['CLIENTE']
       }
     ]

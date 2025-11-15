@@ -28,6 +28,7 @@ export interface UsuarioReservaDTO {
   apellido: string;
   nombreLogin: string;
   role: string; // simplificado para el front
+  email?: string | null;
 }
 
 export interface ReservaRequest {
@@ -58,7 +59,7 @@ export class ReservasService {
 
   private readonly baseUrl = environment.API_BASE_URL + '/api/reservas';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Helper para encabezados con token
   private authHeaders(): HttpHeaders {
@@ -127,7 +128,7 @@ export class ReservasService {
    */
   getReservasAdmin(opts?: { estado?: string; reservaId?: number }): Observable<ReservaResponse[]> {
     let params = new HttpParams();
-    if (opts?.estado)    params = params.set('estado', opts.estado);
+    if (opts?.estado) params = params.set('estado', opts.estado);
     if (opts?.reservaId) params = params.set('reservaId', String(opts.reservaId));
 
     return this.http.get<ReservaResponse[]>(this.baseUrl, {
@@ -142,6 +143,16 @@ export class ReservasService {
       headers: this.authHeaders()
     });
   }
+
+
+  /** DETALLE DE UNA RESERVA POR ID */
+  getReservaDetalle(id: number): Observable<ReservaResponse> {
+    return this.http.get<ReservaResponse>(
+      `${this.baseUrl}/detalle/${id}`,
+      { headers: this.authHeaders() }
+    );
+  }
+
 
   // ================================
   // ESTADO DE RESERVA (workflow)

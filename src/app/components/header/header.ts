@@ -1,5 +1,5 @@
 // src/app/components/header/header.ts
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -27,6 +27,9 @@ export class Header {
   private readonly iconAdmin = faUserSecret;
   private readonly iconClient = faUserTie;
   private readonly iconEmployee = faUserGear;
+
+  @ViewChild('menuInput') menuInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('userMenu') userMenuRef?: ElementRef<HTMLDivElement>;
 
   openLabel: string | null = null;
   userMenuOpen = false;
@@ -73,6 +76,19 @@ export class Header {
     this.openLabel = this.openLabel === label ? null : label;
   }
 
+    // ==== MENÚ LATERAL ====
+  onMenuItemClick() {
+    this.closeSideMenu();
+    this.closeUserMenu(); // por si el menú de usuario estaba abierto
+  }
+
+  private closeSideMenu() {
+    if (this.menuInput?.nativeElement.checked) {
+      this.menuInput.nativeElement.checked = false;
+      this.openLabel = null;
+    }
+  }
+
   toggleUserMenu() {
     this.userMenuOpen = !this.userMenuOpen;
   }
@@ -83,6 +99,18 @@ export class Header {
 
   closeUserMenu() {
     this.userMenuOpen = false;
+  }
+
+   @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.userMenuOpen) return;
+
+    const target = event.target as HTMLElement | null;
+    const menuEl = this.userMenuRef?.nativeElement;
+
+    if (menuEl && target && !menuEl.contains(target)) {
+      this.closeUserMenu();
+    }
   }
 
   logout() {

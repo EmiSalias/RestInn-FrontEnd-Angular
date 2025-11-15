@@ -283,12 +283,20 @@
   opacity: 0.85;
 }
 
-/* Footer de la card */
 .reservation-footer {
-  margin-top: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #2b1c12;
   display: flex;
   justify-content: flex-end;
 }
+
+/* botón un toque más compacto en la card */
+.reservation-footer .btn-gold {
+  padding: 6px 14px;
+  font-size: 12px;
+}
+
 
 .link-btn {
   background: none;
@@ -316,4 +324,58 @@
     padding: 16px;
     border-radius: 18px;
   }
+}
+/* Botón dorado reutilizable (Limpiar filtros / Ver detalle) */
+.btn-gold {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background-color: #c5924a;
+  color: #1d140c;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-gold:hover {
+  background-color: #f1c36f;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+}
+
+.btn-gold:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+/* Botón de cancelar (rojo, outline) */
+.btn-danger-outline {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #ff6b6b;
+  background: transparent;
+  color: #ff6b6b;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.btn-danger-outline:hover {
+  background-color: #ff6b6b;
+  color: #1b0f0b;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
 }
