@@ -1,114 +1,90 @@
+<!-- src/app/pages/home/home.html -->
 <div class="home-wrapper">
-
   <!-- HERO / BIENVENIDA -->
   <section class="hero">
-    <h2>¡Bienvenido a RestInn! 🌟</h2>
-    <p class="intro">Tu experiencia en hoteles empieza aquí. 🏨✨</p>
 
-    <p class="lead">Con RestInn podés:</p>
+    <header class="hero-header">
+      <span class="hero-eyebrow">RestInn · tu estadía online</span>
+      <h2>Elegí por dónde empezar</h2>
+      <p class="hero-subtitle">
+        Reservá, explorá habitaciones o revisá tu historial desde este panel principal.
+      </p>
+    </header>
 
-    <ul class="features-list">
-      <li>📅 <strong>Reservar habitaciones</strong> de manera rápida y sencilla.</li>
-      <li>💳 <strong>Gestionar facturas y consumos</strong> durante la estadía.</li>
-      <li>🛎️ <strong>Acceder a servicios adicionales</strong> como desayuno, spa o transporte.</li>
-      <li>⭐ <strong>Marcar tus favoritos</strong> y volver a ellos cuando quieras.</li>
-      <li>📊 <strong>Consultar tu historial</strong> de reservas y consumos en un solo lugar.</li>
-    </ul>
+    <!-- Wrapper centrado + fades -->
+    <div class="hero-cards-wrapper">
+      <div class="hero-cards"
+           #heroCards
+           (mousemove)="onHeroMouseMove($event)"
+           (mouseleave)="stopHeroScroll()">
 
-    <p class="closing">
-      Todo esto desde una plataforma fácil de usar, pensada para que disfrutes de tu estadía sin complicaciones. 🛏️🍹
-      <br />
-      <strong>Explorá, reservá y hacé de cada visita una experiencia única con RestInn.</strong>
-    </p>
-  </section>
+        <!-- CARD 1 · Reservas -->
+        <article class="hero-card hero-card--reservas"
+                 (mouseenter)="setHeroText('reservas')"
+                 (mouseleave)="setHeroText('default')">
+          <a class="hero-card__link" href="#" (click)="goToReservas($event)">
+            <div class="hero-card__bg"></div>
+            <div class="hero-card__overlay"></div>
+            <div class="hero-card__content">
+              <span class="hero-card__tag">📅 Reservas</span>
+            </div>
+          </a>
+        </article>
 
-   <!-- FILTRO POR FECHAS -->
-  <!-- DISPONIBILIDAD -->
-<section class="availability">
-  <form class="availability__form" (submit)="$event.preventDefault()">
-    <div class="field">
-      <label>Fecha de ingreso</label>
-      <input
-        type="date"
-        name="ingreso"
-        [(ngModel)]="filtro.ingreso"
-        [attr.min]="todayStr"
-        (ngModelChange)="onFechaChange()"
-        required>
-    </div>
+        <!-- CARD 2 · Habitaciones -->
+        <article class="hero-card hero-card--habitaciones"
+                 (mouseenter)="setHeroText('habitaciones')"
+                 (mouseleave)="setHeroText('default')">
+          <a class="hero-card__link" href="#habitaciones-home" (click)="goToHabitaciones($event)">
+            <div class="hero-card__bg"></div>
+            <div class="hero-card__overlay"></div>
+            <div class="hero-card__content">
+              <span class="hero-card__tag">🛏️ Habitaciones</span>
+            </div>
+          </a>
+        </article>
 
-    <div class="field">
-      <label>Fecha de salida</label>
-      <input
-        type="date"
-        name="salida"
-        [(ngModel)]="filtro.salida"
-        [attr.min]="filtro.ingreso || todayStr"
-        (ngModelChange)="onFechaChange()"
-        required>
-    </div>
+        <!-- CARD 3 · Historial -->
+        <article class="hero-card hero-card--historial"
+                 (mouseenter)="setHeroText('historial')"
+                 (mouseleave)="setHeroText('default')">
+          <a class="hero-card__link" href="#" (click)="goToHistorial($event)">
+            <div class="hero-card__bg"></div>
+            <div class="hero-card__overlay"></div>
+            <div class="hero-card__content">
+              <span class="hero-card__tag">📊 Historial</span>
+            </div>
+          </a>
+        </article>
 
-    <button
-      type="button"
-      class="btn-ghost"
-      (click)="limpiarFiltro()"
-      *ngIf="filtro.ingreso || filtro.salida">
-      Limpiar
-    </button>
-  </form>
-
-  <small class="error" *ngIf="rangeError">
-    La fecha de salida debe ser posterior a la fecha de ingreso.
-  </small>
-
-  <div class="availability__info" *ngIf="filtro.ingreso && filtro.salida && !rangeError">
-    Mostrando del {{ filtro.ingreso | date:'dd/MM/yyyy' }} al {{ filtro.salida | date:'dd/MM/yyyy' }} —
-    {{ visibles.length }} resultado(s).
-  </div>
-</section>
-
-
-  <!-- LOADING / ERROR -->
-  <section class="status" *ngIf="loading || errorMsg">
-    <div *ngIf="loading" class="loading">Cargando habitaciones...</div>
-    <div *ngIf="!loading && errorMsg" class="error">{{ errorMsg }}</div>
-  </section>
-
-  <!-- GRID DE HABITACIONES (usa 'visibles' en lugar de 'habitaciones') -->
-  <section class="habitaciones-section" *ngIf="!loading && !errorMsg">
-    <h3 class="section-title">Habitaciones disponibles</h3>
-
-    <div class="habitaciones-grid">
-      <div class="habitacion-card" *ngFor="let hab of visibles">
-
-        <div class="habitacion-card__image-wrapper">
-          <img *ngIf="getMainImageDataUrl(hab) as imgData; else noImg"
-               [src]="imgData" [alt]="'Habitación ' + hab.numero"
-               class="habitacion-card__image"/>
-          <ng-template #noImg>
-            <div class="habitacion-card__image habitacion-card__image--placeholder">Sin imagen</div>
-          </ng-template>
-          <span class="habitacion-card__badge">{{ hab.estado }}</span>
-        </div>
-
-        <div class="habitacion-card__body">
-          <div class="habitacion-card__header">
-            <div class="habitacion-card__title">Hab. #{{ hab.numero }}</div>
-            <div class="habitacion-card__sub">Piso {{ hab.piso }} · {{ hab.tipo }}</div>
-          </div>
-
-          <div class="habitacion-card__details">
-            <div class="detail-row"><span class="label">Capacidad:</span><span class="value">{{ hab.capacidad }} huésped(es)</span></div>
-            <div class="detail-row"><span class="label">Camas:</span><span class="value">{{ hab.cantCamas }}</span></div>
-            <div class="detail-row"><span class="label">Precio/noche:</span><span class="value price">${{ hab.precioNoche }}</span></div>
-            <div class="detail-row" *ngIf="hab.comentario"><span class="label">Nota:</span><span class="value">{{ hab.comentario }}</span></div>
-          </div>
-
-          <button class="reservar-btn" (click)="reservar(hab)">Reservar →</button>
-        </div>
+        <!-- CARD 4 · Favoritos -->
+        <article class="hero-card hero-card--favoritos"
+                 (mouseenter)="setHeroText('favoritos')"
+                 (mouseleave)="setHeroText('default')">
+          <a class="hero-card__link" href="#" (click)="goToFavoritos($event)">
+            <div class="hero-card__bg"></div>
+            <div class="hero-card__overlay"></div>
+            <div class="hero-card__content">
+              <span class="hero-card__tag">⭐ Favoritos</span>
+            </div>
+          </a>
+        </article>
 
       </div>
     </div>
+
+    <div class="hero-dynamic">
+      <span class="hero-dynamic__prefix">
+        {{ currentHeroKey === 'default' ? 'Tip' : (currentHeroKey | titlecase) }}
+      </span>
+      <span class="hero-dynamic__text">
+        {{ typedHeroText }}
+      </span>
+    </div>
+
   </section>
 
+  <section id="habitaciones-home">
+    <app-listado-habitaciones></app-listado-habitaciones>
+  </section>
 </div>

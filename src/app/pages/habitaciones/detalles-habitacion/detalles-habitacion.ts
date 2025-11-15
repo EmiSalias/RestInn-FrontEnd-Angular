@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import Habitacion from '../../../models/Habitacion';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HabitacionService } from '../../../services/habitacion-service';
+import { AuthService } from '../../../services/auth-service';   // 👈 nuevo
+import { take } from 'rxjs';                                   // 👈 nuevo
 
 @Component({
   selector: 'app-detalles-habitacion',
@@ -14,13 +16,33 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
   imagenActualIndex = 0;
   intervaloCarrusel: any;
 
+  // 👇 flags de permisos
+  isCliente = false;
+  puedeGestionarHabitaciones = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    public habService: HabitacionService
+    public habService: HabitacionService,
+    private auth: AuthService            // 👈 inyectamos auth
   ) {}
 
   ngOnInit(): void {
+    // 1) leer roles
+    this.auth.state$.pipe(take(1)).subscribe(state => {
+      const roles = state.roles ?? [];
+
+      this.isCliente = roles.includes('CLIENTE');
+      this.puedeGestionarHabitaciones = roles.some(r =>
+        ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA'].includes(r)
+      );
+
+      // 2) una vez que tengo los flags, cargo la habitación
+      this.cargarHabitacion();
+    });
+  }
+
+  private cargarHabitacion() {
     const habId = Number(this.route.snapshot.paramMap.get('id'));
 
     if (habId) {
@@ -29,7 +51,6 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
           console.log('Habitación recibida:', data);
           this.selectedHab = data;
 
-          // Si tiene más de una imagen, inicia el carrusel
           if (this.selectedHab.imagenes && this.selectedHab.imagenes.length > 1) {
             this.iniciarCarrusel();
           }

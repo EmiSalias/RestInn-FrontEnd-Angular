@@ -1,69 +1,255 @@
 /* -------------------- */
 /* HERO / bienvenida    */
 /* -------------------- */
-
 .hero {
   background-color: var(--color-secondary);
   border-radius: 20px;
   padding: 2rem 2rem 2.5rem;
   box-shadow: 0 16px 32px rgba(0,0,0,0.4);
   border: 1px solid var(--color-border);
-}
-
-.hero h2 {
-  font-size: 1.8rem;
-  text-align: center;
-  margin: 0 0 0.5rem;
-  color: var(--color-primary);
-}
-
-.hero .intro {
-  text-align: center;
-  margin: 0 0 1rem;
-  color: var(--color-text-secondary);
-  font-size: 1rem;
-}
-
-.hero .lead {
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.features-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1.5rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.6rem;
-}
-
-.features-list li {
-  background-color: var(--color-h-f);
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  color: var(--color-text);
   display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-  border: 1px solid var(--color-border);
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
 }
 
-.features-list li strong {
+/* HEADER compacto y centrado */
+
+.hero-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: center;
+  text-align: center;
+}
+
+.hero-eyebrow {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+  background: rgba(0,0,0,0.25);
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid rgba(0,0,0,0.35);
+}
+
+.hero-header h2 {
+  font-size: 1.8rem;
+  margin: 0;
   color: var(--color-primary);
+}
+
+.hero-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  max-width: 520px;
+}
+
+/* --- Carrusel de cards --- */
+
+.hero-cards-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/* fila scrolleable */
+.hero-cards {
+  display: flex;
+  gap: 1.25rem;
+  padding: 0.5rem 3rem 0.75rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  justify-content: flex-start;         /* track pegado a la izquierda */
+}
+
+/* ocultar scrollbar pero mantener scroll */
+.hero-cards {
+  scrollbar-width: none;               /* Firefox */
+}
+.hero-cards::-webkit-scrollbar {
+  display: none;                       /* Chrome, Edge, etc. */
+}
+
+/* fades + flechitas */
+.hero-cards-wrapper::before,
+.hero-cards-wrapper::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 72px;
+  pointer-events: none;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: rgba(255,255,255,0.7);
+}
+
+/* izquierda */
+.hero-cards-wrapper::before {
+  left: 0;
+  content: '‹';
+  background: linear-gradient(
+    to right,
+    rgba(45,31,18,0.95),
+    rgba(45,31,18,0)
+  );
+}
+
+/* derecha */
+.hero-cards-wrapper::after {
+  right: 0;
+  content: '›';
+  background: linear-gradient(
+    to left,
+    rgba(45,31,18,0.95),
+    rgba(45,31,18,0)
+  );
+}
+
+/* Texto tip dinámico */
+.hero-dynamic {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+  min-height: 1.5rem;
+}
+
+.hero-dynamic__prefix {
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-right: 0.35rem;
+  font-size: 1.05rem;
+}
+
+.hero-dynamic__text {
+  font-family: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1.05rem;
+}
+
+/* Cards */
+
+.hero-card {
+  position: relative;
+  flex: 0 0 260px;          /* ancho fijo en fila */
+  height: 190px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.55);
+  cursor: pointer;
+  background-color: #2a1a10;
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+/* Efecto “se agranda” al pasar el mouse o hacer foco */
+.hero-card:hover,
+.hero-card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.8);
+}
+
+/* Imagen de fondo */
+.hero-card__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.55);
+  transition: transform 0.35s ease, filter 0.35s ease;
+}
+
+/* Overlay para que se lea el texto */
+.hero-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,0.25),
+    rgba(0,0,0,0.85)
+  );
+}
+
+/* Distintas imágenes por card (ajustá paths a tu proyecto) */
+.hero-card--reservas .hero-card__bg {
+  background-image: url('../../../assets/restinn/hero-reservas.jpg');
+}
+
+.hero-card--habitaciones .hero-card__bg {
+  background-image: url('../../../assets/restinn/hero-servicios.jpg');
+}
+
+.hero-card--historial .hero-card__bg {
+  background-image: url('../../../assets/restinn/hero-historial.jpg');
+}
+
+.hero-card--favoritos .hero-card__bg {
+  background-image: url('../../../assets/restinn/hero-favoritos.jpg');
+}
+
+/* Zoom suave de la imagen en hover */
+.hero-card:hover .hero-card__bg,
+.hero-card:focus-within .hero-card__bg {
+  transform: scale(1.05);
+  filter: brightness(0.9);
+}
+
+/* Contenido de la card */
+
+.hero-card__content {
+  position: relative;
+  height: 100%;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;   /* tag cerca de arriba */
+  align-items: flex-start;
+  color: #fffaf0;
+}
+
+.hero-card__tag {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(0,0,0,0.7);
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.hero-card h3 {
+  margin: 0.3rem 0 0.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
 }
 
-.features-list li:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 32px rgba(0,0,0,0.6);
-  transition: 0.15s ease;
+.hero-card__summary {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
+/* Link que ocupa toda la card */
+.hero-card__link {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Texto de cierre (si lo usás en otra parte) */
 .closing {
   text-align: center;
   margin: 0;
@@ -75,6 +261,41 @@
 .closing strong {
   color: var(--color-primary);
   font-weight: 600;
+}
+
+/* Responsive HERO */
+
+@media (max-width: 720px) {
+  .hero {
+    padding: 1.75rem 1.25rem 2.25rem;
+  }
+
+  .hero-header h2 {
+    font-size: 1.6rem;
+  }
+
+  /* sin fades ni flechas en mobile */
+  .hero-cards-wrapper::before,
+  .hero-cards-wrapper::after {
+    display: none;
+  }
+
+  .hero-cards {
+    padding: 0.5rem 1.25rem 0.75rem;
+    gap: 1rem;
+    justify-content: flex-start;
+  }
+
+  .hero-card {
+    flex: 0 0 80%;
+    max-width: 100%;
+    height: 210px;
+  }
+
+  .hero-card:hover,
+  .hero-card:focus-within {
+    transform: translateY(-4px);
+  }
 }
 
 /* -------------------- */
@@ -137,7 +358,7 @@
   position: relative;
   width: 100%;
   background-color: #4442; /* fallback mientras carga */
-  aspect-ratio: 4 / 3; /* fuerza proporción 4:3 para todas las cards */
+  aspect-ratio: 4 / 3;     /* fuerza proporción 4:3 para todas las cards */
   overflow: hidden;
 }
 
@@ -284,8 +505,9 @@
     max-width: 60%;
   }
 }
+
+/* wrapper general de la home */
 .home-wrapper {
-  /* lo que ya tenés */
   max-width: 1200px;
   padding: 2rem 1rem 4rem;
   margin: 0 auto;
@@ -294,10 +516,9 @@
   flex-direction: column;
   gap: 3rem;
   line-height: 1.5;
-
-  /* NUEVO: empuja todo para abajo para que no quede tapado */
-  margin-top: 4.5rem; /* ajustá el número hasta que quede joya */
+  margin-top: 4.5rem;
 }
+
 /* -------------------- */
 /* DISPONIBILIDAD       */
 /* -------------------- */
@@ -328,14 +549,12 @@
   align-items: end;
 }
 
-
 .dispo-actions .dispo-btn {
   width: 100%;
   height: 44px;
   padding: 10px 16px;
   border-radius: 10px;
   font-weight: 600;
-  /* usa el <button> global (color/hover) */
 }
 
 .dispo-error {
@@ -353,23 +572,32 @@
     width: 100%;
   }
 }
+
 /* Disponibilidad compacto */
-.availability { margin-top: 1rem; }
+.availability {
+  margin-top: 1rem;
+}
+
 .availability__form {
   display: grid;
   grid-template-columns: repeat(2, minmax(220px, 280px)) auto; /* 2 campos + botón */
   gap: .75rem;
   align-items: end;
   justify-content: flex-start;
-  width: max-content; /* que no ocupe 100% */
+  width: max-content;
 }
 
-.availability__form .field { min-width: 220px; max-width: 280px; }
+.availability__form .field {
+  min-width: 220px;
+  max-width: 280px;
+}
+
 .availability__form .field label {
   display: block;
   margin: 0 0 6px;
   color: var(--color-text-secondary);
 }
+
 .availability__form .field input[type="date"] {
   padding: 10px 12px;
   background: var(--color-bg);
@@ -379,15 +607,23 @@
   outline: none;
   color-scheme: dark;
 }
+
 .availability__form .field input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.9);
   opacity: .9;
   cursor: pointer;
 }
 
-/* Mobile: apilado */
+/* Mobile: apilado disponibilidad */
 @media (max-width: 720px) {
-  .availability__form { grid-template-columns: 1fr; width: 100%; }
-  .availability__form .field { max-width: 100%; }
-  .availability__form button { width: 100%; }
+  .availability__form {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+  .availability__form .field {
+    max-width: 100%;
+  }
+  .availability__form button {
+    width: 100%;
+  }
 }

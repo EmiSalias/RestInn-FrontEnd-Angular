@@ -1,0 +1,50 @@
+.loading-backdrop {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,0,0,0.55), rgba(0,0,0,0.75));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(2px);
+}
+
+/* Tarjetita central */
+.loading-panel {
+  min-width: 180px;
+  padding: 16px 24px;
+  border-radius: 18px;
+  background: rgba(30, 22, 16, 0.96);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(241, 195, 111, 0.35); /* dorado soft */
+}
+
+/* Spinner “doble aro” */
+.loading-spinner {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.18);
+  border-top-color: #f1c36f;
+  border-right-color: #f1c36f;
+  animation: spin 0.7s linear infinite;
+  box-shadow: 0 0 18px rgba(241, 195, 111, 0.5);
+}
+
+.loading-panel p {
+  margin: 0;
+  color: #f9e4b7;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+}
+
+/* Animación */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

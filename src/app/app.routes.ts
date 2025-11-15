@@ -9,9 +9,9 @@ import { DetallesUsuario } from './pages/usuarios/detalles-usuario/detalles-usua
 import { FormUsuario } from './pages/usuarios/form-usuario/form-usuario';
 // #endregion
 // region CLIENTEs       - IMPORTS
-import { FormCliente } from './pages/usuarios/clientes/form-cliente/form-cliente'; 
-import { DetallesCliente } from './pages/usuarios/clientes/detalles-cliente/detalles-cliente'; 
-import { ListadoClientes } from './pages/usuarios/clientes/listado-clientes/listado-clientes'; 
+import { FormCliente } from './pages/usuarios/clientes/form-cliente/form-cliente';
+import { DetallesCliente } from './pages/usuarios/clientes/detalles-cliente/detalles-cliente';
+import { ListadoClientes } from './pages/usuarios/clientes/listado-clientes/listado-clientes';
 // #endregion
 // region Habitaciones   - IMPORTS
 import { ListadoHabitaciones } from './pages/habitaciones/listado-habitaciones/listado-habitaciones';
@@ -24,6 +24,7 @@ import { ListadoReservas } from './pages/reservas/listado-reservas/listado-reser
 import { DetallesReserva } from './pages/reservas/detalles-reserva/detalles-reserva';
 import { FormReserva } from './pages/reservas/form-reserva/form-reserva';
 import { ReservasCliente } from './pages/reservas/reservas-cliente/reservas-cliente';
+import { CrearReservaBusqueda } from './pages/reservas/crear-reserva-busqueda/crear-reserva-busqueda';
 // #endregion
 // region Consumos       - IMPORTS
 import { ListadoConsumos } from './pages/consumos/listado-consumos/listado-consumos';
@@ -42,16 +43,16 @@ import { EditarPerfilUsuario } from './pages/usuarios/editar-perfil-usuario/edit
 // region Normas         - IMPORTS
 import { PrivacyPolicy } from './pages/User-Policy/privacy-policy/privacy-policy';
 import { CancelPolicy } from './pages/User-Policy/cancel-policy/cancel-policy';
-import { CookiesPolicy } from './pages/User-Policy/cookies-policy/cookies-policy';import { TermsConditions } from './pages/User-Policy/terms-conditions/terms-conditions';
+import { CookiesPolicy } from './pages/User-Policy/cookies-policy/cookies-policy'; import { TermsConditions } from './pages/User-Policy/terms-conditions/terms-conditions';
 import { Nosotros } from './pages/nosotros/nosotros';
 import { Contact } from './pages/contact/contact';
 // #endregion
 import { Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth-guard'; 
+import { AuthGuard } from './guards/auth-guard';
 import { Unauthorized } from './pages/usuarios/unauthorized/unauthorized';
 
 export const routes: Routes = [
-    
+
     // region Acceso público
     { path: '', component: Home },
     { path: 'sign_in', component: SignIn },
@@ -60,6 +61,18 @@ export const routes: Routes = [
     // endregion
 
     // region Usuarios - CRUD
+    {
+        path: 'gestion_usuarios',
+        loadComponent: () =>
+            import('./pages/usuarios/gestion-usuarios/gestion-usuarios')
+                .then(m => m.GestionUsuarios)
+    },
+    {
+        path: 'listado_clientes',
+        loadComponent: () =>
+            import('./pages/usuarios/clientes/listado-clientes/listado-clientes')
+                .then(m => m.ListadoClientes)
+    },
     {
         path: 'listado_usuarios',
         component: ListadoUsuarios,
@@ -103,7 +116,8 @@ export const routes: Routes = [
             roles: ['RECEPCIONISTA']
         }
     },
-    { path: 'CLIENTE/:id',
+    {
+        path: 'CLIENTE/:id',
         component: DetallesCliente,
         canActivate: [AuthGuard],
         data: {
@@ -129,33 +143,15 @@ export const routes: Routes = [
     // endregion
 
     // region Habitaciones - CRUD
-    { path: 'listado_habitaciones',
-        component: ListadoHabitaciones,
-        canActivate: [AuthGuard],
-        data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA',
-                'CONSERJE',
-                'LIMPIEZA',
-                'CLIENTE'
-            ]
-        }
+    {
+        path: 'listado_habitaciones',
+        component: ListadoHabitaciones
     },
     {
         path: 'habitacion/:id',
-        component: DetallesHabitacion,
-        canActivate: [AuthGuard],
-        data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA',
-                'CONSERJE',
-                'LIMPIEZA',
-                'CLIENTE'
-            ]
-        }
+        component: DetallesHabitacion
     },
+
     {
         path: 'crear_habitacion/form',
         component: FormHabitacion,
@@ -188,6 +184,20 @@ export const routes: Routes = [
     // endregion
 
     // region Reservas - CRUD
+      { path: 'crear_reserva', component: CrearReservaBusqueda },
+    {
+        path: 'gestion_reservas',
+        loadComponent: () =>
+            import('./pages/reservas/gestion-reservas/gestion-reservas')
+                .then(m => m.GestionReservas),
+        canActivate: [AuthGuard],
+        data: {
+            roles: [
+                'ADMINISTRADOR',
+                'RECEPCIONISTA'
+            ]
+        }
+    },
     {
         path: 'listado_reservas',
         component: ListadoReservas,
@@ -235,13 +245,14 @@ export const routes: Routes = [
         }
     },
     {
-        path: 'mis_reservas/:id',
+        path: 'mis_reservas',
         component: ReservasCliente,
         canActivate: [AuthGuard],
         data: {
             roles: ['CLIENTE']
         }
     },
+
     // endregion
 
     // region Consumos - CRUD
@@ -331,7 +342,8 @@ export const routes: Routes = [
     // #endregion
 
     // region Perfil
-    { path: 'mi_perfil',
+    {
+        path: 'mi_perfil',
         component: PerfilUsuario,
         canActivate: [AuthGuard],
         data: {

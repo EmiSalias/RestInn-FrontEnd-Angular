@@ -1,1 +1,37 @@
-<p>listado-clientes works!</p>
+<section class="clients-page">
+  <h1>Gestión de clientes</h1>
+
+  <div class="status" *ngIf="loading">Cargando clientes...</div>
+  <div class="status error" *ngIf="!loading && errorMsg">{{ errorMsg }}</div>
+
+  <table class="clients-table" *ngIf="!loading && !errorMsg && clientes.length">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>DNI</th>
+        <th>Teléfono</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of clientes">
+        <td>{{ c.nombre }} {{ c.apellido }}</td>
+        <td>{{ c.email }}</td>
+        <td>{{ c.dni }}</td>
+        <td>{{ c.phoneNumber }}</td>
+        <td>
+          <button
+            class="btn-link"
+            [routerLink]="['/detalle_cliente', c.id]">
+            Ver detalles
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="empty" *ngIf="!loading && !errorMsg && !clientes.length">
+    No hay clientes registrados todavía.
+  </div>
+</section>

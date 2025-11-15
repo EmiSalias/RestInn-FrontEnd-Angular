@@ -1,0 +1,35 @@
+<section class="reservas-hub">
+  <h1>Gestión de reservas</h1>
+  <p class="subtitle">
+    Accedé al historial, creación y operaciones de check-in / check-out de reservas.
+  </p>
+
+  <div class="cards">
+    <!-- Historial -->
+    <article class="card" [routerLink]="['/listado_reservas']">
+      <div class="icon-wrapper">
+        <fa-icon [icon]="faList"></fa-icon>
+      </div>
+      <h2>Historial de reservas</h2>
+      <p>Ver y filtrar todas las reservas del sistema.</p>
+    </article>
+
+    <!-- Nueva reserva -->
+    <article class="card" [routerLink]="['/crear_reserva']">
+      <div class="icon-wrapper">
+        <fa-icon [icon]="faPlus"></fa-icon>
+      </div>
+      <h2>Nueva reserva</h2>
+      <p>Crear una reserva seleccionando habitación, fechas y huéspedes.</p>
+    </article>
+
+    <!-- Check-in / Check-out -->
+    <article class="card" [routerLink]="['/listado_reservas']">
+      <div class="icon-wrapper">
+        <fa-icon [icon]="faDoorOpen"></fa-icon>
+      </div>
+      <h2>Check-in / Check-out</h2>
+      <p>Gestionar el ingreso y egreso de huéspedes desde las reservas.</p>
+    </article>
+  </div>
+</section>

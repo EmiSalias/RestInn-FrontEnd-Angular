@@ -6,8 +6,12 @@
       {{ filtrosVisibles ? 'Cerrar filtros' : 'Filtrar' }}
     </button>
     <button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
+
+    @if (puedeGestionarHabitaciones) {
     <button type="button" (click)="agregarNueva()">Agregar nueva</button>
+    }
   </div>
+
 
   @if (filtrosVisibles) {
   <form class="filtros" [class.activo]="filtrosVisibles">
@@ -108,8 +112,11 @@
       <div class="buttons">
         <button (click)="reservarHabitacion(hab)">Reservar</button>
         <button (click)="detailHabitacion(hab)">Detalle</button>
+        
+        @if (puedeGestionarHabitaciones) {
         <button (click)="editHabitacion(hab)">Editar</button>
         <button (click)="deleteHabitacion(hab.id)">Eliminar</button>
+        }
       </div>
     </div>
     }
