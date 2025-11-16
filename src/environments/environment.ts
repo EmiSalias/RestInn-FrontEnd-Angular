@@ -1,3 +1,4 @@
 export const environment = {
-  API_BASE_URL: 'http://restinn.sytes.net'
+  production: true,
+  API_BASE_URL: 'https://restinn.sytes.net'
 };

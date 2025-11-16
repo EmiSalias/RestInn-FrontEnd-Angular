@@ -1,12 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import Habitacion from '../../../models/Habitacion';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HabitacionService } from '../../../services/habitacion-service';
-import { AuthService } from '../../../services/auth-service';   // 👈 nuevo
-import { take } from 'rxjs';                                   // 👈 nuevo
+import { AuthService } from '../../../services/auth-service';
+import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-detalles-habitacion',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './detalles-habitacion.html',
   styleUrl: './detalles-habitacion.css'
 })
@@ -16,28 +20,26 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
   imagenActualIndex = 0;
   intervaloCarrusel: any;
 
-  // 👇 flags de permisos
   isCliente = false;
   puedeGestionarHabitaciones = false;
+
+  private authSub: Subscription | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     public habService: HabitacionService,
-    private auth: AuthService            // 👈 inyectamos auth
+    private auth: AuthService
   ) {}
 
   ngOnInit(): void {
-    // 1) leer roles
-    this.auth.state$.pipe(take(1)).subscribe(state => {
+    this.authSub = this.auth.state$.subscribe(state => {
       const roles = state.roles ?? [];
-
       this.isCliente = roles.includes('CLIENTE');
       this.puedeGestionarHabitaciones = roles.some(r =>
         ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA'].includes(r)
       );
-
-      // 2) una vez que tengo los flags, cargo la habitación
+      
       this.cargarHabitacion();
     });
   }
@@ -46,23 +48,29 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
     const habId = Number(this.route.snapshot.paramMap.get('id'));
 
     if (habId) {
-      this.habService.getHabitacion(habId).subscribe({
-        next: (data) => {
-          console.log('Habitación recibida:', data);
-          this.selectedHab = data;
+      const endpoint$ = this.puedeGestionarHabitaciones
+        ? this.habService.getHabitacionAdmin(habId)
+        : this.habService.getHabitacion(habId);
 
+      endpoint$.subscribe({
+        next: (data) => {
+          this.selectedHab = data;
           if (this.selectedHab.imagenes && this.selectedHab.imagenes.length > 1) {
             this.iniciarCarrusel();
           }
         },
         error: (err) => {
           console.error('Error al cargar habitación:', err);
-          alert('Ha ocurrido un error al cargar el detalle de la habitación.');
+          Swal.fire(
+            'Error',
+            'No se pudo cargar la habitación. Es posible que no exista o esté inactiva.',
+            'error'
+          );
           this.router.navigate(['/listado_habitaciones']);
         }
       });
     } else {
-      alert('ID inexistente. Redirigiéndote al listado.');
+      Swal.fire('Error', 'ID de habitación inválido.', 'error');
       this.router.navigate(['/listado_habitaciones']);
     }
   }
@@ -92,16 +100,10 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     clearInterval(this.intervaloCarrusel);
+    this.authSub?.unsubscribe();
   }
 
   // --- FUNCIONES DE HABITACIÓN ---
-  getMainImageDataUrl(hab: Habitacion): string | null {
-    if (!hab.imagenes || hab.imagenes.length === 0) return null;
-    const primera = hab.imagenes[0];
-    if (!primera.datosBase64 || !primera.tipo) return null;
-    return `data:${primera.tipo};base64,${primera.datosBase64}`;
-  }
-
   reservarHabitacion(hab: Habitacion) {
     this.router.navigate(['/crear_reserva/form'], {
       queryParams: { habitacionId: hab.id }
@@ -112,19 +114,59 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
     this.router.navigate(['/editar_habitacion', hab.id]);
   }
 
-  deleteHabitacion(id: number) {
-    if (confirm('¿Seguro que quieres eliminar esta habitación?')) {
-      this.habService.deleteHabitacion(id).subscribe({
-        next: () => {
-          alert('Habitación eliminada con éxito.');
-          this.router.navigate(['/listado_habitaciones']);
-        },
-        error: (err) => {
-          console.error('Error al eliminar la habitación:', err);
-          alert('Ha ocurrido un error al intentar eliminar la habitación.');
-        }
-      });
-    }
+  // --- LÓGICA DE BORRADO LÓGICO Y REACTIVACIÓN ---
+  inhabilitarHabitacion(hab: Habitacion) {
+    Swal.fire({
+      title: `¿Inhabilitar Habitación ${hab.numero}?`,
+      text: 'La habitación se marcará como inactiva y no aparecerá en búsquedas públicas.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, inhabilitar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.habService.inhabilitarHabitacion(hab.id).subscribe({
+          next: () => {
+            Swal.fire('Inhabilitada', 'La habitación ha sido marcada como inactiva.', 'success');
+            if (this.selectedHab) {
+              this.selectedHab.activo = false;
+            }
+          },
+          error: (err) => {
+            Swal.fire('Error', err.message || 'No se pudo inhabilitar.', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  reactivarHabitacion(hab: Habitacion) {
+    Swal.fire({
+      title: `¿Reactivar Habitación ${hab.numero}?`,
+      text: 'La habitación volverá a estar disponible para búsquedas y reservas.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, reactivar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.habService.reactivarHabitacion(hab.id).subscribe({
+          next: () => {
+            Swal.fire('Reactivada', 'La habitación está activa nuevamente.', 'success');
+            if (this.selectedHab) {
+              this.selectedHab.activo = true;
+            }
+          },
+          error: (err) => {
+            Swal.fire('Error', err.message || 'No se pudo reactivar.', 'error');
+          }
+        });
+      }
+    });
   }
 
   volver() {

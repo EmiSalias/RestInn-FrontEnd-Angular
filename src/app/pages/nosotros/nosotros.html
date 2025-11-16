@@ -1,1 +1,52 @@
-<p>nosotros works!</p>
+<main class="about-page">
+  <header class="about-header">
+    <h1>Sobre RestInn</h1>
+    <p class="subtitle">
+      Conocé más sobre el proyecto y el equipo detrás de este sistema integral de gestión hotelera.
+    </p>
+  </header>
+
+  <section class="about-content">
+    <div class="content-block">
+      <h2>El Proyecto</h2>
+
+      <p>
+        <strong>RestInn</strong> es una plataforma de gestión hotelera integral desarrollada como nuestro Trabajo Práctico Final.
+        Utiliza una arquitectura moderna basada en <strong>Angular</strong> para el frontend y <strong>Spring Boot</strong> para la API RESTful del backend.
+      </p>
+      <p>
+        <strong>Misión:</strong> Proporcionar una solución tecnológica robusta, centralizada y fácil de usar para la gestión hotelera, permitiendo administrar eficientemente reservas, habitaciones, usuarios y facturación.
+      </p>
+      <p>
+        <strong>Alcance:</strong> El sistema es independiente, aunque emplea bibliotecas y herramientas de terceros para funciones clave como seguridad, generación de facturas en PDF y gestión de notificaciones por correo electrónico.
+      </p>
+      <p>
+        El objetivo final es optimizar los procesos administrativos y mejorar la experiencia tanto de los huéspedes como del personal del hotel.
+      </p>
+      </div>
+
+    <div class="content-block">
+      <h2>El Equipo</h2>
+      <p>
+        Somos un grupo de estudiantes de la Tecnicatura en Programación apasionados por el desarrollo de software.
+        Este proyecto es el resultado de nuestro esfuerzo colaborativo.
+      </p>
+
+      <div class="team-grid">
+        @for (integrante of equipo; track integrante.nombre) {
+          <article class="team-card">
+            <a [href]="integrante.linkdinUrl" target="_blank" rel="noopener noreferrer" class="team-link">
+              <div class="team-avatar">
+                <span>{{ integrante.avatar }}</span>
+              </div>
+              <div class="team-info">
+                <h3 class="team-name">{{ integrante.nombre }}</h3>
+                <span class="team-role">Desarrollador Full-Stack</span>
+              </div>
+            </a>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+</main>
