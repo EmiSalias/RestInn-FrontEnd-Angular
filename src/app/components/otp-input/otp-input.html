@@ -1,0 +1,13 @@
+<div class="otp-container" (paste)="onPaste($event)">
+  <input
+    #otpInput
+    *ngFor="let d of digits; let i = index"
+    class="otp-box"
+    type="text"
+    inputmode="numeric"
+    maxlength="1"
+    [value]="digits[i]"
+    (input)="onInput($event, i)"
+    (keydown)="onKeyDown($event, i)"
+  />
+</div>

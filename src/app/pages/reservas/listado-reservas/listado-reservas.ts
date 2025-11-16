@@ -7,7 +7,7 @@ import { ReservasService, ReservaResponse } from '../../../services/reservas-ser
 import Habitacion from '../../../models/Habitacion';
 import { HabitacionService } from '../../../services/habitacion-service';
 import { AuthService } from '../../../services/auth-service';
-import Swal from 'sweetalert2';                          // ⬅️ NUEVO
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-listado-reservas',

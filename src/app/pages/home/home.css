@@ -197,6 +197,10 @@
   background-image: url('../../../assets/restinn/hero-favoritos.jpg');
 }
 
+.hero-card--facturacion .hero-card__bg {
+  background-image: url('../../../assets/restinn/hero-facturacion.jpg');
+}
+
 /* Zoom suave de la imagen en hover */
 .hero-card:hover .hero-card__bg,
 .hero-card:focus-within .hero-card__bg {
@@ -625,5 +629,392 @@
   }
   .availability__form button {
     width: 100%;
+  }
+}
+/* ===================== */
+/* HERO ADMIN DASHBOARD  */
+/* ===================== */
+
+.hero--admin {
+  align-items: stretch;
+}
+
+/* grid responsive de 4 tarjetas */
+.admin-grid {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.admin-card {
+  position: relative;
+  padding: 1.4rem 1.6rem 1.5rem;
+  border-radius: 18px;
+  background: radial-gradient(circle at top left, #3b2715, #1a110b);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85);
+  color: #fffaf0;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform .28s ease,
+    box-shadow .28s ease,
+    border-color .28s ease,
+    background .28s ease;
+}
+
+/* glow dorado al hover */
+.admin-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right,
+    rgba(255, 215, 128, 0.18),
+    transparent 55%);
+  opacity: 0;
+  transition: opacity .28s ease;
+}
+
+.admin-card:hover,
+.admin-card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.95);
+  border-color: rgba(255, 214, 130, 0.55);
+}
+
+.admin-card:hover::after {
+  opacity: 1;
+}
+
+/* ícono grande en caja */
+.admin-card__icon {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: linear-gradient(145deg,
+    rgba(0, 0, 0, 0.85),
+    rgba(60, 40, 25, 0.9));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.9rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+.admin-emoji {
+  font-size: 1.9rem;
+  transition: transform .28s ease;
+}
+
+/* animaciones por tarjeta */
+.admin-card--usuarios:hover .admin-emoji {
+  transform: translateY(-3px) scale(1.04);
+}
+
+.admin-card--habitaciones:hover .admin-emoji {
+  transform: translateY(-3px) rotate(-6deg) scale(1.04);
+}
+
+.admin-card--reservas:hover .admin-emoji {
+  transform: translateY(-3px) rotate(6deg) scale(1.04);
+}
+
+/* Ícono de dinero con segunda línea que se “dibuja” */
+.admin-card__icon--money {
+  justify-content: center;
+}
+
+.money-icon {
+  position: relative;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* línea vertical fija */
+.money-icon::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  width: 2px;
+  height: 76%;
+  border-radius: 999px;
+  background: rgba(249, 231, 181, 0.55);
+  transform: translateX(-50%);
+}
+
+/* segunda línea animada */
+.money-icon::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  width: 2px;
+  height: 0;
+  border-radius: 999px;
+  background: #f9e7b5;
+  transform: translateX(-50%);
+  transition: height .3s ease;
+}
+
+.admin-card--facturacion:hover .money-icon::after {
+  height: 76%;
+}
+
+/* textos de la card admin */
+.admin-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.admin-card p {
+  margin: 0;
+  font-size: 0.86rem;
+  color: rgba(255, 245, 225, 0.85);
+}
+
+/* responsive admin grid */
+@media (max-width: 720px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-card {
+    padding: 1.25rem 1.2rem 1.4rem;
+  }
+}
+/* ===================== */
+/* HOME ADMIN – ICONOS   */
+/* ===================== */
+
+.admin-home {
+  padding: 2.5rem 1rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  position: relative;               /* para poder centrar el TIP encima */
+}
+
+.admin-home .admin-header {
+  max-width: 720px;
+}
+
+/* CONTENEDOR 4 ICONOS, GRANDE, CON HUECO CENTRAL */
+.admin-actions {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  grid-template-rows: repeat(2, minmax(140px, auto));
+  column-gap: min(10vw, 7rem);
+  row-gap: 5.5rem;
+  align-content: space-between;
+  padding: 1rem 0 3rem;
+}
+
+/* cada botón en una esquina del “cuadrante” */
+.admin-action--usuarios {
+  grid-area: 1 / 1;
+  justify-self: flex-start;
+}
+
+.admin-action--reservas {
+  grid-area: 1 / 2;
+  justify-self: flex-end;
+}
+
+.admin-action--habitaciones {
+  grid-area: 2 / 1;
+  justify-self: flex-start;
+}
+
+.admin-action--facturacion {
+  grid-area: 2 / 2;
+  justify-self: flex-end;
+}
+
+/* botón */
+.admin-action {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  cursor: pointer;
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* icono grande */
+.admin-action__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-icon {
+  width: 4.4rem;
+  height: 4.4rem;
+  fill: none;
+  stroke: #f8e4b5;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 12px rgba(0,0,0,0.7));
+  transition: transform .23s ease,
+              filter .23s ease,
+              stroke .23s ease;
+}
+
+.admin-action__label {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.admin-action__hint {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+/* hover */
+.admin-action:hover .admin-icon,
+.admin-action:focus-visible .admin-icon {
+  transform: translateY(-6px) scale(1.08);
+  filter: drop-shadow(0 0 20px rgba(0,0,0,0.95));
+}
+
+.admin-action--habitaciones:hover .admin-icon {
+  transform: translateY(-6px) rotate(-6deg) scale(1.08);
+}
+
+.admin-action--reservas:hover .admin-icon {
+  transform: translateY(-6px) rotate(6deg) scale(1.08);
+}
+
+/* TIP EN EL MEDIO DEL CUADRANTE */
+.admin-home .hero-dynamic {
+  position: absolute;
+  top: 60%;                         /* altura del centro: si lo querés más arriba bajá este valor */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  text-align: center;
+  max-width: 520px;
+  font-size: 1rem;
+  z-index: 3;
+}
+
+.admin-home .hero-dynamic__text {
+  white-space: normal;              /* que pueda ocupar varias líneas */
+}
+
+/* ====== MOBILE: apilar todo ====== */
+@media (max-width: 720px) {
+  .admin-home {
+    padding-bottom: 3rem;
+  }
+
+  .admin-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 1.8rem;
+    padding-bottom: 1rem;
+  }
+
+  .admin-home .hero-dynamic {
+    position: static;
+    transform: none;
+    max-width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .admin-icon {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .admin-action__label {
+    font-size: 0.95rem;
+  }
+
+  .admin-action__hint {
+    font-size: 0.8rem;
+  }
+}
+
+/* ====== MOBILE: apilar todo ====== */
+@media (max-width: 720px) {
+  .admin-home {
+    padding-bottom: 3rem;
+  }
+
+  .admin-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 1.8rem;
+    padding-bottom: 1rem;
+  }
+
+  .admin-home .hero-dynamic {
+    position: static;
+    transform: none;
+    max-width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .admin-icon {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .admin-action__label {
+    font-size: 0.95rem;
+  }
+
+  .admin-action__hint {
+    font-size: 0.8rem;
+  }
+}
+/* BOOST DE TAMAÑO PARA ESCRITORIO */
+@media (min-width: 1024px) {
+
+  /* íconos MUCHO más grandes */
+  .admin-icon {
+    width: 5.6rem;
+    height: 5.6rem;
+    stroke-width: 2.4;                 /* líneas un poquito más gruesas */
+  }
+
+  /* textos un poco más grandes también */
+  .admin-action__label {
+    font-size: 1.2rem;
+  }
+
+  .admin-action__hint {
+    font-size: 0.95rem;
+  }
+
+  /* que el bloque ocupe más área vertical */
+  .admin-actions {
+    max-width: 1200px;
+    row-gap: 6rem;
+  }
+
+  /* ajusto un toque el centro del TIP para que siga quedando bien */
+  .admin-home .hero-dynamic {
+    top: 57%;
   }
 }

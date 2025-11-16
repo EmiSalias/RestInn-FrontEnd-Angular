@@ -49,6 +49,7 @@ import { Contact } from './pages/contact/contact';
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth-guard';
 import { Unauthorized } from './pages/usuarios/unauthorized/unauthorized';
+import { GestionReservas } from './pages/reservas/gestion-reservas/gestion-reservas';
 
 export const routes: Routes = [
 
@@ -186,22 +187,25 @@ export const routes: Routes = [
 
     { path: 'crear_reserva', component: CrearReservaBusqueda },
 
-    // === ADMIN / RECEPCIONISTA: panel de gestión (usa ListadoReservas en modo admin) ===
+    // === ADMIN / RECEPCIONISTA: hub de gestión ===
     {
         path: 'gestion_reservas',
+        component: GestionReservas,
+        canActivate: [AuthGuard],
+        data: {
+            roles: ['ADMINISTRADOR', 'RECEPCIONISTA']
+        }
+    },
+
+    // === ADMIN / RECEPCIONISTA: historial (listado reactivo) ===
+    {
+        path: 'listado_reservas',
         component: ListadoReservas,
         canActivate: [AuthGuard],
         data: {
             roles: ['ADMINISTRADOR', 'RECEPCIONISTA'],
             modo: 'admin'
         }
-    },
-
-    // alias por compatibilidad: cualquier link viejo a /listado_reservas va al hub nuevo
-    {
-        path: 'listado_reservas',
-        redirectTo: 'gestion_reservas',
-        pathMatch: 'full'
     },
 
     // === CLIENTE: mis reservas (mismo componente, modo cliente) ===
@@ -304,10 +308,12 @@ export const routes: Routes = [
         data: {
             roles: [
                 'ADMINISTRADOR',
-                'RECEPCIONISTA'
+                'RECEPCIONISTA',
+                'CLIENTE'
             ]
         }
     },
+
     {
         path: 'factura/:id',
         component: DetalleFactura,
@@ -336,7 +342,7 @@ export const routes: Routes = [
     // region Perfil
     {
         path: 'mi_perfil',
-        component: PerfilUsuario,
+        component: FormUsuario,
         canActivate: [AuthGuard],
         data: {
             roles: [
@@ -348,19 +354,10 @@ export const routes: Routes = [
             ]
         }
     },
+    // si alguien entra a /editar_perfil desde un link viejo, lo mandamos al nuevo
     {
         path: 'editar_perfil',
-        component: EditarPerfilUsuario,
-        canActivate: [AuthGuard],
-        data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA',
-                'CONSERJE',
-                'LIMPIEZA',
-                'CLIENTE'
-            ]
-        }
+        redirectTo: 'mi_perfil',
     },
     // #endregion
 

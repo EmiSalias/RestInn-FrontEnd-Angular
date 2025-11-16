@@ -48,7 +48,6 @@ export const MENU: MenuItem[] = [
     ]
   },
 
-  // === HUB solo para ADMIN / RECEPCIONISTA ===
   {
     label: 'Gestión de reservas',
     icon: faCalendarCheck,
@@ -56,7 +55,6 @@ export const MENU: MenuItem[] = [
     allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA']
   },
 
-  // === Menú clásico de reservas solo para CLIENTE ===
   {
     label: 'Reservas',
     icon: faCalendarCheck,
@@ -80,19 +78,19 @@ export const MENU: MenuItem[] = [
     icon: faUtensils,
     allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE'],
     children: [
-      // { label: 'Listado por reserva', dynamicLink: ... }
+      // futuro
     ]
   },
 
   {
-    label: 'Facturación',
+    label: 'Facturación & pagos',
     icon: faFileInvoice,
     allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE'],
     children: [
       {
-        label: 'Ver facturas',
+        label: 'Facturas',
         link: '/listado_facturas',
-        allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA']
+        allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE']
       }
     ]
   }

@@ -1,1 +1,132 @@
-<p>listado-facturas works!</p>
+<div class="facturas-page">
+
+    <div class="header-row">
+        <h2>Facturas</h2>
+        <span class="rol-badge" *ngIf="isAdminOrRecep">Vista administrador</span>
+    </div>
+
+    <form [formGroup]="filtrosForm" class="filtros">
+        <input type="text" placeholder="Buscar por cliente, reserva u habitación..." formControlName="texto">
+
+        <select formControlName="tipo">
+            <option value="">Todos los tipos</option>
+            <option value="RESERVA">Reserva</option>
+            <option value="CONSUMOS">Consumos</option>
+        </select>
+
+        <select formControlName="estado">
+            <option value="">Todos los estados</option>
+            <option value="EMITIDA">Emitida</option>
+            <option value="EN_PROCESO">En proceso</option>
+            <option value="ANULADA">Anulada</option>
+        </select>
+
+        <label>
+            Desde
+            <input type="date" formControlName="desde">
+        </label>
+
+        <label>
+            Hasta
+            <input type="date" formControlName="hasta">
+        </label>
+    </form>
+
+    <div *ngIf="error" class="estado estado-error">
+        {{ error }}
+    </div>
+
+    <div *ngIf="cargando" class="estado">
+        Cargando facturas...
+    </div>
+
+    <!-- SACAMOS el *ngIf="!cargando" del contenedor -->
+    <table class="tabla-facturas" *ngIf="(facturas$ | async) as facturas; else empty">
+        <thead>
+            <tr>
+                <th class="sortable" (click)="onSort('id')">
+                    #
+                    <span class="sort-indicator" *ngIf="sortState.field === 'id'">
+                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+                    </span>
+                </th>
+                <th class="sortable" (click)="onSort('fechaEmision')">
+                    Fecha
+                    <span class="sort-indicator" *ngIf="sortState.field === 'fechaEmision'">
+                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+                    </span>
+                </th>
+                <th class="sortable" (click)="onSort('clienteNombre')">
+                    Cliente
+                    <span class="sort-indicator" *ngIf="sortState.field === 'clienteNombre'">
+                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+                    </span>
+                </th>
+                <th class="sortable" (click)="onSort('reservaId')">
+                    Reserva
+                    <span class="sort-indicator" *ngIf="sortState.field === 'reservaId'">
+                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+                    </span>
+                </th>
+                <th class="sortable" (click)="onSort('habitacionNumero')">
+                    Hab.
+                    <span class="sort-indicator" *ngIf="sortState.field === 'habitacionNumero'">
+                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+                    </span>
+                </th>
+                <th class="sortable" (click)="onSort('tipoFactura')">
+                    Tipo
+                    <span class="sort-indicator" *ngIf="sortState.field === 'tipoFactura'">
+                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+                    </span>
+                </th>
+                <th class="sortable" (click)="onSort('estado')">
+                    Estado
+                    <span class="sort-indicator" *ngIf="sortState.field === 'estado'">
+                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+                    </span>
+                </th>
+                <th class="sortable total-col" (click)="onSort('totalFinal')">
+                    Total
+                    <span class="sort-indicator" *ngIf="sortState.field === 'totalFinal'">
+                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+                    </span>
+                </th>
+                <th class="pdf-col">
+                    PDF
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let f of facturas">
+                <td>{{ f.id }}</td>
+                <td>{{ f.fechaEmision | date:'dd/MM/yyyy' }}</td>
+                <td>{{ f.clienteNombre }}</td>
+
+                <td class="reserva-link" (click)="irADetalleReserva(f)">
+                    #{{ f.reservaId }}
+                </td>
+
+                <td>{{ f.habitacionNumero }}</td>
+                <td>{{ f.tipoFactura }}</td>
+                <td>{{ f.estado }}</td>
+                <td class="total-col">
+                    {{ f.totalFinal | currency:'ARS':'symbol':'1.0-0' }}
+                </td>
+                <td class="pdf-col">
+                    <button class="btn-pdf" type="button" (click)="abrirPdf(f)">
+                        Ver PDF
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <ng-template #empty>
+        <div class="estado" *ngIf="!cargando && !error">
+            No hay facturas que coincidan con los filtros.
+        </div>
+    </ng-template>
+
+</div>

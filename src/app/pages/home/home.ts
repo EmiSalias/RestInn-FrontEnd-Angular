@@ -12,7 +12,17 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { ListadoHabitaciones } from '../habitaciones/listado-habitaciones/listado-habitaciones';
 
-type HeroKey = 'default' | 'reservas' | 'habitaciones' | 'historial' | 'favoritos';
+type HeroKey =
+  | 'default'
+  | 'reservas'
+  | 'habitaciones'
+  | 'historial'
+  | 'favoritos'
+  | 'facturacion'
+  | 'adminUsuarios'
+  | 'adminHabitaciones'
+  | 'adminReservas'
+  | 'adminFacturacion';
 
 @Component({
   selector: 'app-home',
@@ -23,27 +33,49 @@ type HeroKey = 'default' | 'reservas' | 'habitaciones' | 'historial' | 'favorito
 })
 export class Home implements OnInit, OnDestroy {
 
-  private router = inject(Router);
+    private router = inject(Router);
   private auth = inject(AuthService);
+
+  // si es ADMIN, mostramos el panel premium (getter reactivo)
+  get isAdminPanel(): boolean {
+    return this.auth.isLoggedIn() && this.auth.hasAnyRole(['ADMINISTRADOR']);
+  }
 
   // --- texto dinámico ---
   heroTextMap: Record<HeroKey, string> = {
-    default: 'Pasá el cursor sobre una opción para ver qué podés hacer desde acá.',
-    reservas: 'Realizá una nueva reserva usando el buscador de fechas o revisá las que ya hiciste.',
-    habitaciones: 'Explorá todas las habitaciones, mirá fotos y detalles antes de reservar.',
-    historial: 'Consultá el historial de tus reservas y consumos según tu usuario.',
-    favoritos: 'Próximamente vas a poder guardar tus habitaciones preferidas como favoritas.'
+    // ===== VISTA PÚBLICO / CLIENTE =====
+    default:
+      'Pasá el cursor sobre una opción para ver qué podés hacer desde acá.',
+    reservas:
+      'Realizá una nueva reserva usando el buscador de fechas o revisá las que ya hiciste.',
+    habitaciones:
+      'Explorá todas las habitaciones, mirá fotos y detalles antes de reservar.',
+    historial:
+      'Consultá el historial de tus reservas y consumos según tu usuario.',
+    favoritos:
+      'Próximamente vas a poder guardar tus habitaciones preferidas como favoritas.',
+    facturacion:
+      'Revisá facturas emitidas y descargá los comprobantes de pago en PDF.',
+
+    // ===== VISTA ADMIN =====
+    adminUsuarios:
+      'Gestioná altas, bajas y permisos de usuarios y clientes del hotel.',
+    adminHabitaciones:
+      'Administrá habitaciones, tarifas y estados de disponibilidad.',
+    adminReservas:
+      'Controlá ingresos, salidas y reservas futuras desde un solo lugar.',
+    adminFacturacion:
+      'Revisá facturas, cobros pendientes y comprobantes listos para descargar.'
   };
 
   currentHeroKey: HeroKey = 'default';
   typedHeroText = '';
   private typingIntervalId: any = null;
 
-  // --- referencia al contenedor de cards ---
-  @ViewChild('heroCards', { static: true })
+  // referencia al carrusel SOLO de la vista público/cliente
+  @ViewChild('heroCards')
   heroCardsRef?: ElementRef<HTMLDivElement>;
 
-  // --- estado de auto-scroll ---
   private heroScrollDir: 'left' | 'right' | null = null;
   private heroScrollId: number | null = null;
 
@@ -61,7 +93,6 @@ export class Home implements OnInit, OnDestroy {
   // ---------------------------
   // TEXTO TIP "typewriter"
   // ---------------------------
-
   setHeroText(key: HeroKey): void {
     this.startHeroTyping(key);
   }
@@ -93,11 +124,9 @@ export class Home implements OnInit, OnDestroy {
   }
 
   // ---------------------------
-  // AUTO-SCROLL DE CARDS
+  // AUTO-SCROLL DE CARDS (solo público/cliente)
   // ---------------------------
-
   onHeroMouseMove(ev: MouseEvent): void {
-    // en mobile no hacemos nada
     if (window.innerWidth < 720) {
       this.stopHeroScroll();
       return;
@@ -109,7 +138,7 @@ export class Home implements OnInit, OnDestroy {
     const rect = el.getBoundingClientRect();
     const x = ev.clientX - rect.left;
     const width = rect.width;
-    const edgeZone = Math.min(120, width / 4); // zona sensible
+    const edgeZone = Math.min(120, width / 4);
 
     const maxScroll = el.scrollWidth - el.clientWidth;
     if (maxScroll <= 0) {
@@ -138,7 +167,7 @@ export class Home implements OnInit, OnDestroy {
       cancelAnimationFrame(this.heroScrollId);
     }
 
-    const step = 22; // velocidad de desplazamiento (px por frame)
+    const step = 85;
 
     const tick = () => {
       const maxScroll = el.scrollWidth - el.clientWidth;
@@ -172,15 +201,14 @@ export class Home implements OnInit, OnDestroy {
   }
 
   // ---------------------------
-  // NAVEGACIÓN DE CARDS
+  // NAVEGACIÓN PÚBLICO/CLIENTE
   // ---------------------------
-
   goToReservas(event?: Event): void {
     event?.preventDefault();
 
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/sign_in'], {
-        queryParams: { returnUrl: '/crear_reserva/form' }
+        queryParams: { returnUrl: '/crear_reserva' }
       });
       return;
     }
@@ -191,7 +219,7 @@ export class Home implements OnInit, OnDestroy {
       return;
     }
 
-    this.router.navigate(['/crear_reserva/form']);
+    this.router.navigate(['/crear_reserva']);
   }
 
   goToHistorial(event?: Event): void {
@@ -220,7 +248,61 @@ export class Home implements OnInit, OnDestroy {
 
   goToFavoritos(event?: Event): void {
     event?.preventDefault();
-    // placeholder por ahora
-    // this.router.navigate(['/favoritos']);
+  }
+
+  goToFacturacion(event?: Event): void {
+    event?.preventDefault();
+
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/sign_in'], {
+        queryParams: { returnUrl: '/listado_facturas' }
+      });
+      return;
+    }
+
+    const allowed = ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE'];
+    if (!this.auth.hasAnyRole(allowed)) {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
+
+    this.router.navigate(['/listado_facturas']);
+  }
+
+  // ---------------------------
+  // NAVEGACIÓN ADMIN DASHBOARD
+  // ---------------------------
+  goToGestionUsuarios(event?: Event): void {
+    event?.preventDefault();
+
+    if (!this.auth.hasAnyRole(['ADMINISTRADOR'])) {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
+
+    this.router.navigate(['/gestion_usuarios']);
+  }
+
+  goToAdminHabitaciones(event?: Event): void {
+    event?.preventDefault();
+
+    if (!this.auth.hasAnyRole(['ADMINISTRADOR'])) {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
+
+    this.router.navigate(['/listado_habitaciones']);
+  }
+
+  goToGestionReservas(event?: Event): void {
+    event?.preventDefault();
+
+    const allowed = ['ADMINISTRADOR', 'RECEPCIONISTA'];
+    if (!this.auth.hasAnyRole(allowed)) {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
+
+    this.router.navigate(['/gestion_reservas']);
   }
 }

@@ -14,7 +14,7 @@ export class UserService {
   getCurrentUser(): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/current`);
   }
-  
+
 
   //Actualiza los datos del usuario autenticado
   updateCurrentUser(data: Partial<User>): Observable<void> {
@@ -39,4 +39,17 @@ export class UserService {
   getAll(): Observable<User[]> {
     return this.http.get<User[]>(this.baseUrl);
   }
+
+  // src/app/services/user-service.ts
+  updatePassword(data: { oldPassword: string; newPassword: string }): Observable<void> {
+    return this.getCurrentUser().pipe(
+      switchMap((current) =>
+        this.http.put<void>(`${this.baseUrl}/update-password`, {
+          oldPassword: data.oldPassword,
+          newPassword: data.newPassword
+        })
+      )
+    );
+  }
+
 }
