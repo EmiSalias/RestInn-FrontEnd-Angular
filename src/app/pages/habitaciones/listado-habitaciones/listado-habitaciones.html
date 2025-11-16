@@ -10,6 +10,19 @@
     @if (puedeGestionarHabitaciones) {
     <button type="button" (click)="agregarNueva()">Agregar nueva</button>
     }
+    
+    <div class="filtro">
+        <label for="orden">Ordenar por:</label>
+        <select id="orden" [(ngModel)]="orden" name="orden" (change)="ordenarHabitaciones()">
+          <option hidden value="">Seleccionar</option>
+          <option value="Numero asc">Número ↑</option>
+          <option value="Numero desc">Número ↓</option>
+          <option value="Precio asc">Precio ↑</option>
+          <option value="Precio desc">Precio ↓</option>
+          <option value="Capacidad asc">Capacidad ↑</option>
+          <option value="Capacidad desc">Capacidad ↓</option>
+        </select>
+      </div>
   </div>
 
 
@@ -49,18 +62,6 @@
         <input type="date" [(ngModel)]="filtros.fechaHasta" name="fechaHasta">
       </div>
 
-      <div class="filtro">
-        <label for="orden">Ordenar por:</label>
-        <select id="orden" [(ngModel)]="orden" name="orden" (change)="ordenarHabitaciones()">
-          <option hidden value="">Seleccionar</option>
-          <option value="Numero asc">Número ↑</option>
-          <option value="Numero desc">Número ↓</option>
-          <option value="Precio asc">Precio ↑</option>
-          <option value="Precio desc">Precio ↓</option>
-          <option value="Capacidad asc">Capacidad ↑</option>
-          <option value="Capacidad desc">Capacidad ↓</option>
-        </select>
-      </div>
     </div>
 
     <div class="filtros-bottom">
