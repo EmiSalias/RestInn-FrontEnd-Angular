@@ -4,7 +4,6 @@
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-      <!-- DATOS BÁSICOS -->
       <div class="grid-2">
         <div class="field">
           <label>Número</label>
@@ -54,28 +53,36 @@
             <option value="DELUXE">Deluxe</option>
           </select>
         </div>
+
+        @if (editMode) {
+          <div class="field field-toggle">
+            <label for="activo">Habitación Activa</label>
+            <label class="switch">
+              <input type="checkbox" id="activo" formControlName="activo">
+              <span class="slider round"></span>
+            </label>
+            <small class="hint">Desmarcar para inhabilitar. Marcar para reactivar.</small>
+          </div>
+        }
       </div>
 
-      <!-- COMENTARIO -->
       <div class="field">
-        <label>Comentario</label>
+        <label>Comentario (Opcional)</label>
         <textarea rows="2" formControlName="comentario"></textarea>
       </div>
 
-      <!-- IMÁGENES -->
       <div class="field">
         <label>Imágenes</label>
         <input type="file" multiple (change)="onFilesSelected($event)" accept="image/*" />
       </div>
 
-      <!-- GALERÍA -->
       @if (imagenesPreview.length > 0) {
         <section class="galeria">
           <div class="galeria__thumbs">
-            @for (img of imagenesPreview; let i = $index; track i) {
+            @for (img of imagenesPreview; let i = $index; track $index) {
               <div class="thumb">
-                <img [src]="img" [alt]="'Imagen ' + (i + 1)" />
-                <button type="button" class="btn-remove" (click)="removeImage(i)">✕</button>
+                <img [src]="img.url" [alt]="'Imagen ' + (i + 1)" />
+                <button type="button" class="btn-remove" (click)="removeImage(i)" title="Eliminar imagen">✕</button>
               </div>
             }
           </div>
@@ -84,16 +91,15 @@
         <div class="galeria galeria--empty">Sin imágenes cargadas</div>
       }
 
-      <!-- BOTONES -->
       <div class="actions">
-        <button type="submit" [disabled]="loading">
-          {{ editMode ? 'Guardar cambios' : 'Crear habitación' }}
+        <button type="submit" [disabled]="loading || form.invalid">
+          @if (loading) {
+            <span>Guardando...</span>
+          } @else {
+            <span>{{ editMode ? 'Guardar cambios' : 'Crear habitación' }}</span>
+          }
         </button>
         <button type="button" class="btn-ghost" (click)="volver()">Cancelar</button>
-
-        @if (loading) {
-          <span class="muted">Guardando...</span>
-        }
       </div>
     </form>
   </section>
