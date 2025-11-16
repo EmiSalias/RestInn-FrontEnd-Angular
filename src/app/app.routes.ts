@@ -21,9 +21,8 @@ import { InhabilitarHabitacion } from './pages/habitaciones/inhabilitar-habitaci
 // #endregion
 // region Reservas       - IMPORTS
 import { ListadoReservas } from './pages/reservas/listado-reservas/listado-reservas';
-import { DetallesReserva } from './pages/reservas/detalles-reserva/detalles-reserva';
+import { DetalleReserva } from './pages/reservas/detalles-reserva/detalles-reserva';
 import { FormReserva } from './pages/reservas/form-reserva/form-reserva';
-import { ReservasCliente } from './pages/reservas/reservas-cliente/reservas-cliente';
 import { CrearReservaBusqueda } from './pages/reservas/crear-reserva-busqueda/crear-reserva-busqueda';
 // #endregion
 // region Consumos       - IMPORTS
@@ -50,6 +49,7 @@ import { Contact } from './pages/contact/contact';
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth-guard';
 import { Unauthorized } from './pages/usuarios/unauthorized/unauthorized';
+import { GestionReservas } from './pages/reservas/gestion-reservas/gestion-reservas';
 
 export const routes: Routes = [
 
@@ -184,53 +184,58 @@ export const routes: Routes = [
     // endregion
 
     // region Reservas - CRUD
-      { path: 'crear_reserva', component: CrearReservaBusqueda },
+
+    { path: 'crear_reserva', component: CrearReservaBusqueda },
+
+    // === ADMIN / RECEPCIONISTA: hub de gestión ===
     {
         path: 'gestion_reservas',
-        loadComponent: () =>
-            import('./pages/reservas/gestion-reservas/gestion-reservas')
-                .then(m => m.GestionReservas),
+        component: GestionReservas,
         canActivate: [AuthGuard],
         data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA'
-            ]
+            roles: ['ADMINISTRADOR', 'RECEPCIONISTA']
         }
     },
+
+    // === ADMIN / RECEPCIONISTA: historial (listado reactivo) ===
     {
         path: 'listado_reservas',
         component: ListadoReservas,
         canActivate: [AuthGuard],
         data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA'
-            ]
+            roles: ['ADMINISTRADOR', 'RECEPCIONISTA'],
+            modo: 'admin'
         }
     },
+
+    // === CLIENTE: mis reservas (mismo componente, modo cliente) ===
     {
-        path: 'reserva/:id',
-        component: DetallesReserva,
+        path: 'mis_reservas',
+        component: ListadoReservas,
         canActivate: [AuthGuard],
         data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA',
-                'CLIENTE'
-            ]
+            roles: ['CLIENTE'],
+            modo: 'cliente'
         }
     },
+
+    // Detalle
+    {
+        path: 'reserva/:id',
+        component: DetalleReserva,
+        canActivate: [AuthGuard],
+        data: {
+            roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE']
+        }
+    },
+
+    // Crear / editar reserva
     {
         path: 'crear_reserva/form',
         component: FormReserva,
         canActivate: [AuthGuard],
         data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA',
-                'CLIENTE'
-            ]
+            roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE']
         }
     },
     {
@@ -238,20 +243,11 @@ export const routes: Routes = [
         component: FormReserva,
         canActivate: [AuthGuard],
         data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA'
-            ]
+            roles: ['ADMINISTRADOR', 'RECEPCIONISTA']
         }
     },
-    {
-        path: 'mis_reservas',
-        component: ReservasCliente,
-        canActivate: [AuthGuard],
-        data: {
-            roles: ['CLIENTE']
-        }
-    },
+
+    // endregion
 
     // endregion
 
@@ -312,10 +308,12 @@ export const routes: Routes = [
         data: {
             roles: [
                 'ADMINISTRADOR',
-                'RECEPCIONISTA'
+                'RECEPCIONISTA',
+                'CLIENTE'
             ]
         }
     },
+
     {
         path: 'factura/:id',
         component: DetalleFactura,
@@ -344,7 +342,7 @@ export const routes: Routes = [
     // region Perfil
     {
         path: 'mi_perfil',
-        component: PerfilUsuario,
+        component: FormUsuario,
         canActivate: [AuthGuard],
         data: {
             roles: [
@@ -356,19 +354,10 @@ export const routes: Routes = [
             ]
         }
     },
+    // si alguien entra a /editar_perfil desde un link viejo, lo mandamos al nuevo
     {
         path: 'editar_perfil',
-        component: EditarPerfilUsuario,
-        canActivate: [AuthGuard],
-        data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA',
-                'CONSERJE',
-                'LIMPIEZA',
-                'CLIENTE'
-            ]
-        }
+        redirectTo: 'mi_perfil',
     },
     // #endregion
 

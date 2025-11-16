@@ -1,90 +1,238 @@
 <!-- src/app/pages/home/home.html -->
 <div class="home-wrapper">
-  <!-- HERO / BIENVENIDA -->
-  <section class="hero">
 
-    <header class="hero-header">
-      <span class="hero-eyebrow">RestInn · tu estadía online</span>
-      <h2>Elegí por dónde empezar</h2>
-      <p class="hero-subtitle">
-        Reservá, explorá habitaciones o revisá tu historial desde este panel principal.
-      </p>
-    </header>
+  <!-- ========================= -->
+  <!-- VISTA PÚBLICO / CLIENTE   -->
+  <!-- ========================= -->
+  <ng-container *ngIf="!isAdminPanel; else adminHero">
 
-    <!-- Wrapper centrado + fades -->
-    <div class="hero-cards-wrapper">
-      <div class="hero-cards"
-           #heroCards
-           (mousemove)="onHeroMouseMove($event)"
-           (mouseleave)="stopHeroScroll()">
+    <!-- HERO / BIENVENIDA -->
+    <section class="hero">
 
-        <!-- CARD 1 · Reservas -->
-        <article class="hero-card hero-card--reservas"
-                 (mouseenter)="setHeroText('reservas')"
-                 (mouseleave)="setHeroText('default')">
-          <a class="hero-card__link" href="#" (click)="goToReservas($event)">
-            <div class="hero-card__bg"></div>
-            <div class="hero-card__overlay"></div>
-            <div class="hero-card__content">
-              <span class="hero-card__tag">📅 Reservas</span>
-            </div>
-          </a>
-        </article>
+      <header class="hero-header">
+        <span class="hero-eyebrow">RestInn · tu estadía online</span>
+        <h2>Elegí por dónde empezar</h2>
+        <p class="hero-subtitle">
+          Reservá, explorá habitaciones o revisá tu historial desde este panel principal.
+        </p>
+      </header>
 
-        <!-- CARD 2 · Habitaciones -->
-        <article class="hero-card hero-card--habitaciones"
-                 (mouseenter)="setHeroText('habitaciones')"
-                 (mouseleave)="setHeroText('default')">
-          <a class="hero-card__link" href="#habitaciones-home" (click)="goToHabitaciones($event)">
-            <div class="hero-card__bg"></div>
-            <div class="hero-card__overlay"></div>
-            <div class="hero-card__content">
-              <span class="hero-card__tag">🛏️ Habitaciones</span>
-            </div>
-          </a>
-        </article>
+      <!-- Wrapper centrado + fades -->
+      <div class="hero-cards-wrapper">
+        <div class="hero-cards"
+             #heroCards
+             (mousemove)="onHeroMouseMove($event)"
+             (mouseleave)="stopHeroScroll()">
 
-        <!-- CARD 3 · Historial -->
-        <article class="hero-card hero-card--historial"
-                 (mouseenter)="setHeroText('historial')"
-                 (mouseleave)="setHeroText('default')">
-          <a class="hero-card__link" href="#" (click)="goToHistorial($event)">
-            <div class="hero-card__bg"></div>
-            <div class="hero-card__overlay"></div>
-            <div class="hero-card__content">
-              <span class="hero-card__tag">📊 Historial</span>
-            </div>
-          </a>
-        </article>
+          <!-- CARD 1 · Reservas -->
+          <article class="hero-card hero-card--reservas"
+                   (mouseenter)="setHeroText('reservas')"
+                   (mouseleave)="setHeroText('default')">
+            <a class="hero-card__link" href="#" (click)="goToReservas($event)">
+              <div class="hero-card__bg"></div>
+              <div class="hero-card__overlay"></div>
+              <div class="hero-card__content">
+                <span class="hero-card__tag">📅 Reservas</span>
+              </div>
+            </a>
+          </article>
 
-        <!-- CARD 4 · Favoritos -->
-        <article class="hero-card hero-card--favoritos"
-                 (mouseenter)="setHeroText('favoritos')"
-                 (mouseleave)="setHeroText('default')">
-          <a class="hero-card__link" href="#" (click)="goToFavoritos($event)">
-            <div class="hero-card__bg"></div>
-            <div class="hero-card__overlay"></div>
-            <div class="hero-card__content">
-              <span class="hero-card__tag">⭐ Favoritos</span>
-            </div>
-          </a>
-        </article>
+          <!-- CARD 2 · Habitaciones -->
+          <article class="hero-card hero-card--habitaciones"
+                   (mouseenter)="setHeroText('habitaciones')"
+                   (mouseleave)="setHeroText('default')">
+            <a class="hero-card__link" href="#habitaciones-home" (click)="goToHabitaciones($event)">
+              <div class="hero-card__bg"></div>
+              <div class="hero-card__overlay"></div>
+              <div class="hero-card__content">
+                <span class="hero-card__tag">🛏️ Habitaciones</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- CARD 3 · Historial -->
+          <article class="hero-card hero-card--historial"
+                   (mouseenter)="setHeroText('historial')"
+                   (mouseleave)="setHeroText('default')">
+            <a class="hero-card__link" href="#" (click)="goToHistorial($event)">
+              <div class="hero-card__bg"></div>
+              <div class="hero-card__overlay"></div>
+              <div class="hero-card__content">
+                <span class="hero-card__tag">📊 Historial</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- CARD 4 · Facturación & pagos -->
+          <article class="hero-card hero-card--facturacion"
+                   (mouseenter)="setHeroText('facturacion')"
+                   (mouseleave)="setHeroText('default')">
+            <a class="hero-card__link" href="#" (click)="goToFacturacion($event)">
+              <div class="hero-card__bg"></div>
+              <div class="hero-card__overlay"></div>
+              <div class="hero-card__content">
+                <span class="hero-card__tag">💳 Facturación &amp; pagos</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- CARD 5 · Favoritos (desactivado por ahora) -->
+          <!--
+          <article class="hero-card hero-card--favoritos"
+                   (mouseenter)="setHeroText('favoritos')"
+                   (mouseleave)="setHeroText('default')">
+            <a class="hero-card__link" href="#" (click)="goToFavoritos($event)">
+              <div class="hero-card__bg"></div>
+              <div class="hero-card__overlay"></div>
+              <div class="hero-card__content">
+                <span class="hero-card__tag">⭐ Favoritos</span>
+              </div>
+            </a>
+          </article>
+          -->
+
+        </div>
+      </div>
+
+      <div class="hero-dynamic">
+        <span class="hero-dynamic__prefix">
+          {{ currentHeroKey === 'default' ? 'Tip' : (currentHeroKey | titlecase) }}
+        </span>
+        <span class="hero-dynamic__text">
+          {{ typedHeroText }}
+        </span>
+      </div>
+
+    </section>
+
+    <!-- Listado de habitaciones igual que siempre -->
+    <section id="habitaciones-home">
+      <app-listado-habitaciones></app-listado-habitaciones>
+    </section>
+
+  </ng-container>
+
+    <!-- ========================= -->
+  <!-- VISTA ADMIN PREMIUM       -->
+  <!-- ========================= -->
+  <ng-template #adminHero>
+    <section class="admin-home">
+
+      <header class="hero-header admin-header">
+        <span class="hero-eyebrow">RestInn · panel administrativo</span>
+        <h2>Gestión rápida del hotel</h2>
+        <p class="hero-subtitle">
+          Accedé en un clic a usuarios, habitaciones, reservas y facturación.
+          Más abajo vas a poder sumar el dashboard de métricas.
+        </p>
+      </header>
+
+      <!-- ICONOS "SUELTOS" -->
+            <!-- ICONOS "SUELTOS" -->
+      <div class="admin-actions">
+
+        <!-- Gestión de usuarios -->
+        <button
+          type="button"
+          class="admin-action admin-action--usuarios"
+          (mouseenter)="setHeroText('adminUsuarios')"
+          (mouseleave)="setHeroText('default')"
+          (click)="goToGestionUsuarios($event)">
+          <div class="admin-action__icon">
+            <svg class="admin-icon admin-icon--usuarios" viewBox="0 0 32 32" aria-hidden="true">
+              <!-- usuario principal -->
+              <circle cx="12" cy="11" r="4.2" />
+              <path d="M5.5 21.5c1.2-2.5 3.2-4 6.5-4s5.3 1.5 6.5 4" />
+              <!-- usuario secundario -->
+              <circle cx="22" cy="11" r="3.2" />
+              <path d="M18.5 21c.7-1.9 2.1-3 3.9-3 1.9 0 3.2 1 3.9 3" />
+            </svg>
+          </div>
+          <span class="admin-action__label">Gestión de usuarios</span>
+          <span class="admin-action__hint">Altas, bajas, roles y accesos.</span>
+        </button>
+
+        <!-- Habitaciones -->
+        <button
+          type="button"
+          class="admin-action admin-action--habitaciones"
+          (mouseenter)="setHeroText('adminHabitaciones')"
+          (mouseleave)="setHeroText('default')"
+          (click)="goToAdminHabitaciones($event)">
+          <div class="admin-action__icon">
+            <svg class="admin-icon admin-icon--habitaciones" viewBox="0 0 32 32" aria-hidden="true">
+              <!-- cama -->
+              <rect x="5" y="14" width="22" height="8" rx="1.6" />
+              <!-- cabecero/pared -->
+              <line x1="5" y1="22" x2="5" y2="26" />
+              <line x1="27" y1="22" x2="27" y2="26" />
+              <!-- almohada -->
+              <rect x="6" y="11" width="7" height="4" rx="1" />
+            </svg>
+          </div>
+          <span class="admin-action__label">Habitaciones</span>
+          <span class="admin-action__hint">Disponibilidad y tarifas.</span>
+        </button>
+
+        <!-- Gestión de reservas -->
+        <button
+          type="button"
+          class="admin-action admin-action--reservas"
+          (mouseenter)="setHeroText('adminReservas')"
+          (mouseleave)="setHeroText('default')"
+          (click)="goToGestionReservas($event)">
+          <div class="admin-action__icon">
+            <svg class="admin-icon admin-icon--reservas" viewBox="0 0 32 32" aria-hidden="true">
+              <!-- marco calendario -->
+              <rect x="6" y="7" width="20" height="18" rx="2.5" />
+              <!-- línea separadora -->
+              <line x1="6" y1="13" x2="26" y2="13" />
+              <!-- aros arriba -->
+              <line x1="12" y1="5" x2="12" y2="9" />
+              <line x1="20" y1="5" x2="20" y2="9" />
+              <!-- “tilde” de reserva -->
+              <polyline points="12 18 14.8 20.6 19 16.5" />
+            </svg>
+          </div>
+          <span class="admin-action__label">Gestión de reservas</span>
+          <span class="admin-action__hint">Check-in, check-out y agenda.</span>
+        </button>
+
+        <!-- Facturación & pagos -->
+        <button
+          type="button"
+          class="admin-action admin-action--facturacion"
+          (mouseenter)="setHeroText('adminFacturacion')"
+          (mouseleave)="setHeroText('default')"
+          (click)="goToFacturacion($event)">
+          <div class="admin-action__icon">
+            <svg class="admin-icon admin-icon--facturacion" viewBox="0 0 32 32" aria-hidden="true">
+              <!-- círculo moneda -->
+              <circle cx="16" cy="16" r="9" />
+              <!-- símbolo $ -->
+              <path d="M16 10v12" />
+              <path d="M19.5 12.3c-.7-1.1-1.8-1.8-3.5-1.8-2.1 0-3.6 1.1-3.6 2.8 0 1.7 1.2 2.5 3.4 2.9l1.3.2c2.1.3 3.4 1.2 3.4 3 0 1.8-1.6 3-3.8 3-1.9 0-3.3-.8-4-2" />
+            </svg>
+          </div>
+          <span class="admin-action__label">Facturación &amp; pagos</span>
+          <span class="admin-action__hint">Facturas, cobros y PDFs.</span>
+        </button>
 
       </div>
-    </div>
 
-    <div class="hero-dynamic">
-      <span class="hero-dynamic__prefix">
-        {{ currentHeroKey === 'default' ? 'Tip' : (currentHeroKey | titlecase) }}
-      </span>
-      <span class="hero-dynamic__text">
-        {{ typedHeroText }}
-      </span>
-    </div>
+      <div class="hero-dynamic">
+        <span class="hero-dynamic__prefix">
+          {{ currentHeroKey === 'default' ? 'Tip' : (currentHeroKey | titlecase) }}
+        </span>
+        <span class="hero-dynamic__text">
+          {{ typedHeroText }}
+        </span>
+      </div>
 
-  </section>
+      <!-- Más adelante acá metés el iframe de Looker -->
 
-  <section id="habitaciones-home">
-    <app-listado-habitaciones></app-listado-habitaciones>
-  </section>
+    </section>
+  </ng-template>
+
+
 </div>

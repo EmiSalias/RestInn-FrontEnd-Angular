@@ -2,11 +2,12 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ReservasService, ReservaResponse } from '../../../services/reservas-service';
 import Habitacion from '../../../models/Habitacion';
 import { HabitacionService } from '../../../services/habitacion-service';
-
+import { AuthService } from '../../../services/auth-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-listado-reservas',
@@ -19,6 +20,13 @@ export class ListadoReservas implements OnInit {
 
   private habSrv = inject(HabitacionService);
   private reservasSrv = inject(ReservasService);
+  private auth = inject(AuthService);
+  private route = inject(ActivatedRoute);
+
+  // modo de uso
+  modoAdmin = false;
+  titulo = '';
+  subtitulo = '';
 
   habitacionesMap = new Map<number, Habitacion>();
   reservas: ReservaResponse[] = [];
@@ -29,7 +37,7 @@ export class ListadoReservas implements OnInit {
   loading = false;
   errorMsg: string | null = null;
 
-  // Combo de clientes únicos (para filtrar)
+  // Combo de clientes únicos (solo tiene sentido en admin)
   clientesUnicos: { id: number; nombre: string }[] = [];
 
   filtros = {
@@ -41,14 +49,67 @@ export class ListadoReservas implements OnInit {
     search: ''
   };
 
-  orden = 'ingresoDesc';  // ingreso más reciente primero
+  orden: 'ingresoDesc' | 'ingresoAsc' | 'estado' = 'ingresoDesc';
+
+  // =======================
+  //  HELPER ERRORES
+  // =======================
+  private getBackendErrorMessage(err: any, fallback: string): string {
+    const httpErr = err as any;
+
+    if (!httpErr || httpErr.status === 0) {
+      return 'No se pudo conectar con el servidor. Intentalo de nuevo más tarde.';
+    }
+
+    const body = httpErr.error;
+
+    if (typeof body === 'string') {
+      return body || fallback;
+    }
+
+    if (body) {
+      if (body.mensaje) return body.mensaje;    // 👈 lo que armamos en el Handler
+      if (body.message) return body.message;    // por si viene ErrorDetails
+      if (body.detail) return body.detail;     // formato ProblemDetail
+    }
+
+    if (httpErr.status >= 500) {
+      return 'Error interno del servidor';
+    }
+
+    return fallback;
+  }
+
+
 
   ngOnInit(): void {
-    this.cargarTodas();
+    const modoRuta = this.route.snapshot.data['modo'] as 'admin' | 'cliente' | undefined;
+
+    if (modoRuta === 'admin') {
+      this.modoAdmin = true;
+    } else if (modoRuta === 'cliente') {
+      this.modoAdmin = false;
+    } else {
+      this.modoAdmin = this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA']);
+    }
+
+    if (this.modoAdmin) {
+      this.titulo = 'Reservas';
+      this.subtitulo = 'Revisá y filtrá todas las reservas del sistema.';
+      this.cargarReservasAdmin();
+    } else {
+      this.titulo = 'Mis reservas';
+      this.subtitulo = 'Revisá el estado de tus reservas y consultá el detalle.';
+      this.cargarMisReservas();
+    }
+
     this.cargarHabitaciones();
   }
 
-  cargarTodas(): void {
+  // =======================
+  //    ADMIN / RECEPCIÓN
+  // =======================
+  private cargarReservasAdmin(): void {
     this.loading = true;
     this.errorMsg = null;
 
@@ -66,6 +127,31 @@ export class ListadoReservas implements OnInit {
       }
     });
   }
+
+  // =======================
+  //        CLIENTE
+  // =======================
+  private cargarMisReservas(): void {
+    this.loading = true;
+    this.errorMsg = null;
+
+    this.reservasSrv.getMisReservas().subscribe({
+      next: (data) => {
+        this.reservas = data ?? [];
+        this.aplicarFiltros();
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error obteniendo reservas del cliente', err);
+        this.errorMsg = err?.error?.message || 'No se pudieron cargar tus reservas.';
+        this.loading = false;
+      }
+    });
+  }
+
+  // =======================
+  //   FILTROS / ORDEN
+  // =======================
 
   private armarClientesUnicos(): void {
     const mapa = new Map<number, string>();
@@ -103,30 +189,24 @@ export class ListadoReservas implements OnInit {
     const dHasta = fechaHasta ? new Date(fechaHasta) : null;
     const termino = search.trim().toLowerCase();
 
-    // normalizamos el valor elegido en el combo ('' | CLIENTE | RECEPCIONISTA | ADMINISTRADOR)
     const claveRolFiltro = this.normalizarRol(rolUsuario);
 
     this.reservasFiltradas = this.reservas.filter(r => {
       const fIng = new Date(r.fechaIngreso);
       const fSal = new Date(r.fechaSalida);
 
-      // --- Rango de fechas ---
       if (dDesde && fIng < dDesde) return false;
       if (dHasta && fSal > dHasta) return false;
 
-      // --- Estado ---
       if (estado && r.estado !== estado) return false;
 
-      // --- Rol que creó la reserva (CLIENTE / RECEPCIONISTA / ADMINISTRADOR) ---
-      if (claveRolFiltro) {
+      if (this.modoAdmin && claveRolFiltro) {
         const rolReserva = this.normalizarRol(r.usuario?.role);
         if (rolReserva !== claveRolFiltro) return false;
       }
 
-      // --- Cliente específico ---
-      if (clienteId && r.usuario?.id !== clienteId) return false;
+      if (this.modoAdmin && clienteId && r.usuario?.id !== clienteId) return false;
 
-      // --- Búsqueda texto ---
       if (termino) {
         const nom = `${r.usuario?.nombre ?? ''} ${r.usuario?.apellido ?? ''}`.toLowerCase();
         const hab = String(r.habitacionNumero ?? r.habitacionId ?? '').toLowerCase();
@@ -155,7 +235,7 @@ export class ListadoReservas implements OnInit {
           return fa - fb;
         case 'estado':
           return (a.estado ?? '').localeCompare(b.estado ?? '');
-        default: // ingresoDesc
+        default:
           return fb - fa;
       }
     });
@@ -187,13 +267,71 @@ export class ListadoReservas implements OnInit {
     }
   }
 
-  /** Normaliza cualquier forma del rol a algo tipo:
-   *  'ROLE_cliente  ' -> 'CLIENTE'
-   */
   private normalizarRol(role?: string | null): string {
     if (!role) return '';
     return role.trim().toUpperCase().replace(/^ROLE_/, '');
   }
+
+  // =======================
+  //  CANCELACIÓN CLIENTE
+  // =======================
+
+  /** Solo mostramos botón en modo cliente y estado PENDIENTE */
+  puedeCancelar(r: ReservaResponse): boolean {
+    if (this.modoAdmin) return false;
+    return r.estado === 'PENDIENTE';
+  }
+
+  onCancelarClick(r: ReservaResponse): void {
+    if (!this.puedeCancelar(r)) return;
+
+    Swal.fire({
+      title: `Cancelar reserva #${r.id}`,
+      text: '¿Seguro que querés cancelar esta reserva? Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, volver',
+      confirmButtonColor: '#d33'
+    }).then(result => {
+      if (!result.isConfirmed) return;
+
+      this.reservasSrv.cancelarReserva(r.id).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Reserva cancelada',
+            text: 'La reserva fue cancelada correctamente.'
+          });
+
+          // Recargamos mis reservas (modo cliente)
+          if (!this.modoAdmin) {
+            this.cargarMisReservas();
+          }
+        },
+        error: (err) => {
+          console.error('Error cancelando reserva', err);
+
+          const msg = this.getBackendErrorMessage(
+            err,
+            'No se pudo cancelar la reserva.'
+          );
+
+          Swal.fire({
+            icon: 'error',
+            title: 'No se pudo cancelar',
+            text: msg
+          });
+        }
+
+
+      });
+    });
+  }
+
+  // =======================
+  //  HABITACIONES / IMG
+  // =======================
 
   private cargarHabitaciones(): void {
     this.habSrv.getHabitaciones().subscribe({
@@ -220,12 +358,10 @@ export class ListadoReservas implements OnInit {
     const primera: any = hab.imagenes[0];
     if (!primera.datosBase64 || !primera.tipo) return null;
 
-    // mismo formato que usás en getMainImageDataUrl
     return `data:${primera.tipo};base64,${primera.datosBase64}`;
   }
 
   onImgError(ev: Event): void {
     (ev.target as HTMLImageElement).src = this.defaultRoomImg;
   }
-
 }

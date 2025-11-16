@@ -1,8 +1,126 @@
-@if (hasRole()) {
-<p>LOGEAAAAAAAAAAAAAAAAAADOOOOOOOOOOOOOOOOOOO</p>
-}
-@else {
-<p>SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS</p>
+<section class="profile-page">
 
-}
+  <!-- si no está logueado -->
+  <ng-container *ngIf="isLoggedIn(); else notLogged">
+    <div class="profile-layout">
+      <!-- menú lateral tipo Booking -->
+      <aside class="profile-menu">
+        <div class="menu-title">Cuenta</div>
 
+        <button
+          class="menu-item"
+          type="button"
+          [class.active]="activeTab === 'datos'"
+          (click)="setTab('datos')">
+          Datos personales
+        </button>
+
+        <button
+          class="menu-item"
+          type="button"
+          [class.active]="activeTab === 'seguridad'"
+          (click)="setTab('seguridad')">
+          Seguridad
+        </button>
+      </aside>
+
+      <!-- formulario -->
+      <form class="profile-card" [formGroup]="form" (ngSubmit)="guardar()">
+
+        <!-- ===== CONTENIDO SEGÚN PESTAÑA ===== -->
+        <ng-container [ngSwitch]="activeTab">
+
+          <!-- ===== TAB DATOS ===== -->
+          <ng-container *ngSwitchCase="'datos'">
+            <h1>Datos personales</h1>
+            <p class="subtitle">
+              Actualizá tu nombre y teléfono. Tu usuario y email se usan para iniciar sesión.
+            </p>
+
+            <div class="grid-2">
+              <label>
+                <span class="label">Nombre</span>
+                <input type="text" formControlName="nombre" />
+              </label>
+
+              <label>
+                <span class="label">Apellido</span>
+                <input type="text" formControlName="apellido" />
+              </label>
+
+              <label>
+                <span class="label">Usuario</span>
+                <input type="text" formControlName="nombreLogin" [disabled]="true" />
+              </label>
+
+              <label>
+                <span class="label">Email</span>
+                <input type="email" formControlName="email" [disabled]="true" />
+              </label>
+
+              <label>
+                <span class="label">Teléfono</span>
+                <input type="text" formControlName="phoneNumber" />
+              </label>
+
+              <label>
+                <span class="label">Rol</span>
+                <input type="text" [value]="user?.role" disabled />
+              </label>
+            </div>
+          </ng-container>
+
+          <!-- ===== TAB SEGURIDAD ===== -->
+          <ng-container *ngSwitchCase="'seguridad'">
+            <h1>Seguridad</h1>
+            <p class="subtitle small">
+              Cambiá tu contraseña. Si no querés cambiarla, dejá estos campos vacíos.
+            </p>
+
+            <div class="security-grid" formGroupName="passGroup">
+                <li style="list-style: none;">
+              <label>
+                <span class="label">Contraseña actual</span>
+                <input type="password" formControlName="oldPassword" />
+              </label>
+
+              <label>
+                <span class="label">Nueva contraseña</span>
+                <input type="password" formControlName="newPassword" />
+              </label>
+
+              <label>
+                <span class="label">Confirmar nueva contraseña</span>
+                <input type="password" formControlName="confirm" />
+              </label>
+              </li>
+            </div>
+
+            <p class="hint" *ngIf="isEmpleado">
+              Como empleado solo podés cambiar tu contraseña. Otros datos se gestionan desde Administración.
+            </p>
+          </ng-container>
+
+        </ng-container>
+
+        <!-- Botón común a ambas pestañas -->
+        <div class="actions">
+          <button class="btn-gold" type="submit" [disabled]="loading">
+            Guardar cambios
+          </button>
+          <span class="saving" *ngIf="loading">Guardando…</span>
+        </div>
+
+        <p class="info" *ngIf="infoMsg">{{ infoMsg }}</p>
+        <p class="err" *ngIf="errorMsg">{{ errorMsg }}</p>
+
+      </form>
+    </div>
+  </ng-container>
+
+  <ng-template #notLogged>
+    <div class="profile-card">
+      <p>Necesitás iniciar sesión para editar tu perfil.</p>
+    </div>
+  </ng-template>
+</section>

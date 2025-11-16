@@ -71,19 +71,34 @@ button:disabled {
   text-align: center;
   font-weight: 500;
 }
+
+/* contenedor del botón principal */
 .actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 12px;
+  margin-top: 1.5rem;
 }
 
+/* fila con los links "Crear cuenta" y "¿Olvidaste...?" */
+.links-row {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* botones tipo link (no ocupan todo el ancho) */
 .link-btn {
   background: transparent;
   color: var(--color-primary);
   border: none;
   padding: 0;
+  width: auto;
+  margin-top: 0;
   text-decoration: underline;
   cursor: pointer;
+  font-size: 0.85rem;
 }
-.link-btn:hover { color: var(--color-text); }
+
+.link-btn:hover {
+  color: var(--color-text);
+}

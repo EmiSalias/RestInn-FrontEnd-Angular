@@ -1,0 +1,171 @@
+.facturas-page {
+  padding: 2rem;
+  color: #f5f5f5;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+}
+
+.rol-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  font-size: 0.75rem;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+
+  input[type="text"],
+  select,
+  input[type="date"] {
+    background: #241c24;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #f5f5f5;
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.75rem;
+  }
+}
+
+.tabla-facturas {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  th,
+  td {
+    padding: 0.6rem 0.4rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    text-align: left;
+  }
+
+  th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+}
+
+.btn-pdf {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: #7b5cff;
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.estado {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.estado-error {
+  color: #ff6b6b;
+}
+.tabla-facturas {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.tabla-facturas thead {
+  background: #191328;
+}
+
+.tabla-facturas th,
+.tabla-facturas td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.tabla-facturas tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.tabla-facturas tbody tr:hover {
+  background-color: rgba(197, 127, 255, 0.08);
+}
+
+.total-col {
+  text-align: right;
+}
+
+.pdf-col {
+  text-align: center;
+  width: 90px;
+}
+
+/* columnas ordenables */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+th.sortable:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.sort-indicator {
+  font-size: 0.7rem;
+  margin-left: 0.25rem;
+  opacity: 0.9;
+}
+
+/* botón PDF más amigable */
+.btn-pdf {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #8b5cff, #c77dff);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+}
+
+.btn-pdf:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(199, 125, 255, 0.6);
+  filter: brightness(1.05);
+}
+
+.btn-pdf:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+.tabla-facturas td.reserva-link {
+  color: #e0aaff;          /* o el color de acento que uses */
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.tabla-facturas td.reserva-link:hover {
+  text-decoration: underline wavy;
+}

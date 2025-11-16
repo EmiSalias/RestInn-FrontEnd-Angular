@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ReservasCliente } from './reservas-cliente';
+import { OtpInput } from './otp-input';
 
-describe('ReservasCliente', () => {
-  let component: ReservasCliente;
-  let fixture: ComponentFixture<ReservasCliente>;
+describe('OtpInput', () => {
+  let component: OtpInput;
+  let fixture: ComponentFixture<OtpInput>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReservasCliente]
+      imports: [OtpInput]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ReservasCliente);
+    fixture = TestBed.createComponent(OtpInput);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

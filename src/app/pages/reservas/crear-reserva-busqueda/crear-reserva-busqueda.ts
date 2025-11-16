@@ -21,7 +21,15 @@ export class CrearReservaBusqueda {
   private reservasSrv = inject(ReservasService);
   private router = inject(Router);
 
-  todayStr = new Date().toISOString().slice(0, 10);
+  todayStr = this.getTodayLocal();   // 👈 usar esto
+
+  private getTodayLocal(): string {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const d = String(today.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;         // yyyy-MM-dd en horario local
+  }
 
   fechaIngreso = '';
   fechaSalida = '';
