@@ -1,0 +1,73 @@
+<section class="empleados-page">
+  <h1>Gestión de empleados</h1>
+
+  <div class="status" *ngIf="loading">Cargando empleados...</div>
+  <div class="status error" *ngIf="!loading && errorMsg">{{ errorMsg }}</div>
+
+  <div class="actions">
+    <button routerLink="/crear_empleado" class="btn-create">Crear nuevo empleado</button>
+
+    <button class="btn-filter" (click)="filtrarEmpleados(true)">Mostrar empleados activos</button>
+    <button class="btn-filter" (click)="filtrarEmpleados(false)">Mostrar empleados inactivos</button>
+  </div>
+
+  <!-- Tabla de empleados -->
+  <table class="tabla-empleados" *ngIf="!loading && !errorMsg && empleados.length">
+    <thead>
+      <tr>
+        <th class="sortable" (click)="onSort('nombre')">Nombre
+          <span class="sort-indicator" *ngIf="sortField === 'nombre'">
+            {{ sortDirection === 'asc' ? '▲' : '▼' }}
+          </span>
+        </th>
+        <th class="sortable" (click)="onSort('role')">Rol
+          <span class="sort-indicator" *ngIf="sortField === 'role'">
+            {{ sortDirection === 'asc' ? '▲' : '▼' }}
+          </span>
+        </th>
+        <th class="sortable" (click)="onSort('email')">Email
+          <span class="sort-indicator" *ngIf="sortField === 'email'">
+            {{ sortDirection === 'asc' ? '▲' : '▼' }}
+          </span>
+        </th>
+        <th class="sortable" (click)="onSort('dni')">DNI
+          <span class="sort-indicator" *ngIf="sortField === 'dni'">
+            {{ sortDirection === 'asc' ? '▲' : '▼' }}
+          </span>
+        </th>
+        <th class="sortable" (click)="onSort('phoneNumber')">Teléfono
+          <span class="sort-indicator" *ngIf="sortField === 'phoneNumber'">
+            {{ sortDirection === 'asc' ? '▲' : '▼' }}
+          </span>
+        </th>
+        <th class="sortable" (click)="onSort('activo')">Estado
+          <span class="sort-indicator" *ngIf="sortField === 'activo'">
+            {{ sortDirection === 'asc' ? '▲' : '▼' }}
+          </span>
+        </th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let e of empleados" [ngClass]="{'activo': e.activo, 'inactivo': !e.activo}">
+        <td>{{ e.nombre }} {{ e.apellido }}</td>
+        <td>{{ e.role }}</td>
+        <td>{{ e.email }}</td>
+        <td>{{ e.dni }}</td>
+        <td>{{ e.phoneNumber }}</td>
+        <td>
+          <div [ngClass]="{'activo': e.activo, 'inactivo': !e.activo}" class="estado">
+            {{ e.activo ? 'Activo' : 'Inactivo' }}
+          </div>
+        </td>
+        <td>
+          <button class="btn-link" [routerLink]="['/detalle_empleado', e.id]">Ver detalles</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="empty" *ngIf="!loading && !errorMsg && !empleados.length">
+    No hay empleados registrados todavía.
+  </div>
+</section>
