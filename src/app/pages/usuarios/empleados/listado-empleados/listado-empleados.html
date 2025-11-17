@@ -5,7 +5,7 @@
   <div class="status error" *ngIf="!loading && errorMsg">{{ errorMsg }}</div>
 
   <div class="actions">
-    <button routerLink="/crear_empleado" class="btn-create">Crear nuevo empleado</button>
+    <button routerLink="/form_empleado" class="btn-create">Crear nuevo empleado</button>
 
     <button class="btn-filter" (click)="filtrarEmpleados(true)">Mostrar empleados activos</button>
     <button class="btn-filter" (click)="filtrarEmpleados(false)">Mostrar empleados inactivos</button>
@@ -61,7 +61,7 @@
           </div>
         </td>
         <td>
-          <button class="btn-link" [routerLink]="['/detalle_empleado', e.id]">Ver detalles</button>
+          <button class="btn-link" [routerLink]="['/form_empleado', e.id]">Ver detalles</button>
         </td>
       </tr>
     </tbody>

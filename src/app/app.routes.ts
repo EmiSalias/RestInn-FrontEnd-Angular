@@ -13,7 +13,6 @@ import { FormEmpleado } from './pages/usuarios/empleados/form-empleado/form-empl
 // #endregion
 // region EMPLEADOS       - IMPORTS
 import { FormCliente } from './pages/usuarios/clientes/form-cliente/form-cliente';
-import { DetallesCliente } from './pages/usuarios/clientes/detalles-cliente/detalles-cliente';
 import { ListadoClientes } from './pages/usuarios/clientes/listado-clientes/listado-clientes';
 // #endregion
 
@@ -26,7 +25,7 @@ import { GestionHabitaciones } from './pages/habitaciones/gestion-habitaciones/g
 // #endregion
 // region Reservas       - IMPORTS
 import { ListadoReservas } from './pages/reservas/listado-reservas/listado-reservas';
-import { DetalleReserva } from './pages/reservas/detalles-reserva/detalles-reserva';
+import { DetallesReserva } from './pages/reservas/detalles-reserva/detalles-reserva';
 import { FormReserva } from './pages/reservas/form-reserva/form-reserva';
 import { CrearReservaBusqueda } from './pages/reservas/crear-reserva-busqueda/crear-reserva-busqueda';
 // #endregion
@@ -91,11 +90,19 @@ export const routes: Routes = [
         component: DetallesUsuario,
         canActivate: [AuthGuard],
         data: {
+            roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE']
+        }
+    },
+    {
+        path: 'form_empleado/:id',
+        component: FormEmpleado,
+        canActivate: [AuthGuard],
+        data: {
             roles: ['ADMINISTRADOR']
         }
     },
     {
-        path: 'crear_empleado',
+        path: 'form_empleado',
         component: FormEmpleado,
         canActivate: [AuthGuard],
         data: {
@@ -116,14 +123,6 @@ export const routes: Routes = [
     {
         path: 'listado_CLIENTEs',
         component: ListadoClientes,
-        canActivate: [AuthGuard],
-        data: {
-            roles: ['RECEPCIONISTA']
-        }
-    },
-    {
-        path: 'CLIENTE/:id',
-        component: DetallesCliente,
         canActivate: [AuthGuard],
         data: {
             roles: ['RECEPCIONISTA']
@@ -235,7 +234,7 @@ export const routes: Routes = [
     // Detalle
     {
         path: 'reserva/:id',
-        component: DetalleReserva,
+        component: DetallesReserva,
         canActivate: [AuthGuard],
         data: {
             roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE']

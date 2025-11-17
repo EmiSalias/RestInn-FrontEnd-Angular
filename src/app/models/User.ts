@@ -9,4 +9,5 @@ export default interface User {
     cuit: string;
     activo: boolean;
     role: string;
+    password?: string;
 }

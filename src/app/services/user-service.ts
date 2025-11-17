@@ -18,7 +18,6 @@ export class UserService {
     return this.http.get<User>(`${this.baseUrl}/current`);
   }
 
-
   //Actualiza los datos del usuario autenticado
   updateCurrentUser(data: Partial<User>): Observable<void> {
     return this.getCurrentUser().pipe(
@@ -31,6 +30,11 @@ export class UserService {
   //Obtiene un usuario por ID
   getById(id: string | number): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/${id}`);
+  }
+
+  // Si necesitas el GetEmployeeById
+  getEmployeeById(id: string | number): Observable<User> {
+    return this.http.get<User>(`${this.adminBaseUrl}/empleados/${id}`);
   }
 
   //Elimina un usuario por ID
@@ -64,6 +68,20 @@ export class UserService {
     return this.http.get<User[]>(`${this.adminBaseUrl}/empleados`).pipe(
       tap((response) => console.log('Empleados recibidos:', response)) // Verifica la respuesta aquí
     );
+  }
+
+  // Borrado lógico de un empleado (marcar como inactivo)
+  borrarLogicoEmpleado(id: string | number): Observable<void> {
+    return this.http.put<void>(`${this.adminBaseUrl}/empleados/${id}/borrado-logico`, {});
+  }
+
+  // Método para activar a un empleado
+  activateEmployee(id: string | number): Observable<void> {
+    return this.http.put<void>(`${this.adminBaseUrl}/empleados/${id}/activarEmpleado`, {});
+  }
+
+  updateEmployee(id: string, data: any): Observable<User> {
+    return this.http.put<User>(`${this.adminBaseUrl}/empleados/${id}`, data);
   }
 
 }

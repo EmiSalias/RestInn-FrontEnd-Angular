@@ -36,25 +36,25 @@ export class FormUsuario implements OnInit {
   activeTab: 'datos' | 'seguridad' = 'datos';
 
   form: FormGroup = this.fb.group({
-    nombre: ['', [Validators.minLength(2)]],
-    apellido: ['', [Validators.minLength(2)]],
+    nombre: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]], // Ahora es obligatorio
+    apellido: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]], // Ahora es obligatorio
     nombreLogin: [''],
     email: [''],
     dni: [''],
-    phoneNumber: ['', [Validators.pattern(/^[\d\s+\-()]{6,20}$/)]],
+    phoneNumber: ['', [Validators.pattern(/^[0-9\s+\-()]{6,20}$/)]],  // Solo números, espacios, guiones y paréntesis
     cuit: [''],
     role: [''],
 
     passGroup: this.fb.group(
       {
-        oldPassword: ['', [Validators.required]], // Se añadió Validators.required
-        newPassword: ['', [Validators.required, Validators.minLength(8)]], // Se añadió Validators.required
-        confirm: ['', [Validators.required]],  // Se añadió Validators.required
+        oldPassword: ['', [Validators.required]],
+        newPassword: ['', [Validators.required]],
+        confirm: ['', [Validators.required]],
       },
       { validators: samePassword }
     ),
-
   });
+
 
   user: User | null = null;
   role: string | null = null;
@@ -138,37 +138,81 @@ export class FormUsuario implements OnInit {
     const passValue = passGroup.value;
     const wantsPasswordChange = !!(passValue.oldPassword || passValue.newPassword || passValue.confirm);
 
-    // Si no hay cambios en los campos de contraseña y no hay cambios en otros datos, muestra un error.
+    // Validación: si no hay cambios, muestra un error.
     if (!wantsPasswordChange && !this.form.dirty) {
       this.errorMsg = 'No se han realizado cambios.';
+      Swal.fire({
+        icon: 'error',
+        title: 'No hay cambios',
+        text: 'No has realizado ningún cambio en tus datos.',
+        showConfirmButton: true,
+      });
       return;
     }
 
-    // Validación de los campos de contraseña
+    // Validación de campos: nombre, apellido, teléfono
+    if (this.form.get('nombre')?.invalid || this.form.get('apellido')?.invalid) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error en los datos',
+        text: 'El nombre y apellido deben tener entre 2 y 25 caracteres.',
+        showConfirmButton: true,
+      });
+      return;
+    }
+
+    if (this.form.get('phoneNumber')?.invalid) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error en teléfono',
+        text: 'El teléfono solo puede contener números, espacios, guiones y paréntesis.',
+        showConfirmButton: true,
+      });
+      return;
+    }
+
+    // Validación de la contraseña
     if (wantsPasswordChange) {
       if (!passValue.oldPassword || !passValue.newPassword || !passValue.confirm) {
         passGroup.markAllAsTouched();
         this.errorMsg = 'Completá los tres campos de contraseña.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Faltan campos de contraseña',
+          text: 'Debe completar todos los campos de contraseña.',
+          showConfirmButton: true,
+        });
         return;
       }
 
       if (passValue.newPassword.length < 8) {
         this.errorMsg = 'La nueva contraseña debe tener al menos 8 caracteres.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Contraseña demasiado corta',
+          text: 'La nueva contraseña debe tener al menos 8 caracteres.',
+          showConfirmButton: true,
+        });
         return;
       }
 
       if (passGroup.hasError('mismatch')) {
         this.errorMsg = 'Las nuevas contraseñas no coinciden.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Las contraseñas no coinciden',
+          text: 'Las contraseñas nuevas no coinciden. Verifique e intente nuevamente.',
+          showConfirmButton: true,
+        });
         return;
       }
 
-      // Si todo está correcto, envía la solicitud para actualizar la contraseña
+      // Si todo está bien, actualiza la contraseña
       const passwordUpdateData = {
         oldPassword: passValue.oldPassword,
         newPassword: passValue.newPassword,
       };
 
-      // Llama al servicio para actualizar la contraseña
       this.userService.updatePassword(passwordUpdateData).subscribe({
         next: () => {
           Swal.fire({
@@ -191,17 +235,30 @@ export class FormUsuario implements OnInit {
         },
       });
     } else {
-      // Si no se cambia la contraseña, solo actualiza otros datos del usuario
+      // Actualiza los datos si no hay cambios en la contraseña
       this.userService.updateCurrentUser(this.form.value).subscribe({
         next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Datos actualizados correctamente',
+            showConfirmButton: false,
+            timer: 1500,
+          });
           this.infoMsg = 'Datos actualizados correctamente.';
         },
         error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al actualizar datos',
+            text: err?.error?.message || 'No se pudieron guardar los cambios.',
+            showConfirmButton: true,
+          });
           this.errorMsg = err?.error?.message || 'No se pudieron guardar los cambios.';
         },
       });
     }
   }
+
   isLoggedIn(): boolean {
     return this.auth.isLoggedIn();
   }
