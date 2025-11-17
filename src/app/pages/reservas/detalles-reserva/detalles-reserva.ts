@@ -1,27 +1,26 @@
-// src/app/pages/reservas/detalle-reserva/detalle-reserva.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReservasService, ReservaResponse } from '../../../services/reservas-service';
 import { HabitacionService } from '../../../services/habitacion-service';
 import Habitacion from '../../../models/Habitacion';
-import { AuthService } from '../../../services/auth-service';    // ⬅️ NUEVO
-import Swal from 'sweetalert2';                                  // ⬅️ NUEVO
+import { AuthService } from '../../../services/auth-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-detalle-reserva',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './detalles-reserva.html',
-  styleUrl: './detalles-reserva.css'
+  styleUrls: ['./detalles-reserva.css']
 })
-export class DetalleReserva implements OnInit {
+export class DetallesReserva implements OnInit {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private reservasSrv = inject(ReservasService);
   private habSrv = inject(HabitacionService);
-  private auth = inject(AuthService);                           // ⬅️ NUEVO
+  private auth = inject(AuthService);
 
   reserva?: ReservaResponse;
   habitacion?: Habitacion;
@@ -116,52 +115,153 @@ export class DetalleReserva implements OnInit {
   }
 
   // ======================
-  //  CANCELAR RESERVA
+  //  CONFIRMAR RESERVA
   // ======================
 
-  /** Solo cliente + estado PENDIENTE */
-  get puedeCancelarReserva(): boolean {
+  /** Solo ADMIN/RECEPCIONISTA y estado PENDIENTE */
+  get puedeConfirmarReserva(): boolean {
     if (!this.reserva) return false;
-    if (!this.auth.hasAnyRole(['CLIENTE'])) return false;
+    if (!this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) return false;
     return this.reserva.estado === 'PENDIENTE';
   }
 
-  cancelarReserva(): void {
+  confirmarReserva(): void {
     if (!this.reserva) return;
 
     const r = this.reserva;
 
     Swal.fire({
-      title: `Cancelar reserva #${r.id}`,
-      text: '¿Seguro que querés cancelar esta reserva? Esta acción no se puede deshacer.',
-      icon: 'warning',
+      title: `Confirmar reserva #${r.id}`,
+      text: '¿Seguro que querés confirmar esta reserva?',
+      icon: 'question',
       showCancelButton: true,
-      confirmButtonText: 'Sí, cancelar',
+      confirmButtonText: 'Sí, confirmar',
       cancelButtonText: 'No, volver',
-      confirmButtonColor: '#d33'
+      confirmButtonColor: '#4CAF50'
     }).then(result => {
       if (!result.isConfirmed) return;
 
-      this.reservasSrv.cancelarReserva(r.id).subscribe({
+      this.reservasSrv.confirmarReserva(r.id).subscribe({
         next: () => {
           Swal.fire({
             icon: 'success',
-            title: 'Reserva cancelada',
-            text: 'La reserva fue cancelada correctamente.'
+            title: 'Reserva confirmada',
+            text: 'La reserva fue confirmada correctamente.'
           }).then(() => {
-            this.volver();
+            this.router.navigate(['/listado_reservas']);
           });
         },
         error: (err) => {
-          console.error('Error cancelando reserva', err);
-          const msg = err?.error?.message || 'No se pudo cancelar la reserva.';
+          console.error('Error confirmando reserva', err);
           Swal.fire({
             icon: 'error',
-            title: 'No se pudo cancelar',
-            text: msg
+            title: 'No se pudo confirmar',
+            text: err?.error?.message || 'No se pudo confirmar la reserva.'
           });
         }
       });
     });
   }
+
+  // ======================
+  //  CHECK-IN
+  // ======================
+
+  /** Solo ADMIN/RECEPCIONISTA y estado CONFIRMADA */
+  get puedeCheckIn(): boolean {
+    if (!this.reserva) return false;
+    if (!this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) return false;
+    return this.reserva.estado === 'CONFIRMADA';
+  }
+  // Solo ADMIN/RECEPCIONISTA y estado PENDIENTE
+
+  checkIn(): void {
+    if (!this.reserva) return;
+
+    const r = this.reserva;
+
+    Swal.fire({
+      title: `Check-in reserva #${r.id}`,
+      text: '¿Seguro que quieres hacer el check-in de esta reserva?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, hacer check-in',
+      cancelButtonText: 'No, volver',
+      confirmButtonColor: '#2196F3'
+    }).then(result => {
+      if (!result.isConfirmed) return;
+
+      this.reservasSrv.checkIn(r.id).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Check-in realizado',
+            text: 'El check-in fue realizado correctamente.'
+          }).then(() => {
+            this.volver();
+          });
+        },
+        error: (err) => {
+          console.error('Error haciendo check-in', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'No se pudo hacer check-in',
+            text: err?.error?.mensaje || 'No se pudo hacer check-in.'
+          });
+        }
+      });
+    });
+  }
+
+
+  // ======================
+  //  CHECK-OUT
+  // ======================
+
+  /** Solo ADMIN/RECEPCIONISTA y estado EN_CURSO */
+  get puedeCheckOut(): boolean {
+    if (!this.reserva) return false;
+    if (!this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) return false;
+    return this.reserva.estado === 'EN_CURSO';
+  }
+
+  checkOut(): void {
+    if (!this.reserva) return;
+
+    const r = this.reserva;
+
+    Swal.fire({
+      title: `Check-out reserva #${r.id}`,
+      text: '¿Seguro que quieres hacer el check-out de esta reserva?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, hacer check-out',
+      cancelButtonText: 'No, volver',
+      confirmButtonColor: '#FF9800'
+    }).then(result => {
+      if (!result.isConfirmed) return;
+
+      this.reservasSrv.checkOut(r.id).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Check-out realizado',
+            text: 'El check-out fue realizado correctamente.'
+          }).then(() => {
+            this.volver();
+          });
+        },
+        error: (err) => {
+          console.error('Error haciendo check-out', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'No se pudo hacer check-out',
+            text: err?.error?.mensaje || 'No se pudo hacer check-out.'
+          });
+        }
+      });
+    });
+  }
+  
+  
 }

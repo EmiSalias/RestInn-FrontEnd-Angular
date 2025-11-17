@@ -1,0 +1,183 @@
+:root {
+  --color-bg: #1E1A16;
+  --color-h-f: #34271b;
+  --color-surface: #2A241E;
+  --color-primary: #CBB26A;
+  --color-secondary: #8C704B;
+  --color-text: #f3e9d9;
+  --color-text-secondary: #f5deb3;
+  --color-text-muted: #B8B0A3;
+  --color-success: #4CAF50;
+  --color-error: #E57373;
+  --color-warning: #D6B85A;
+  --color-border: #3A332C;
+
+  --font-family: 'Plus Jakarta Sans', 'Poppins', 'Roboto', sans-serif;
+  --font-size-base: 16px;
+  --header-h: 80px;
+}
+
+html, body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  box-sizing: border-box;
+}
+body {
+  padding-top: var(--header-h);
+}
+
+h1, h2, h3, h4, h5 {
+  color: var(--color-primary);
+  font-family: var(--font-family);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+p {
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: var(--color-secondary);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  outline: none;
+  font-size: 16px;
+}
+
+input:focus {
+  border-color: var(--color-primary);
+}
+
+label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Estilos mejorados */
+.profile-layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.profile-card {
+  background: var(--color-surface);
+  padding: 30px;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Estilo para el botón Volver */
+.btn-back {
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  display: block;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+  background-color: var(--color-primary);
+}
+
+.menu-title {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.menu-item {
+  background: none;
+  border: none;
+  color: var(--color-text);
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  text-align: left;
+}
+
+.menu-item:hover {
+  color: var(--color-primary);
+}
+
+footer {
+  margin-top: 50px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+footer a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}

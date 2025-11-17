@@ -93,6 +93,22 @@
             <div class="muted">
               Estado: {{ estadoLabel(r.estado) }}
             </div>
+
+            <!-- Botones debajo de la foto -->
+            <div class="detail-header-actions">
+              <!-- Botón de Confirmar solo para ADMIN/RECEPCIONISTA -->
+              <button *ngIf="puedeConfirmarReserva" class="btn" (click)="confirmarReserva()">
+                Confirmar reserva
+              </button>
+              <button *ngIf="puedeCheckIn" class="btn" (click)="checkIn()">
+                Realizar check-in
+              </button>
+
+              <button *ngIf="puedeCheckOut" class="btn" (click)="checkOut()">
+                Realizar check-out
+              </button>
+
+            </div>
           </div>
         </div>
       </aside>

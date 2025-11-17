@@ -132,44 +132,57 @@
   margin-bottom: 0.25rem;
 }
 
+.detail-header-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-primary);
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.btn:hover {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
 @media (max-width: 900px) {
   .detail-layout {
     grid-template-columns: 1fr;
   }
 }
-.detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
+.status-chip {
+  padding: 0.5rem 1rem;
+  border-radius: 16px;
+  color: #fff;
+  font-weight: bold;
 }
 
-.detail-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.status-chip.pendiente {
+  background-color: #FFB74D; /* Naranja para Pendiente */
 }
 
-/* Podés reutilizar el mismo estilo que en listado-reservas */
-.btn-danger-outline {
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid #ff6b6b;
-  background: transparent;
-  color: #ff6b6b;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background-color 0.18s ease,
-    color 0.18s ease,
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
+.status-chip.confirmada {
+  background-color: #66BB6A; /* Verde para Confirmada */
 }
 
-.btn-danger-outline:hover {
-  background-color: #ff6b6b;
-  color: #1b0f0b;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+.status-chip.en-curso {
+  background-color: #2196F3; /* Azul para En curso */
+}
+
+.status-chip.finalizada {
+  background-color: #8E44AD; /* Púrpura para Finalizada */
+}
+
+.status-chip.cancelada {
+  background-color: #FF6B6B; /* Rojo para Cancelada */
 }

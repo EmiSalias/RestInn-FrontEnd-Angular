@@ -33,7 +33,7 @@ type HeroKey =
 })
 export class Home implements OnInit, OnDestroy {
 
-    private router = inject(Router);
+  private router = inject(Router);
   private auth = inject(AuthService);
 
   // si es ADMIN, mostramos el panel premium (getter reactivo)
@@ -227,18 +227,19 @@ export class Home implements OnInit, OnDestroy {
 
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/sign_in'], {
-        queryParams: { returnUrl: '/reservas/historial' }
+        queryParams: { returnUrl: '/mis_reservas' }
       });
       return;
     }
 
     const esCliente = this.auth.hasAnyRole(['CLIENTE']);
     const target = esCliente
-      ? '/reservas_cliente/listado'
+      ? '/mis_reservas'  // Aquí cambiamos la ruta a 'mis_reservas' para el cliente
       : '/reservas/listado';
 
     this.router.navigate([target]);
   }
+
 
   goToHabitaciones(event?: Event): void {
     event?.preventDefault();

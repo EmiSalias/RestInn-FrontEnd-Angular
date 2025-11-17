@@ -1,1 +1,48 @@
-<p>detalles-usuario works!</p>
+<section class="profile-page">
+  <ng-container *ngIf="isLoggedIn; else notLogged">
+    <div class="profile-layout">
+
+      <!-- Formulario solo para visualización -->
+      <form class="profile-card">
+        <!-- Botón Volver -->
+        <button type="button" class="btn-back" (click)="goBack()">Volver</button>
+        
+        <h1 class="section-title">Datos personales</h1>
+        <p class="subtitle">Esta es la información del usuario. Los campos son solo de lectura.</p>
+
+        <div class="grid-2">
+          <label>
+            <span class="label">Nombre</span>
+            <input type="text" [value]="user?.nombre" readonly />
+          </label>
+
+          <label>
+            <span class="label">Apellido</span>
+            <input type="text" [value]="user?.apellido" readonly />
+          </label>
+
+          <label>
+            <span class="label">Email</span>
+            <input type="email" [value]="user?.email" readonly />
+          </label>
+
+          <label>
+            <span class="label">Teléfono</span>
+            <input type="text" [value]="user?.phoneNumber" readonly />
+          </label>
+
+          <label>
+            <span class="label">Rol</span>
+            <input type="text" [value]="user?.role" readonly />
+          </label>
+        </div>
+      </form>
+    </div>
+  </ng-container>
+
+  <ng-template #notLogged>
+    <div class="profile-card">
+      <p>Necesitas iniciar sesión para ver tu perfil.</p>
+    </div>
+  </ng-template>
+</section>

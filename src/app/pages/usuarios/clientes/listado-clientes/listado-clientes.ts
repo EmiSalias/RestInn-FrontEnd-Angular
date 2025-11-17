@@ -28,7 +28,6 @@ export class ListadoClientes implements OnInit {
 
     this.userSrv.getAll().subscribe({
       next: (users) => {
-        // Ajustá el nombre del campo si no es "rol"
         this.clientes = users.filter(u => u.role === 'CLIENTE');
         this.loading = false;
       },
