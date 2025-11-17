@@ -47,12 +47,13 @@ export class FormUsuario implements OnInit {
 
     passGroup: this.fb.group(
       {
-        oldPassword: [''],
-        newPassword: ['', [Validators.minLength(8)]],
-        confirm: [''],
+        oldPassword: ['', [Validators.required]], // Se añadió Validators.required
+        newPassword: ['', [Validators.required, Validators.minLength(8)]], // Se añadió Validators.required
+        confirm: ['', [Validators.required]],  // Se añadió Validators.required
       },
       { validators: samePassword }
     ),
+
   });
 
   user: User | null = null;
@@ -135,8 +136,7 @@ export class FormUsuario implements OnInit {
 
     const passGroup = this.form.get('passGroup') as FormGroup;
     const passValue = passGroup.value;
-    const wantsPasswordChange =
-      !!(passValue.oldPassword || passValue.newPassword || passValue.confirm);
+    const wantsPasswordChange = !!(passValue.oldPassword || passValue.newPassword || passValue.confirm);
 
     // Si no hay cambios en los campos de contraseña y no hay cambios en otros datos, muestra un error.
     if (!wantsPasswordChange && !this.form.dirty) {
@@ -146,20 +146,17 @@ export class FormUsuario implements OnInit {
 
     // Validación de los campos de contraseña
     if (wantsPasswordChange) {
-      // Asegúrate de que los tres campos estén completos
       if (!passValue.oldPassword || !passValue.newPassword || !passValue.confirm) {
         passGroup.markAllAsTouched();
         this.errorMsg = 'Completá los tres campos de contraseña.';
         return;
       }
 
-      // Verifica que la nueva contraseña tenga al menos 8 caracteres
       if (passValue.newPassword.length < 8) {
         this.errorMsg = 'La nueva contraseña debe tener al menos 8 caracteres.';
         return;
       }
 
-      // Verifica que las nuevas contraseñas coincidan
       if (passGroup.hasError('mismatch')) {
         this.errorMsg = 'Las nuevas contraseñas no coinciden.';
         return;
@@ -169,7 +166,6 @@ export class FormUsuario implements OnInit {
       const passwordUpdateData = {
         oldPassword: passValue.oldPassword,
         newPassword: passValue.newPassword,
-        confirmPassword: passValue.confirm,
       };
 
       // Llama al servicio para actualizar la contraseña

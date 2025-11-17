@@ -4,20 +4,25 @@ import { SignUp } from './pages/usuarios/sign-up/sign-up';
 import { SignIn } from './pages/usuarios/sign-in/sign-in';
 // #endregion
 // region Usuarios       - IMPORTS
-import { ListadoUsuarios } from './pages/usuarios/listado-usuarios/listado-usuarios';
 import { DetallesUsuario } from './pages/usuarios/detalles-usuario/detalles-usuario';
 import { FormUsuario } from './pages/usuarios/form-usuario/form-usuario';
 // #endregion
 // region CLIENTEs       - IMPORTS
+import { ListadoEmpleados } from './pages/usuarios/empleados/listado-empleados/listado-empleados';
+import { FormEmpleado } from './pages/usuarios/empleados/form-empleado/form-empleado';
+// #endregion
+// region EMPLEADOS       - IMPORTS
 import { FormCliente } from './pages/usuarios/clientes/form-cliente/form-cliente';
 import { DetallesCliente } from './pages/usuarios/clientes/detalles-cliente/detalles-cliente';
 import { ListadoClientes } from './pages/usuarios/clientes/listado-clientes/listado-clientes';
 // #endregion
+
 // region Habitaciones   - IMPORTS
 import { ListadoHabitaciones } from './pages/habitaciones/listado-habitaciones/listado-habitaciones';
 import { DetallesHabitacion } from './pages/habitaciones/detalles-habitacion/detalles-habitacion';
 import { FormHabitacion } from './pages/habitaciones/form-habitacion/form-habitacion';
 import { InhabilitarHabitacion } from './pages/habitaciones/inhabilitar-habitacion/inhabilitar-habitacion';
+import { GestionHabitaciones } from './pages/habitaciones/gestion-habitaciones/gestion-habitaciones';
 // #endregion
 // region Reservas       - IMPORTS
 import { ListadoReservas } from './pages/reservas/listado-reservas/listado-reservas';
@@ -74,8 +79,8 @@ export const routes: Routes = [
                 .then(m => m.ListadoClientes)
     },
     {
-        path: 'listado_usuarios',
-        component: ListadoUsuarios,
+        path: 'listado_empleados',
+        component: ListadoEmpleados,
         canActivate: [AuthGuard],
         data: {
             roles: ['ADMINISTRADOR']
@@ -90,8 +95,8 @@ export const routes: Routes = [
         }
     },
     {
-        path: 'crear_usuario/form',
-        component: FormUsuario,
+        path: 'crear_empleado',
+        component: FormEmpleado,
         canActivate: [AuthGuard],
         data: {
             roles: ['ADMINISTRADOR']
@@ -163,6 +168,14 @@ export const routes: Routes = [
     {
         path: 'editar_habitacion/:id',
         component: FormHabitacion,
+        canActivate: [AuthGuard],
+        data: {
+            roles: ['ADMINISTRADOR']
+        }
+    },
+    {
+        path: 'gestion_habitaciones',
+        component: GestionHabitaciones,
         canActivate: [AuthGuard],
         data: {
             roles: ['ADMINISTRADOR']
@@ -246,9 +259,6 @@ export const routes: Routes = [
             roles: ['ADMINISTRADOR', 'RECEPCIONISTA']
         }
     },
-
-    // endregion
-
     // endregion
 
     // region Consumos - CRUD

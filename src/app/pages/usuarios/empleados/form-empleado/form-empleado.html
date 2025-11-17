@@ -1,0 +1,60 @@
+<section class="form-creacion-empleado">
+  <h1>Crear nuevo empleado</h1>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+
+    <!-- Selección de rol -->
+    <label for="rolEmpleado">Rol</label>
+    <select id="rolEmpleado" formControlName="rolEmpleado" (change)="onRoleChange()" required>
+      <option *ngFor="let rol of roles" [value]="rol">{{ rol }}</option>
+    </select>
+
+    <!-- Campos adicionales que se muestran después de elegir el rol -->
+    <div *ngIf="showAdditionalFields" class="additional-fields">
+      <label for="nombre">Nombre</label>
+      <input id="nombre" formControlName="nombre" required>
+      <div *ngIf="form.get('nombre')?.invalid && form.get('nombre')?.touched" class="error">
+        El nombre es obligatorio.
+      </div>
+
+      <label for="apellido">Apellido</label>
+      <input id="apellido" formControlName="apellido" required>
+      <div *ngIf="form.get('apellido')?.invalid && form.get('apellido')?.touched" class="error">
+        El apellido es obligatorio.
+      </div>
+
+      <label for="nombreLogin">Nombre de usuario</label>
+      <input id="nombreLogin" formControlName="nombreLogin" required>
+      <div *ngIf="form.get('nombreLogin')?.invalid && form.get('nombreLogin')?.touched" class="error">
+        El nombre de usuario es obligatorio.
+      </div>
+
+      <label for="dni">DNI</label>
+      <input id="dni" formControlName="dni" required>
+      <div *ngIf="form.get('dni')?.invalid && form.get('dni')?.touched" class="error">
+        El DNI es obligatorio.
+      </div>
+
+      <label for="phoneNumber">Teléfono</label>
+      <input id="phoneNumber" formControlName="phoneNumber" required>
+      <div *ngIf="form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched" class="error">
+        El teléfono es obligatorio.
+      </div>
+
+      <label for="email">Email</label>
+      <input id="email" formControlName="email" type="email" required>
+      <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="error">
+        El email es obligatorio y debe tener un formato válido.
+      </div>
+
+      <label for="password">Contraseña</label>
+      <input id="password" formControlName="password" type="password" required>
+      <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="error">
+        La contraseña es obligatoria.
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="form.invalid">Crear Empleado</button>
+  </form>
+</section>

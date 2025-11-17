@@ -4,11 +4,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
 import User from '../models/User';
 import { environment } from '../../environments/environment';
+import { tap } from 'rxjs/operators';
+
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private http = inject(HttpClient);
   private readonly baseUrl = environment.API_BASE_URL + '/api/usuarios';
+  private readonly adminBaseUrl = environment.API_BASE_URL + '/api/admin/usuarios';
 
   //Obtiene el usuario actualmente autenticado
   getCurrentUser(): Observable<User> {
@@ -49,6 +52,17 @@ export class UserService {
           newPassword: data.newPassword
         })
       )
+    );
+  }
+
+  createEmployee(data: any): Observable<User> {
+    return this.http.post<User>(`${this.adminBaseUrl}/empleados`, data);
+  }
+
+  // Obtener todos los empleados
+  getAllEmpleados(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.adminBaseUrl}/empleados`).pipe(
+      tap((response) => console.log('Empleados recibidos:', response)) // Verifica la respuesta aquí
     );
   }
 

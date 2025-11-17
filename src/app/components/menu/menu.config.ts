@@ -31,19 +31,21 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    label: 'Gestión de habitaciones',
+    icon: faBed,
+    link: '/gestion_habitaciones',
+    allowedRoles: ['ADMINISTRADOR'],
+  },
+
+  {
     label: 'Habitaciones',
     icon: faBed,
-    allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA', 'CLIENTE'],
+    allowedRoles: ['RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA', 'CLIENTE'],
     children: [
       {
         label: 'Ver todas',
         link: '/listado_habitaciones',
-        allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA']
-      },
-      {
-        label: 'Agregar nueva',
-        link: '/crear_habitacion/form',
-        allowedRoles: ['ADMINISTRADOR']
+        allowedRoles: ['RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA', 'CLIENTE']
       },
     ]
   },
@@ -85,13 +87,8 @@ export const MENU: MenuItem[] = [
   {
     label: 'Facturación & pagos',
     icon: faFileInvoice,
+    link: '/listado_facturas',
     allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE'],
-    children: [
-      {
-        label: 'Facturas',
-        link: '/listado_facturas',
-        allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE']
-      }
-    ]
+
   }
 ];

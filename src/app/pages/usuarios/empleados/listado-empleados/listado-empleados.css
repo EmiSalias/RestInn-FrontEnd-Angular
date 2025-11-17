@@ -1,0 +1,86 @@
+.empleados-page {
+  padding: 40px 60px; /* Aumentamos aún más el padding para mejorar la separación */
+  color: var(--color-text);
+}
+
+.tabla-empleados {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px; /* Más espacio arriba */
+  margin-bottom: 20px; /* Más espacio abajo */
+  font-size: 0.9rem;
+}
+
+.tabla-empleados th,
+.tabla-empleados td {
+  padding: 0.8rem 1.2rem; /* Aumentamos el padding para mejor separación */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.tabla-empleados thead {
+  background-color: #3a2a1c;
+}
+
+.tabla-empleados tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.tabla-empleados tbody tr:hover {
+  background-color: rgba(197, 127, 255, 0.08);
+}
+
+.tabla-empleados td .estado {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  color: #fff;
+}
+
+.tabla-empleados td.activo .estado {
+  background-color: #4caf50; /* Verde */
+}
+
+.tabla-empleados td.inactivo .estado {
+  background-color: #f44336; /* Rojo */
+}
+
+.btn-link {
+  border: none;
+  background: transparent;
+  color: #f1c36f;
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.btn-link:hover {
+  color: #ffd78b;
+}
+
+.empty {
+  margin-top: 16px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Añadir márgenes generales */
+.actions {
+  margin-bottom: 20px; /* Márgenes en las acciones */
+}
+
+.status {
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.status.error {
+  color: #ff6b6b;
+}
+
+/* Alineación de la tabla y margenes */
+.tabla-empleados {
+  margin-left: 20px; /* Espacio a la izquierda */
+  margin-right: 20px; /* Espacio a la derecha */
+}
