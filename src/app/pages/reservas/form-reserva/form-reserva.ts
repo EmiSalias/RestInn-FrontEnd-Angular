@@ -125,7 +125,7 @@ export class FormReserva implements OnInit {
   }
 
   private cargarHabitacion(id: number) {
-    this.habSrv.getPorId(id).subscribe({
+    this.habSrv.getHabitacion(id).subscribe({
       next: (h) => {
         this.hab = h;
         this.capacidadMax = Number(h?.capacidad ?? Number.MAX_SAFE_INTEGER);
