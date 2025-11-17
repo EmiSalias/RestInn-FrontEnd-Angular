@@ -1,5 +1,12 @@
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faHome, faBed, faUtensils, faFileInvoice, faCalendarCheck, faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHome,
+  faBed,
+  faUtensils,
+  faFileInvoice,
+  faCalendarCheck,
+  faUser
+} from '@fortawesome/free-solid-svg-icons';
 
 export type Role = 'ADMINISTRADOR' | 'RECEPCIONISTA' | 'CONSERJE' | 'LIMPIEZA' | 'CLIENTE';
 type Public = 'PUBLIC';
@@ -17,48 +24,71 @@ export const MENU: MenuItem[] = [
   { label: 'Inicio', icon: faHome, link: '/', allowedRoles: 'PUBLIC' },
 
   {
-    label: 'Gestion de usuarios', icon: faUser,
+    label: 'Gestion de usuarios',
+    icon: faUser,
+    link: '/gestion_usuarios',
     allowedRoles: ['ADMINISTRADOR'],
-    children: [
-      { label: 'Ver todas', link: '/listado_habitaciones', allowedRoles: ['ADMINISTRADOR','RECEPCIONISTA','CONSERJE','LIMPIEZA'] },
-      { label: 'Agregar nueva', link: '/crear_habitacion/form', allowedRoles: ['ADMINISTRADOR'] },
-    ]
   },
+
   {
-    label: 'Habitaciones', icon: faBed,
-    allowedRoles: ['ADMINISTRADOR','RECEPCIONISTA','CONSERJE','LIMPIEZA','CLIENTE'],
+    label: 'Gestión de habitaciones',
+    icon: faBed,
+    link: '/gestion_habitaciones',
+    allowedRoles: ['ADMINISTRADOR'],
+  },
+
+  {
+    label: 'Habitaciones',
+    icon: faBed,
+    allowedRoles: ['RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA', 'CLIENTE'],
     children: [
-      { label: 'Ver todas', link: '/listado_habitaciones', allowedRoles: ['ADMINISTRADOR','RECEPCIONISTA','CONSERJE','LIMPIEZA'] },
-      { label: 'Agregar nueva', link: '/crear_habitacion/form', allowedRoles: ['ADMINISTRADOR'] },
+      {
+        label: 'Ver todas',
+        link: '/listado_habitaciones',
+        allowedRoles: ['RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA', 'CLIENTE']
+      },
     ]
   },
 
   {
-    label: 'Reservas', icon: faCalendarCheck,
-    allowedRoles: ['ADMINISTRADOR','RECEPCIONISTA','CLIENTE'],
+    label: 'Gestión de reservas',
+    icon: faCalendarCheck,
+    link: '/gestion_reservas',
+    allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA']
+  },
+
+  {
+    label: 'Reservas',
+    icon: faCalendarCheck,
+    allowedRoles: ['CLIENTE'],
     children: [
-      { label: 'Ver reservas', link: '/listado_reservas', allowedRoles: ['ADMINISTRADOR','RECEPCIONISTA'] },
-      { label: 'Nueva reserva', link: '/crear_reserva/form', allowedRoles: ['ADMINISTRADOR','RECEPCIONISTA','CLIENTE'] },
-      // ejemplo de link dinámico con el id del cliente logueado
-      { label: 'Mis reservas', allowedRoles: ['CLIENTE'], dynamicLink: ({userId}) => ['/mis_reservas', userId!] },
+      {
+        label: 'Ver reservas',
+        link: '/mis_reservas',
+        allowedRoles: ['CLIENTE']
+      },
+      {
+        label: 'Nueva reserva',
+        link: '/crear_reserva',
+        allowedRoles: ['CLIENTE']
+      }
     ]
   },
 
   {
-    label: 'Consumos', icon: faUtensils,
-    allowedRoles: ['ADMINISTRADOR','RECEPCIONISTA','CLIENTE'],
+    label: 'Consumos',
+    icon: faUtensils,
+    allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE'],
     children: [
-      // Los que llevan :id los omitimos del menú a menos que tengas el id en contexto
-      // { label: 'Listado por reserva', dynamicLink: ... }
+      // futuro
     ]
   },
 
   {
-    label: 'Facturación', icon: faFileInvoice,
-    allowedRoles: ['ADMINISTRADOR','RECEPCIONISTA','CLIENTE'],
-    children: [
-      { label: 'Ver facturas', link: '/listado_facturas', allowedRoles: ['ADMINISTRADOR','RECEPCIONISTA'] },
-      // { label: 'Ver facturas por reserva', dynamicLink: ... }
-    ]
+    label: 'Facturación & pagos',
+    icon: faFileInvoice,
+    link: '/listado_facturas',
+    allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE'],
+
   }
 ];

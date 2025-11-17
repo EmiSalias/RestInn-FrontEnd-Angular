@@ -1,13 +1,34 @@
+// src/app/services/reservas-service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpParams
+} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+// ------- DTOs ---------
 
 export interface HuespedRequest {
   nombre: string;
   apellido: string;
   dni: string;
+}
+
+export interface HuespedResponse {
+  nombre: string;
+  apellido: string;
+  dni: string;
+}
+
+export interface UsuarioReservaDTO {
+  id: number;
+  nombre: string;
+  apellido: string;
+  nombreLogin: string;
+  role: string; // simplificado para el front
+  email?: string | null;
 }
 
 export interface ReservaRequest {
@@ -21,27 +42,146 @@ export interface ReservaRequest {
 
 export interface ReservaResponse {
   id: number;
-  // si querés, agregá el resto de los campos del DTO
+  fechaIngreso: string;
+  fechaSalida: string;
+  fechaReserva: string;
+  estado: string;
+  habitacionId: number;
+  habitacionNumero?: number;
+  usuario: UsuarioReservaDTO;
+  huespedes?: HuespedResponse[];
 }
+
+// ------- SERVICE ---------
 
 @Injectable({ providedIn: 'root' })
 export class ReservasService {
+
   private readonly baseUrl = environment.API_BASE_URL + '/api/reservas';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  crearReserva(dto: ReservaRequest): Observable<ReservaResponse> {
+  // Helper para encabezados con token
+  private authHeaders(): HttpHeaders {
     const token = localStorage.getItem('access_token') ?? '';
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    });
-    return this.http.post<ReservaResponse>(this.baseUrl, dto, { headers });
+    const base: any = { 'Content-Type': 'application/json' };
+    return new HttpHeaders(
+      token ? { ...base, Authorization: `Bearer ${token}` } : base
+    );
   }
-  
+
+  // ================================
+  // CREAR / ACTUALIZAR / ELIMINAR
+  // ================================
+
+  /** POST /api/reservas  (crea reserva como usuario autenticado) */
+  crearReserva(dto: ReservaRequest): Observable<ReservaResponse> {
+    return this.http.post<ReservaResponse>(this.baseUrl, dto, {
+      headers: this.authHeaders()
+    });
+  }
+
+  /** PUT /api/reservas/{id}  (actualiza fechas/huespedes) */
+  actualizarReserva(id: number, dto: ReservaRequest): Observable<ReservaResponse> {
+    return this.http.put<ReservaResponse>(`${this.baseUrl}/${id}`, dto, {
+      headers: this.authHeaders()
+    });
+  }
+
+  /** DELETE /api/reservas/{id}  (CLIENTE cancela su propia reserva) */
+  cancelarReserva(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`, {
+      headers: this.authHeaders()
+    });
+  }
+
+  /** DELETE /api/reservas/administrador/{id}  (ADMIN elimina reserva) */
+  eliminarReservaAdmin(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/administrador/${id}`, {
+      headers: this.authHeaders()
+    });
+  }
+
+  // ================================
+  // CONSULTAS
+  // ================================
+
+  /** GET /api/reservas/ocupadas?ingreso=YYYY-MM-DD&salida=YYYY-MM-DD */
   getHabitacionesOcupadas(ingreso: string, salida: string): Observable<number[]> {
-    const params = new HttpParams().set('ingreso', ingreso).set('salida', salida);
+    const params = new HttpParams()
+      .set('ingreso', ingreso)
+      .set('salida', salida);
+
     return this.http.get<number[]>(`${this.baseUrl}/ocupadas`, { params });
   }
-  
+
+  /** GET /api/reservas/mis-reservas  (cliente actual) */
+  getMisReservas(): Observable<ReservaResponse[]> {
+    return this.http.get<ReservaResponse[]>(`${this.baseUrl}/mis-reservas`, {
+      headers: this.authHeaders()
+    });
+  }
+
+  /**
+   * GET /api/reservas  (ADMIN / RECEPCIONISTA)
+   * Opcionalmente filtra por estado o por id de reserva.
+   */
+  getReservasAdmin(opts?: { estado?: string; reservaId?: number }): Observable<ReservaResponse[]> {
+    let params = new HttpParams();
+    if (opts?.estado) params = params.set('estado', opts.estado);
+    if (opts?.reservaId) params = params.set('reservaId', String(opts.reservaId));
+
+    return this.http.get<ReservaResponse[]>(this.baseUrl, {
+      headers: this.authHeaders(),
+      params
+    });
+  }
+
+  /** GET /api/reservas/{idCliente}  (reservas de un cliente, ADMIN / RECEPCIONISTA) */
+  getReservasPorCliente(clienteId: number): Observable<ReservaResponse[]> {
+    return this.http.get<ReservaResponse[]>(`${this.baseUrl}/${clienteId}`, {
+      headers: this.authHeaders()
+    });
+  }
+
+
+  /** DETALLE DE UNA RESERVA POR ID */
+  getReservaDetalle(id: number): Observable<ReservaResponse> {
+    return this.http.get<ReservaResponse>(
+      `${this.baseUrl}/detalle/${id}`,
+      { headers: this.authHeaders() }
+    );
+  }
+
+
+  // ================================
+  // ESTADO DE RESERVA (workflow)
+  // ================================
+
+  /** POST /api/reservas/confirmar/{reservaId} */
+  confirmarReserva(reservaId: number): Observable<ReservaResponse> {
+    return this.http.post<ReservaResponse>(
+      `${this.baseUrl}/confirmar/${reservaId}`,
+      {},
+      { headers: this.authHeaders() }
+    );
+  }
+
+  /** POST /api/reservas/checkin/{reservaId} */
+  checkIn(reservaId: number): Observable<ReservaResponse> {
+    return this.http.post<ReservaResponse>(
+      `${this.baseUrl}/checkin/${reservaId}`,
+      {},
+      { headers: this.authHeaders() }
+    );
+  }
+
+  /** POST /api/reservas/checkout/{reservaId} */
+  checkOut(reservaId: number): Observable<ReservaResponse> {
+    return this.http.post<ReservaResponse>(
+      `${this.baseUrl}/checkout/${reservaId}`,
+      {},
+      { headers: this.authHeaders() }
+    );
+  }
 }

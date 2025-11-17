@@ -1,0 +1,26 @@
+<section class="habitaciones-hub">
+  <h1>Gestión de habitaciones</h1>
+  <p class="subtitle">
+    Administra, visualiza y agrega habitaciones a tu sistema.
+  </p>
+
+  <div class="cards">
+    <!-- Ver habitaciones -->
+    <article class="card" [routerLink]="['/listado_habitaciones']">
+      <div class="icon-wrapper">
+        <fa-icon [icon]="faList"></fa-icon>
+      </div>
+      <h2>Ver habitaciones</h2>
+      <p>Accede a la lista de todas las habitaciones en el sistema.</p>
+    </article>
+
+    <!-- Nueva habitación -->
+    <article class="card" [routerLink]="['/crear_habitacion/form']">
+      <div class="icon-wrapper">
+        <fa-icon [icon]="faPlus"></fa-icon>
+      </div>
+      <h2>Agregar nueva</h2>
+      <p>Crea una nueva habitación para agregar al sistema.</p>
+    </article>
+  </div>
+</section>

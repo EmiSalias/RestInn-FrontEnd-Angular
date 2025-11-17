@@ -1,8 +1,8 @@
+/* --- Contenedor General --- */
 .habitaciones-list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  margin: 110px 30px;
+  gap: 20px;
 }
 
 .section-title {
@@ -14,27 +14,85 @@
   margin-bottom: 0.5rem;
 }
 
-/* FILTROS */
-.filtros {
+/* --- Botonera Superior (Filtrar, Limpiar, Agregar) --- */
+.filtros-toggle {
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filtros-toggle button {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filtros-toggle button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Panel de Filtros (Contenedor) --- */
+.filtros {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s ease;
   background-color: var(--color-surface);
-  padding: 1rem;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  border-radius: 12px;
   border: 1px solid var(--color-border);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.filtros.activo {
+  max-height: 600px;
+  opacity: 1;
+  padding: 1.5rem;
 }
 
 .filtros-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 1rem 1.5rem;
   justify-content: center;
+  align-items: flex-end;
+}
+
+.filtro,
+.filtro-rango {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 1 200px;
+  min-width: 200px;
+}
+
+.filtro label {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* Contenedor para los inputs de rango (min/max) */
+.filtro-rango-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filtro-rango-inputs span {
+  color: var(--color-text-muted);
 }
 
 .filtros input,
 .filtros select {
+  width: 100%;
   padding: 0.4rem 0.6rem;
   border-radius: 6px;
   border: 1px solid var(--color-border);
@@ -43,47 +101,66 @@
   font-size: 0.9rem;
 }
 
-.filtros button {
-  background-color: var(--color-primary);
+.filtros input[type="number"] {
+  text-align: center;
+}
+
+.filtros input[type="date"] {
+  text-align: center;
+}
+
+/* Botones "Aplicar" y "Cancelar" */
+.filtros-bottom {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+}
+
+.filtros-bottom button {
+  background-color: var(--color-secondary);
   color: var(--color-bg);
   border: none;
   border-radius: 6px;
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
-.filtros button:hover {
+.filtros-bottom button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.5);
 }
 
-/* ORDENAMIENTO */
-.orden {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-  color: var(--color-text);
+/* --- Mensajes de Estado (Cargando, Error, Warning) --- */
+.loading {
+  text-align: center;
+  color: var(--color-warning);
 }
 
-.orden select {
-  background-color: var(--color-h-f);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 0.4rem 0.6rem;
-  color: var(--color-text);
+.error {
+  color: var(--color-error);
+  text-align: center;
+  font-weight: 500;
+  margin-top: 0.5rem;
 }
 
-/* LISTADO */
+.warning {
+  color: var(--color-warning);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* --- Grilla de Tarjetas de Habitación --- */
 .habitaciones-grid {
   display: grid;
   gap: 1.5rem;
   grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  align-items: stretch;
 }
 
-/* Reutilizamos tus estilos de cards anteriores */
 .habitacion-card {
   background-color: var(--color-surface);
   border-radius: 16px;
@@ -93,6 +170,7 @@
   display: flex;
   flex-direction: column;
   transition: 0.2s ease;
+  height: 100%;
 }
 
 .habitacion-card:hover {
@@ -103,24 +181,33 @@
 .habitacion-card__image-wrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 4/3;
-  background-color: #4442;
+  aspect-ratio: 4 / 3; /* Proporción fija 4:3 */
+  background-color: var(--color-h-f);
+  overflow: hidden;
 }
 
 .habitacion-card__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .habitacion-card__image--placeholder {
   width: 100%;
   height: 100%;
-  background-color: var(--color-h-f);
   color: var(--color-text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.habitacion-card__body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1rem 1.25rem;
+  gap: 1rem;
 }
 
 .habitacion-card__badge {
@@ -135,33 +222,30 @@
   border-radius: 6px;
 }
 
-.filtro {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+.habitacion-card__badge.badge-inactiva {
+  top: 3.2rem;
+  left: 0.75rem;
+  background-color: var(--color-error);
+  color: #fff;
 }
 
-.filtro label {
-  font-size: 0.9rem;
-  color: var(--color-text);
+/* Estado visual para tarjetas inactivas */
+.habitacion-card.inactiva {
+  opacity: 0.6;
+  border-color: #555;
+}
+.habitacion-card.inactiva:hover {
+  opacity: 1;
 }
 
-.filtro input {
-  width: 70px;
-  padding: 0.3rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-h-f);
-  color: var(--color-text);
-  text-align: center;
-}
-
+/* --- Botonera inferior de cada tarjeta --- */
 .buttons {
   display: flex;
   justify-content: space-around;
   padding: 1rem;
   background-color: var(--color-h-f);
   border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .buttons button {
@@ -175,17 +259,18 @@
   color: var(--color-bg);
 }
 
+/* Colores específicos de botones */
 .buttons button:nth-child(1) { background-color: var(--color-primary); }
 .buttons button:nth-child(2) { background-color: var(--color-secondary); }
-.buttons button:nth-child(3) { background-color: #e6b800; color: #222; }
-.buttons button:nth-child(4) { background-color: var(--color-error); }
 
-.loading {
-  text-align: center;
-  color: var(--color-warning);
+.buttons .btn-edit { 
+  background-color: #e6b800; 
+  color: #222; 
 }
-
-.error {
-  text-align: center;
-  color: var(--color-error);
+.buttons .btn-delete { 
+  background-color: var(--color-error); 
+}
+.buttons .btn-reactivate {
+  background-color: var(--color-success);
+  color: #fff;
 }

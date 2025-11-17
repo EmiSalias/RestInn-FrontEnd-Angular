@@ -1,0 +1,188 @@
+/* src/app/pages/reservas/detalle-reserva/detalle-reserva.css */
+.reserva-detail {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+.back-btn {
+  margin-bottom: 1rem;
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-header h1 {
+  margin: 0;
+  font-size: 1.7rem;
+  color: var(--color-primary);
+}
+
+.detail-header .subtitle {
+  margin: 0.3rem 0 0;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+  gap: 1.75rem;
+}
+
+.detail-block {
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 1rem 1.25rem 1.25rem;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.45);
+  margin-bottom: 1rem;
+}
+
+.detail-block h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.05rem;
+  color: var(--color-primary);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.value {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.value.strong {
+  font-size: 1.05rem;
+}
+
+.muted {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.guest-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.guest-name {
+  font-weight: 500;
+}
+
+.guest-meta {
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+}
+
+.detail-sidebar .room-card {
+  background: var(--color-surface);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.45);
+}
+
+.room-img-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.room-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.room-body {
+  padding: 0.75rem 1rem 1rem;
+}
+
+.room-tag {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.detail-header-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-primary);
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.btn:hover {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+.status-chip {
+  padding: 0.5rem 1rem;
+  border-radius: 16px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.status-chip.pendiente {
+  background-color: #FFB74D; /* Naranja para Pendiente */
+}
+
+.status-chip.confirmada {
+  background-color: #66BB6A; /* Verde para Confirmada */
+}
+
+.status-chip.en-curso {
+  background-color: #2196F3; /* Azul para En curso */
+}
+
+.status-chip.finalizada {
+  background-color: #8E44AD; /* Púrpura para Finalizada */
+}
+
+.status-chip.cancelada {
+  background-color: #FF6B6B; /* Rojo para Cancelada */
+}

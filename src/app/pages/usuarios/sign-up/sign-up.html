@@ -1,84 +1,136 @@
-<!-- src/app/pages/auth/sign-up/sign-up.html -->
-<main class="auth-card">
-  <h2>Crear cuenta</h2>
+<section class="auth-page">
+  <div class="auth-card" [ngSwitch]="step">
 
-  <!-- Paso 1: Formulario -->
-  <section *ngIf="step === 'form'">
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <div class="grid-2">
-        <label>Nombre
-          <input formControlName="nombre" placeholder="Nombre">
-          <small class="err" *ngIf="f.nombre.touched && f.nombre.invalid">Requerido (≥2)</small>
-        </label>
+    <!-- PASO 1: FORMULARIO -->
+    <form *ngSwitchCase="'form'" [formGroup]="form" (ngSubmit)="submit()">
+      <h1>Crear cuenta</h1>
+      <p class="subtitle">Registrate para gestionar tus reservas en RestInn.</p>
 
-        <label>Apellido
-          <input formControlName="apellido" placeholder="Apellido">
-          <small class="err" *ngIf="f.apellido.touched && f.apellido.invalid">Requerido (≥2)</small>
-        </label>
+      <div class="form-grid">
+        <div class="field">
+          <label for="nombre">Nombre</label>
+          <input id="nombre" type="text" formControlName="nombre" />
+          <div class="field-error" *ngIf="f.nombre.touched && f.nombre.invalid">
+            Ingresá tu nombre.
+          </div>
+        </div>
 
-        <label>Usuario
-          <input formControlName="nombreLogin" placeholder="usuario">
-          <small class="err" *ngIf="f.nombreLogin.touched && f.nombreLogin.invalid">
-            3–30 caracteres
-          </small>
-        </label>
+        <div class="field">
+          <label for="apellido">Apellido</label>
+          <input id="apellido" type="text" formControlName="apellido" />
+          <div class="field-error" *ngIf="f.apellido.touched && f.apellido.invalid">
+            Ingresá tu apellido.
+          </div>
+        </div>
 
-        <label>Email
-          <input formControlName="email" placeholder="nombre@dominio.com">
-          <small class="err" *ngIf="f.email.touched && f.email.invalid">Email inválido</small>
-        </label>
+        <div class="field full">
+          <label for="email">Correo electrónico</label>
+          <input id="email" type="email" formControlName="email" />
+          <div class="field-error" *ngIf="f.email.touched && f.email.invalid">
+            Ingresá un correo válido.
+          </div>
+        </div>
 
-        <label>DNI
-          <input formControlName="dni" placeholder="Solo números (7–10)">
-          <small class="err" *ngIf="f.dni.touched && f.dni.invalid">Formato inválido</small>
-        </label>
+        <div class="field">
+          <label for="nombreLogin">Usuario</label>
+          <input id="nombreLogin" type="text" formControlName="nombreLogin" />
+          <div class="field-error" *ngIf="f.nombreLogin.touched && f.nombreLogin.invalid">
+            Elegí un usuario (3 a 30 caracteres).
+          </div>
+        </div>
 
-        <label>Teléfono
-          <input formControlName="phoneNumber" placeholder="+54 11 5555 5555">
-          <small class="err" *ngIf="f.phoneNumber.touched && f.phoneNumber.invalid">Formato inválido</small>
-        </label>
+        <div class="field">
+          <label for="dni">DNI (opcional)</label>
+          <input id="dni" type="text" formControlName="dni" />
+        </div>
 
-        <label>CUIT
-          <input formControlName="cuit" placeholder="11 dígitos">
-          <small class="err" *ngIf="f.cuit.touched && f.cuit.invalid">11 dígitos</small>
-        </label>
+        <div class="field">
+          <label for="phoneNumber">Teléfono (opcional)</label>
+          <input id="phoneNumber" type="text" formControlName="phoneNumber" />
+        </div>
 
-        <div formGroupName="passGroup">
-          <label>Contraseña
-            <input type="password" formControlName="password" placeholder="Mínimo 8">
-          </label>
-          <label>Repetir contraseña
-            <input type="password" formControlName="confirm" placeholder="Repetir">
-          </label>
-          <small class="err" *ngIf="pass.password.touched && pass.password.invalid">Min. 8</small>
-          <small class="err" *ngIf="(form.get('passGroup')?.touched || pass.confirm.touched) && form.get('passGroup')?.errors?.['mismatch']">
-            Las contraseñas no coinciden
-          </small>
+        <div class="field">
+          <label for="cuit">CUIT (opcional)</label>
+          <input id="cuit" type="text" formControlName="cuit" />
         </div>
       </div>
 
-      <div class="actions">
-        <button type="submit" [disabled]="loading">Crear cuenta</button>
-        <span class="hint" *ngIf="loading">Enviando…</span>
-        <small class="err" *ngIf="!loading && errorMsg">{{ errorMsg }}</small>
+      <div formGroupName="passGroup" class="pass-group">
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input id="password" type="password" formControlName="password" />
+          <div class="field-error" *ngIf="pass.password.touched && pass.password.invalid">
+            Mínimo 8 caracteres.
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="confirm">Confirmar contraseña</label>
+          <input id="confirm" type="password" formControlName="confirm" />
+          <div
+            class="field-error"
+            *ngIf="form.get('passGroup')?.touched && form.get('passGroup')?.hasError('mismatch')">
+            Las contraseñas no coinciden.
+          </div>
+        </div>
       </div>
+
+      <div class="auth-actions">
+        <button class="btn-gold" type="submit" [disabled]="loading">
+          Crear cuenta
+        </button>
+
+        <button class="btn-ghost" type="button" (click)="goToSignIn()">
+          ¿Ya tenés cuenta? Iniciar sesión
+        </button>
+      </div>
+
+      <p class="auth-error" *ngIf="errorMsg">{{ errorMsg }}</p>
+      <p class="auth-info" *ngIf="infoMsg">{{ infoMsg }}</p>
+      <p class="auth-loading" *ngIf="loading">Procesando...</p>
     </form>
-  </section>
 
-  <!-- Paso 2: Verificación -->
-  <section *ngIf="step === 'verify'">
-    <p>Te enviamos un código de verificación al correo. Ingrésalo para activar tu cuenta.</p>
-    <div class="verify-row">
-      <input [formControl]="codeCtrl" placeholder="Código de 6 dígitos" maxlength="6">
-      <button type="button" (click)="onVerify()" [disabled]="loading">Verificar</button>
+    <!-- PASO 2: VERIFICAR CÓDIGO -->
+    <div *ngSwitchCase="'verify'" [formGroup]="codeForm">
+      <h1>Confirmá tu correo</h1>
+      <p class="auth-subtitle">
+        Ingresá el código de 6 dígitos.
+      </p>
+
+      <div class="code-inputs">
+        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d1" />
+        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d2" />
+        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d3" />
+        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d4" />
+        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d5" />
+        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d6" />
+      </div>
+
+      <div class="auth-actions">
+        <button type="button" class="btn-gold" (click)="onVerify()" [disabled]="loading">
+          Verificar cuenta
+        </button>
+        <button type="button" class="btn-ghost" (click)="backToForm()" [disabled]="loading">
+          Volver al formulario
+        </button>
+      </div>
+
+      <p class="auth-helper" *ngIf="infoMsg">{{ infoMsg }}</p>
+      <p class="auth-error" *ngIf="errorMsg">{{ errorMsg }}</p>
+      <p class="auth-loading" *ngIf="loading">Verificando...</p>
     </div>
-    <small class="err" *ngIf="!loading && errorMsg">{{ errorMsg }}</small>
-  </section>
 
-  <!-- Paso 3: Éxito -->
-  <section *ngIf="step === 'success'">
-    <h3>¡Cuenta activada!</h3>
-    <p>Ya podés iniciar sesión.</p>
-    <button type="button" (click)="goToSignIn()">Ir a Iniciar sesión</button>
-  </section>
-</main>
+    <!-- PASO 3: SUCCESS -->
+    <div *ngSwitchCase="'success'">
+      <h1>Cuenta creada</h1>
+      <p class="subtitle">
+        Tu cuenta fue confirmada correctamente. Ya podés iniciar sesión.
+      </p>
+
+      <button class="btn-gold" type="button" (click)="goToSignIn()">
+        Ir al inicio de sesión
+      </button>
+    </div>
+
+  </div>
+</section>

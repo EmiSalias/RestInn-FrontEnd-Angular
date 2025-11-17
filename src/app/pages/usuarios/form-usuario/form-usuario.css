@@ -1,3 +1,169 @@
-p{height: 700px;
-margin-top: 400px;
-margin-bottom: 400px}
+/* src/app/pages/usuarios/form-usuario/form-usuario.css */
+
+.profile-page {
+  padding: 40px 16px;
+}
+
+.profile-layout {
+  max-width: 960px;
+  margin: 0 auto 32px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+}
+
+.profile-menu {
+  background: #1b1815;
+  border-radius: 16px;
+  padding: 16px 12px;
+}
+
+.menu-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #f1c36f;
+}
+
+.menu-item {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  background: transparent;
+  color: #e6ddcf;
+  cursor: default;
+  font-size: 14px;
+}
+
+.menu-item.active {
+  background: #2a211a;
+}
+
+.profile-card {
+  background: #221f1c;
+  border-radius: 18px;
+  padding: 24px 24px 20px;
+}
+
+.profile-card h1 {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #d4c2a5;
+  margin-bottom: 20px;
+}
+
+.subtitle.small {
+  margin-top: 4px;
+}
+
+.section-title {
+  font-size: 18px;
+  margin: 24px 0 8px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+}
+
+.security-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+}
+
+.security-grid label:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+label .label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+input {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #3b352f;
+  background: #151310;
+  padding: 10px 12px;
+  color: #f7f3e9;
+  font-size: 14px;
+}
+
+input:disabled {
+  opacity: 0.7;
+}
+
+.actions {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-gold {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 0;
+  background: #f1c36f;
+  color: #1b120b;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-gold[disabled] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.saving {
+  font-size: 12px;
+  color: #d4c2a5;
+}
+
+.err {
+  color: #ff8a8a;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.info {
+  color: #d4b068;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.hint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #b5a28b;
+}
+
+@media (max-width: 768px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-2,
+  .security-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;        /* separación entre campos */
+  margin-top: 16px;
+}
+
+.security-grid label {
+  display: flex;
+  flex-direction: column;
+}
+}

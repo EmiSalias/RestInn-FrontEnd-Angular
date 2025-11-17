@@ -1,0 +1,381 @@
+/* Contenedor general */
+.admin-reservations-page {
+  padding: 110px 40px 40px;
+  color: var(--color-text);
+}
+
+.admin-reservations-page h1 {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.admin-reservations-page .subtitle {
+  margin-bottom: 24px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Panel de filtros */
+.filters-panel {
+  background-color: #21160d;
+  border-radius: 24px;
+  padding: 20px 24px 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  margin-bottom: 18px;
+}
+
+/* Ahora los filtros se acomodan en 2/3 columnas, no 6 en línea */
+.filters-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px 24px;
+  align-items: flex-end;
+}
+
+.filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filtro label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.filtro select,
+.filtro input[type="date"],
+.filtro input[type="text"] {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #3a2920;
+  background-color: #1a120c;
+  color: var(--color-text);
+  font-size: 13px;
+  outline: none;
+  appearance: none;
+}
+
+.filtro select:focus,
+.filtro input:focus {
+  border-color: #f1c36f;
+  box-shadow: 0 0 0 1px rgba(241, 195, 111, 0.7);
+}
+
+.dates-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dates-filter span {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* Botón limpiar */
+.filters-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.filters-actions button {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background-color: #c5924a;
+  color: #1d140c;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.filters-actions button:hover {
+  background-color: #f1c36f;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* Resumen resultados */
+.reservations-summary {
+  margin-bottom: 14px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* Mensajes de estado */
+.status {
+  margin-top: 24px;
+  font-size: 14px;
+  text-align: center;
+  opacity: 0.9;
+}
+
+.status.error {
+  color: #ff8b8b;
+}
+
+.empty {
+  margin-top: 24px;
+  font-size: 14px;
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* GRID de reservas (multi fila, cards algo más anchas) */
+.reservations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px 20px;
+  align-items: stretch;
+}
+
+/* Card de reserva */
+.reservation-card {
+  background-color: #21160d;
+  border-radius: 22px;
+  padding: 16px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.reservation-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.7);
+  background-color: #2a1a10;
+}
+
+/* Layout interno: mini foto + contenido */
+.reservation-main {
+  display: flex;
+  gap: 14px;
+}
+
+/* Thumbnail habitación (al costado) */
+.thumb-wrapper {
+  flex: 0 0 82px;
+  height: 82px;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #1a120c;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.7);
+}
+
+.thumb-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Contenido de la card al lado de la foto */
+.reservation-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header de la card */
+.reservation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.room-tag {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1c36f;
+  margin-bottom: 4px;
+}
+
+.client-line {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.client-role {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Chip de estado */
+.status-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Colores por estado */
+.status-chip.pendiente {
+  background-color: #3c2a13;
+  color: #f7c56b;
+}
+
+.status-chip.confirmada {
+  background-color: #23452b;
+  color: #9af59f;
+}
+
+.status-chip.en_curso {
+  background-color: #234054;
+  color: #8ad7ff;
+}
+
+.status-chip.finalizada {
+  background-color: #262626;
+  color: #d5d5d5;
+}
+
+.status-chip.cancelada {
+  background-color: #4b1e2d;
+  color: #ff9fb8;
+}
+
+/* Cuerpo de la card */
+.reservation-body {
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.dates {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.dates .label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+
+.dates .value {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.extra {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.reservation-footer {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #2b1c12;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* botón un toque más compacto en la card */
+.reservation-footer .btn-gold {
+  padding: 6px 14px;
+  font-size: 12px;
+}
+
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #f1c36f;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.link-btn:hover {
+  color: #ffd88b;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .admin-reservations-page {
+    padding: 96px 16px 24px;
+  }
+
+  .filters-panel {
+    padding: 16px;
+    border-radius: 18px;
+  }
+}
+/* Botón dorado reutilizable (Limpiar filtros / Ver detalle) */
+.btn-gold {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background-color: #c5924a;
+  color: #1d140c;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-gold:hover {
+  background-color: #f1c36f;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+}
+
+.btn-gold:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+/* Botón de cancelar (rojo, outline) */
+.btn-danger-outline {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #ff6b6b;
+  background: transparent;
+  color: #ff6b6b;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.btn-danger-outline:hover {
+  background-color: #ff6b6b;
+  color: #1b0f0b;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+}

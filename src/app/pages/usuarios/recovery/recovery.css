@@ -1,12 +1,131 @@
 /* src/app/pages/auth/recovery/recovery.css */
-.auth-card { max-width: 720px; margin: 96px auto 40px; padding: 24px; border-radius: 16px; background: #221f1c; }
-.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-label { display:block; font-size:14px; }
-input { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #3b352f; background:#151310; color:#eee; }
-.actions { margin-top:16px; display:flex; gap:12px; align-items:center; }
-button { padding:10px 14px; border-radius:12px; border:0; background:#d4b068; color:#1a1714; cursor:pointer; }
-button[disabled]{ opacity:.6; cursor:default; }
-.err { color:#ff8a8a; display:block; margin-top:4px; }
-.hint,.info{ color:#d4b068; }
-.verify-row{ display:flex; gap:12px; align-items:center; }
-@media (max-width:640px){ .grid-2{ grid-template-columns:1fr; } }
+
+.auth-card {
+  max-width: 720px;
+  margin: 96px auto 40px;
+  padding: 24px;
+  border-radius: 16px;
+  background: #221f1c;
+}
+
+/* Campos normales (email, password, etc.) */
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #eee3d5;
+}
+
+.field input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #3b352f;
+  background: #151310;
+  color: #eee;
+  font-size: 14px;
+}
+
+.field-error {
+  color: #ff8a8a;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Texto auxiliar */
+.helper {
+  margin-top: 12px;
+  color: #d4b068;
+  font-size: 13px;
+}
+
+/* Botones (ya los usás en otros auth) */
+.btn-gold {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 0;
+  background: #f1c36f;
+  color: #1a1714;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn-gold[disabled] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.link-under {
+  margin-top: 8px;
+  background: transparent;
+  border: 0;
+  color: #e0d3c0;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* === CÓDIGO DE 6 DÍGITOS (MISMA ESTÉTICA QUE SIGN-UP) === */
+.code-inputs {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start; /* o center si lo querés centrado */
+  margin: 24px 0 16px;
+}
+
+.code-inputs .code-box {
+  width: 52px;
+  height: 56px;
+  text-align: center;
+  font-size: 24px;
+  border-radius: 12px;
+  border: 1px solid #3b352f;
+  background: #151310;
+  color: #f7f3e9;
+  outline: none;
+}
+
+.code-inputs .code-box:focus {
+  border-color: #f1c36f;
+}
+
+/* Mensajes globales */
+.info-msg {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #d4b068;
+}
+
+.error-msg {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #ff8a8a;
+}
+
+.loading-msg {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #e0d3c0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .auth-card {
+    margin: 64px 16px 24px;
+    padding: 20px;
+  }
+
+  .code-inputs {
+    justify-content: space-between;
+  }
+
+  .code-inputs .code-box {
+    flex: 1 1 auto;
+    max-width: 48px;
+  }
+}

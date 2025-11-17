@@ -1,1 +1,161 @@
-<p>listado-reservas works!</p>
+<!-- src/app/pages/reservas/listado-reservas/listado-reservas.html -->
+<section class="admin-reservations-page">
+    <h1>{{ titulo }}</h1>
+    <p class="subtitle">
+        {{ subtitulo }}
+    </p>
+
+    <!-- FILTROS -->
+    <div class="filters-panel">
+        <div class="filters-row">
+
+            <!-- Estado (ambos modos) -->
+            <div class="filtro">
+                <label>Estado</label>
+                <select [(ngModel)]="filtros.estado" (change)="aplicarFiltros()">
+                    <option value="">Todos</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="CONFIRMADA">Confirmada</option>
+                    <option value="EN_CURSO">En curso</option>
+                    <option value="FINALIZADA">Finalizada</option>
+                    <option value="CANCELADA">Cancelada</option>
+                </select>
+            </div>
+
+            <!-- Creada por (solo admin/recepción) -->
+            <div class="filtro" *ngIf="modoAdmin">
+                <label>Creada por</label>
+                <select [(ngModel)]="filtros.rolUsuario" (change)="aplicarFiltros()">
+                    <option value="">Cualquiera</option>
+                    <option value="CLIENTE">Cliente</option>
+                    <option value="RECEPCIONISTA">Recepcionista</option>
+                    <option value="ADMINISTRADOR">Administrador</option>
+                </select>
+            </div>
+
+            <!-- Cliente (solo admin/recepción) -->
+            <div class="filtro" *ngIf="modoAdmin">
+                <label>Cliente</label>
+                <select [(ngModel)]="filtros.clienteId" (change)="aplicarFiltros()">
+                    <option [ngValue]="null">Todos</option>
+                    <option *ngFor="let c of clientesUnicos" [ngValue]="c.id">
+                        {{ c.nombre }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Fechas (ambos modos) -->
+            <div class="filtro">
+                <label>Fechas (ingreso / salida)</label>
+                <div class="dates-filter">
+                    <input type="date" [(ngModel)]="filtros.fechaDesde" (change)="aplicarFiltros()">
+                    <span>—</span>
+                    <input type="date" [(ngModel)]="filtros.fechaHasta" (change)="aplicarFiltros()">
+                </div>
+            </div>
+
+            <!-- Buscar (ambos modos) -->
+            <div class="filtro filtro-search">
+                <label>Buscar</label>
+                <input type="text" [(ngModel)]="filtros.search" (input)="aplicarFiltros()"
+                    placeholder="Nombre, #reserva, #hab..." />
+            </div>
+
+            <!-- Orden (ambos modos) -->
+            <div class="filtro">
+                <label>Ordenar por</label>
+                <select [(ngModel)]="orden" (change)="ordenar()">
+                    <option value="ingresoDesc">Ingreso más reciente</option>
+                    <option value="ingresoAsc">Ingreso más antiguo</option>
+                    <option value="estado">Estado</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="filters-actions">
+            <button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
+        </div>
+    </div>
+
+    <!-- RESUMEN -->
+    <div class="reservations-summary" *ngIf="!loading && !errorMsg && reservasFiltradas.length">
+        Mostrando {{ reservasFiltradas.length }} reservas.
+    </div>
+
+    <div class="status" *ngIf="loading">Cargando reservas...</div>
+    <div class="status error" *ngIf="!loading && errorMsg">{{ errorMsg }}</div>
+
+    <!-- GRID -->
+    <div class="reservations-grid" *ngIf="!loading && !errorMsg && reservasFiltradas.length">
+
+        <article class="reservation-card" *ngFor="let r of reservasFiltradas">
+            <div class="reservation-main">
+                <!-- FOTO DE LA HABITACIÓN -->
+                <div class="thumb-wrapper">
+                    <img [src]="getHabitacionThumb(r.habitacionId) || defaultRoomImg"
+                        alt="Habitación {{ r.habitacionNumero || r.habitacionId }}" (error)="onImgError($event)" />
+                </div>
+
+                <!-- CONTENIDO -->
+                <div class="reservation-main-content">
+                    <header class="reservation-header">
+                        <div>
+                            <div class="room-tag">
+                                Habitación {{ r.habitacionNumero || r.habitacionId }}
+                            </div>
+
+                            <div class="client-line" *ngIf="modoAdmin">
+                                {{ r.usuario?.nombre }} {{ r.usuario?.apellido }}
+                                ·
+                                <span class="client-role">
+                                    {{ rolLabel(r.usuario?.role) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <span class="status-chip" [ngClass]="r.estado?.toLowerCase()">
+                            {{ estadoLabel(r.estado) }}
+                        </span>
+                    </header>
+
+                    <div class="reservation-body">
+                        <div class="dates">
+                            <div>
+                                <span class="label">Ingreso</span>
+                                <span class="value">
+                                    {{ r.fechaIngreso | date:'dd/MM/yyyy' }}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="label">Salida</span>
+                                <span class="value">
+                                    {{ r.fechaSalida | date:'dd/MM/yyyy' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="extra">
+                            <span>{{ contarHuespedes(r) }} huésped(es)</span>
+                            <span>Reserva #{{ r.id }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="reservation-footer">
+                <button class="btn-gold" [routerLink]="['/reserva', r.id]">
+                    Ver detalle
+                </button>
+                <button *ngIf="puedeCancelar(r)" type="button" class="btn-danger-outline" (click)="onCancelarClick(r)">
+                    Cancelar reserva
+                </button>
+            </footer>
+
+        </article>
+    </div>
+
+    <div class="empty" *ngIf="!loading && !errorMsg && !reservasFiltradas.length">
+        No se encontraron reservas con los filtros actuales.
+    </div>
+</section>

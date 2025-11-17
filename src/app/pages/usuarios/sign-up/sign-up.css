@@ -18,3 +18,54 @@ button[disabled] { opacity: .6; cursor: default; }
   border-radius: 16px;
   background: #221f1c;
 }
+/* CONTENEDOR de los 6 dígitos */
+.code-inputs {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin: 24px 0 20px;
+}
+
+/* Cada cajita de código */
+.code-inputs .code-box {
+  width: 56px;
+  height: 56px;
+  max-width: 56px;
+  flex: 0 0 56px;              /* NO crecer */
+  text-align: center;
+  font-size: 24px;
+  font-weight: 500;
+  border-radius: 14px;
+
+  background-color: #120c08;
+  border: 1px solid #3a2920;
+  color: #f8f1e7;
+
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* Pisar cualquier regla global de width:100% */
+.auth-card .code-inputs .code-box {
+  width: 56px !important;
+}
+
+/* Focus */
+.code-inputs .code-box:focus {
+  border-color: #f1c36f;
+  box-shadow: 0 0 0 2px rgba(241, 195, 111, 0.35);
+}
+
+/* Para que no se vean gigantes en mobile, si querés */
+@media (max-width: 480px) {
+  .code-inputs {
+    gap: 8px;
+  }
+
+  .code-inputs .code-box {
+    width: 44px !important;
+    height: 44px;
+    font-size: 20px;
+    border-radius: 10px;
+  }
+}

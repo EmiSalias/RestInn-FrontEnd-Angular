@@ -8,16 +8,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReservasService, ReservaRequest } from '../../../services/reservas-service';
 import Habitacion from '../../../models/Habitacion';
 import { HabitacionService } from '../../../services/habitacion-service';
-import { ImagenesService } from '../../../services/imagenes.service';
+import { ImagenService } from '../../../services/imagen-service';
+import Swal from 'sweetalert2';
 
-/** Valida que fechaSalida > fechaIngreso */
+
 function rangoFechasValidator(group: AbstractControl) {
   const fi = group.get('fechaIngreso')?.value as string | null;
   const fs = group.get('fechaSalida')?.value as string | null;
   if (!fi || !fs) return null;
   return fs > fi ? null : { rangoInvalido: true };
 }
-// --- validator: no superar capacidad ---
+// validator: no superar capacidad
 function arrayMaxLength(maxProvider: () => number): ValidatorFn {
   return (control: AbstractControl) => {
     const arr = control as FormArray;
@@ -41,7 +42,7 @@ export class FormReserva implements OnInit {
   private router = inject(Router);
   private reservasSrv = inject(ReservasService);
   private habSrv = inject(HabitacionService);
-  private imgSrv = inject(ImagenesService);
+  private imgSrv = inject(ImagenService);
 
   form: FormGroup = this.fb.group({
     habitacionId: [null, Validators.required],
@@ -54,16 +55,16 @@ export class FormReserva implements OnInit {
   errorMsg: string | null = null;
   todayStr = new Date().toISOString().slice(0, 10);
 
-  // ---- datos para la galería ----
+  // datos para la galería
   hab: Habitacion | null = null;
   imgUrls: string[] = [];
   selectedIdx = 0;
-  capacidadMax = Number.MAX_SAFE_INTEGER;   // se fija al cargar la habitación
+  capacidadMax = Number.MAX_SAFE_INTEGER;
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(qp => {
       const habitacionIdStr = qp.get('habitacionId');
-      const capStr = qp.get('capacidad');      // 👈 NUEVO
+      const capStr = qp.get('capacidad');
       const fi = qp.get('fechaIngreso') ?? qp.get('ingreso') ?? qp.get('fi');
       const fs = qp.get('fechaSalida') ?? qp.get('salida') ?? qp.get('fs');
       const isISO = (s: string | null) => !!s && /^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -75,7 +76,7 @@ export class FormReserva implements OnInit {
       if (isISO(fs)) patch.fechaSalida = fs!;
       if (Object.keys(patch).length) this.form.patchValue(patch, { emitEvent: false });
 
-      // ⬇️ Setear capacidad al toque si viene por query
+      // Setea capacidad al toque si viene por query
       if (capStr && !Number.isNaN(+capStr)) {
         this.capacidadMax = +capStr;
         // si ya me pasé, recorto
@@ -85,7 +86,7 @@ export class FormReserva implements OnInit {
         this.refrescarValidadoresHuespedes();
       }
 
-      // Cargar data de respaldo/confirmación desde API
+      // Carga data de respaldo/confirmación desde API
       const habitacionId = +(habitacionIdStr || this.form.get('habitacionId')?.value || 0);
       if (habitacionId) {
         this.cargarHabitacion(habitacionId);    // esto reafirma capacidad
@@ -93,7 +94,7 @@ export class FormReserva implements OnInit {
       }
     });
 
-    // si cambia desde UI, re-cargar datos y revalidar
+    // si cambia desde UI, recargar datos y revalidar
     this.form.get('habitacionId')?.valueChanges.subscribe((v) => {
       const id = Number(v);
       if (id) {
@@ -160,11 +161,32 @@ export class FormReserva implements OnInit {
   removeHuesped(idx: number) { if (this.huespedesFA.length > 1) this.huespedesFA.removeAt(idx); }
 
   submit() {
+    // Validación de capacidad
     if (this.huespedesFA.length > this.capacidadMax) {
       this.errorMsg = `Máximo ${this.capacidadMax} huésped(es) para esta habitación.`;
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Capacidad superada',
+        text: this.errorMsg,
+      });
+
       return;
     }
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+
+    // Validación de formulario
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Formulario incompleto',
+        text: 'Revisá los campos marcados en rojo.',
+      });
+
+      return;
+    }
+
     const raw = this.form.value;
     const dto: ReservaRequest = {
       fechaIngreso: raw.fechaIngreso,
@@ -172,17 +194,41 @@ export class FormReserva implements OnInit {
       habitacionId: Number(raw.habitacionId),
       huespedes: raw.huespedes
     };
-    this.loading = true; this.errorMsg = null;
+
+    this.loading = true;
+    this.errorMsg = null;
+
     this.reservasSrv.crearReserva(dto).subscribe({
-      next: (res) => this.router.navigate(['/reserva', res.id]),
-      error: (err) => {
-        console.error('Error creando reserva', err);
-        this.errorMsg = err?.error?.message || 'No se pudo crear la reserva. Verificá fechas y disponibilidad.';
+      next: (res) => {
         this.loading = false;
+
+        // Popup de éxito + luego navegación al detalle
+        Swal.fire({
+          icon: 'success',
+          title: 'Reserva creada',
+          text: `Tu reserva se creó correctamente. Código: #${res.id}`,
+          confirmButtonText: 'Ver detalle'
+        }).then(() => {
+          this.router.navigate(['/reserva', res.id]); // ruta que ya usabas
+        });
+      },
+      error: (err) => {
+        this.loading = false;
+        const msg =
+          err?.error?.message ||
+          'No se pudo crear la reserva. Verificá fechas y disponibilidad.';
+
+        this.errorMsg = msg;
+
+        Swal.fire({
+          icon: 'error',
+          title: 'No se pudo crear la reserva',
+          text: msg,
+        });
       }
     });
-
   }
+
 
   private cargarImagenes(habitacionId: number) {
     this.imgSrv.getUrlsPorHabitacion(habitacionId).subscribe({

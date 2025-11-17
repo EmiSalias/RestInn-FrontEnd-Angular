@@ -1,1 +1,58 @@
-<p>perfil-usuario works!</p>
+<!-- src/app/pages/usuario/perfil-usuario.html -->
+<main class="auth-card">
+    <h2>Perfil de Usuario</h2>
+
+    @if (user) {
+        <section>
+            <div class="grid-2">
+                <label>
+                    <h4>Nombre</h4>
+                    <span>{{user.nombre}}</span>
+                </label>
+
+                <label>
+                    <h4>Apellido</h4>
+                    <span>{{user.apellido}}</span>
+                </label>
+
+                <label>
+                    <h4>Usuario</h4>
+                    <span>{{user.nombreLogin}}</span>
+                </label>
+
+                <label>
+                    <h4>Email</h4>
+                    <span>{{user.email}}</span>
+                </label>
+
+                <label>
+                    <h4>DNI</h4>
+                    <span>{{user.dni}}</span>
+                </label>
+
+                <label>
+                    <h4>Teléfono</h4>
+                    <span>{{user.phoneNumber}}</span>
+                </label>
+
+                <label>
+                    <h4>CUIT</h4>
+                    <span>{{user.cuit}}</span>
+                </label>
+
+                <label>
+                    <h4>Rol</h4>
+                    <span>{{user.role}}</span>
+                </label>
+            </div>
+
+            <div class="actions">
+            <button type="button" (click)="editar()">Editar perfil</button>
+            </div>
+        </section>
+    } @else {
+        <section>
+            <p>No se encontró información del usuario.</p>
+        </section>
+    }
+</main>

@@ -1,1 +1,106 @@
-<p>form-habitacion works!</p>
+<main class="page-habitacion">
+  <section class="form-card">
+    <h2>{{ editMode ? 'Editar habitación' : 'Crear habitación' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Número</label>
+          <input type="number" formControlName="numero" min="1" />
+          @if (form.get('numero')?.invalid && form.get('numero')?.touched) {
+            <small class="error">Número obligatorio</small>
+          }
+        </div>
+
+        <div class="field">
+          <label>Piso</label>
+          <input type="number" formControlName="piso" min="0" />
+        </div>
+
+        <div class="field">
+          <label>Capacidad</label>
+          <input type="number" formControlName="capacidad" min="1" />
+        </div>
+
+        <div class="field">
+          <label>Camas</label>
+          <input type="number" formControlName="cantCamas" min="1" />
+        </div>
+
+        <div class="field">
+          <label>Precio por noche</label>
+          <input type="number" formControlName="precioNoche" min="0" step="0.01" />
+        </div>
+
+        <div class="field">
+          <label>Estado</label>
+          <select formControlName="estado">
+            <option value="DISPONIBLE">Disponible</option>
+            <option value="OCUPADA">Ocupada</option>
+            <option value="MANTENIMIENTO">Mantenimiento</option>
+            <option value="LIMPIEZA">Limpieza</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Tipo</label>
+          <select formControlName="tipo">
+            <option value="SIMPLE">Simple</option>
+            <option value="DOBLE">Doble</option>
+            <option value="TRIPLE">Triple</option>
+            <option value="CUADRUPLE">Cuádruple</option>
+            <option value="DELUXE">Deluxe</option>
+          </select>
+        </div>
+
+        @if (editMode) {
+          <div class="field field-toggle">
+            <label for="activo">Habitación Activa</label>
+            <label class="switch">
+              <input type="checkbox" id="activo" formControlName="activo">
+              <span class="slider round"></span>
+            </label>
+            <small class="hint">Desmarcar para inhabilitar. Marcar para reactivar.</small>
+          </div>
+        }
+      </div>
+
+      <div class="field">
+        <label>Comentario (Opcional)</label>
+        <textarea rows="2" formControlName="comentario"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Imágenes</label>
+        <input type="file" multiple (change)="onFilesSelected($event)" accept="image/*" />
+      </div>
+
+      @if (imagenesPreview.length > 0) {
+        <section class="galeria">
+          <div class="galeria__thumbs">
+            @for (img of imagenesPreview; let i = $index; track $index) {
+              <div class="thumb">
+                <img [src]="img.url" [alt]="'Imagen ' + (i + 1)" />
+                <button type="button" class="btn-remove" (click)="removeImage(i)" title="Eliminar imagen">✕</button>
+              </div>
+            }
+          </div>
+        </section>
+      } @else {
+        <div class="galeria galeria--empty">Sin imágenes cargadas</div>
+      }
+
+      <div class="actions">
+        <button type="submit" [disabled]="loading || form.invalid">
+          @if (loading) {
+            <span>Guardando...</span>
+          } @else {
+            <span>{{ editMode ? 'Guardar cambios' : 'Crear habitación' }}</span>
+          }
+        </button>
+        <button type="button" class="btn-ghost" (click)="volver()">Cancelar</button>
+      </div>
+    </form>
+  </section>
+</main>

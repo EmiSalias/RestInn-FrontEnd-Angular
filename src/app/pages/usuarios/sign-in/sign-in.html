@@ -13,9 +13,16 @@
     <input id="password" formControlName="password" type="password"/>
 
     <div class="actions">
-      <button type="submit" [disabled]="loginForm.invalid">Ingresar</button>
+      <button type="submit" [disabled]="loginForm.invalid">
+        Ingresar
+      </button>
+    </div>
 
-      <!-- Botón/link de recovery -->
+    <div class="links-row">
+      <button type="button" class="link-btn" (click)="goToSignUp()">
+        Crear cuenta
+      </button>
+
       <button type="button" class="link-btn" (click)="goToRecovery()">
         ¿Olvidaste tu contraseña?
       </button>

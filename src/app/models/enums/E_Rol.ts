@@ -1,0 +1,5 @@
+export enum RolEmpleado {
+  LIMPIEZA = 'LIMPIEZA',
+  RECEPCIONISTA = 'RECEPCIONISTA',
+  CONSERJE = 'CONSERJE'
+}
