@@ -1,1 +1,85 @@
-<p>contact works!</p>
+<main class="policy-page contact-page"> <header class="policy-header">
+    <h1>Contacto</h1>
+    <p class="subtitle">
+      ¿Tenés alguna duda o sugerencia? Envianos un mensaje.
+    </p>
+  </header>
+
+  <div class="contact-layout">
+
+    <section class="contact-form-wrapper">
+      <h2>Formulario de Contacto</h2>
+
+      @if (submitted) {
+        <div class="success-message">
+          <h3>¡Mensaje enviado!</h3>
+          <p>Gracias por comunicarte con nosotros. Te responderemos a la brevedad.</p>
+        </div>
+      }
+
+      @if (!submitted) {
+        <form class="contact-form" [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+          
+          <div class="field">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" formControlName="nombre" />
+            @if (f['nombre'].touched && f['nombre'].invalid) {
+              <small class="field-error">Tu nombre es requerido (mín. 3 caracteres).</small>
+            }
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" formControlName="email" />
+            @if (f['email'].touched && f['email'].errors?.['required']) {
+              <small class="field-error">Tu email es requerido.</small>
+            }
+            @if (f['email'].touched && f['email'].errors?.['email']) {
+              <small class="field-error">Por favor, ingresá un email válido.</small>
+            }
+          </div>
+
+          <div class="field">
+            <label for="mensaje">Mensaje</label>
+            <textarea id="mensaje" rows="6" formControlName="mensaje"></textarea>
+            @if (f['mensaje'].touched && f['mensaje'].invalid) {
+              <small class="field-error">El mensaje es requerido (mín. 10 caracteres).</small>
+            }
+          </div>
+
+          <div class="actions">
+            <button type="submit" [disabled]="loading || contactForm.invalid">
+              @if (loading) {
+                <span>Enviando...</span>
+              } @else {
+                <span>Enviar Mensaje</span>
+              }
+            </button>
+          </div>
+
+        </form>
+      }
+    </section>
+
+    <aside class="contact-info">
+      <h2>Otros medios</h2>
+      <p>También podés contactarnos directamente a través de estos canales:</p>
+      
+      <ul class="info-list">
+        <li>
+          <fa-icon [icon]="faEnvelope"></fa-icon>
+          <span>consultas@restinn.com</span>
+        </li>
+        <li>
+          <fa-icon [icon]="faPhone"></fa-icon>
+          <span>+54 9 11 1234-5678</span>
+        </li>
+        <li>
+          <fa-icon [icon]="faMapMarkerAlt"></fa-icon>
+          <span>P. Sherman, calle Wallaby, 42, Sídney</span>
+        </li>
+      </ul>
+    </aside>
+
+  </div>
+</main>

@@ -1,0 +1,155 @@
+.policy-page {
+  padding: 110px 40px 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+.policy-header {
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.policy-header h1 {
+  font-size: 2.2rem;
+  color: var(--color-primary);
+  margin: 0 0 0.25rem;
+}
+
+.policy-header .subtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Layout de 2 columnas */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 3rem;
+}
+
+.contact-form-wrapper h2,
+.contact-info h2 {
+  font-size: 1.6rem;
+  color: var(--color-primary);
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.contact-info p {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* Formulario */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.field input,
+.field textarea {
+  background-color: var(--color-surface);
+  font-family: var(--font-family);
+  font-size: 1rem;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.field input.ng-invalid.ng-touched,
+.field textarea.ng-invalid.ng-touched {
+  border-color: var(--color-error);
+}
+
+.field-error {
+  color: var(--color-error);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.actions {
+  margin-top: 0.5rem;
+}
+
+.actions button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.info-list li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.info-list li fa-icon {
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  width: 20px;
+  text-align: center;
+}
+
+/* Mensaje de éxito */
+.success-message {
+  border: 1px solid var(--color-success);
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.success-message h3 {
+  color: var(--color-success);
+  margin: 0 0 0.5rem;
+}
+
+.success-message p {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .policy-page {
+    padding: 96px 20px 30px;
+  }
+}

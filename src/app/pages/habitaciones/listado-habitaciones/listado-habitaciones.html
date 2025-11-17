@@ -8,118 +8,144 @@
     <button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
 
     @if (puedeGestionarHabitaciones) {
-    <button type="button" (click)="agregarNueva()">Agregar nueva</button>
+      <button type="button" (click)="agregarNueva()">Agregar nueva</button>
     }
   </div>
 
-
   @if (filtrosVisibles) {
-  <form class="filtros" [class.activo]="filtrosVisibles">
-    <div class="filtros-row">
+    <form class="filtros" [class.activo]="filtrosVisibles">
+      <div class="filtros-row">
 
-      <div class="filtro">
-        <label>Estado:</label>
-        <select [(ngModel)]="filtros.estado" name="estado">
-          <option hidden value="">Seleccionar</option>
-          <option value="DISPONIBLE">Disponible</option>
-          <option value="OCUPADA">Ocupada</option>
-          <option value="MANTENIMIENTO">Mantenimiento</option>
-          <option value="LIMPIEZA">Limpieza</option>
-        </select>
+        <div classa="filtro">
+          <label for="orden">Ordenar por:</label>
+          <select id="orden" [(ngModel)]="orden" name="orden" (change)="ordenarHabitaciones()">
+            <option value="Numero asc">Número ↑</option>
+            <option value="Numero desc">Número ↓</option>
+            <option value="Precio asc">Precio ↑</option>
+            <option value="Precio desc">Precio ↓</option>
+            <option value="Capacidad asc">Capacidad ↑</option>
+            <option value="Capacidad desc">Capacidad ↓</option>
+          </select>
+        </div>
+
+        <div class="filtro">
+          <label>Estado:</label>
+          <select [(ngModel)]="filtros.estado" name="estado">
+            <option hidden value="">Seleccionar</option>
+            <option value="DISPONIBLE">Disponible</option>
+            <option value="OCUPADA">Ocupada</option>
+            <option value="MANTENIMIENTO">Mantenimiento</option>
+            <option value="LIMPIEZA">Limpieza</option>
+          </select>
+        </div>
+
+        @if (puedeGestionarHabitaciones) {
+          <div class="filtro">
+            <label>Visibilidad:</label>
+            <select [(ngModel)]="filtros.filtroActivo" name="filtroActivo">
+              <option value="todas">Todas</option>
+              <option value="activas">Solo Activas</option>
+              <option value="inactivas">Solo Inactivas</option>
+            </select>
+          </div>
+        }
+
+        <div class="filtro filtro-rango">
+          <label>Capacidad:</label>
+          <input type="number" [(ngModel)]="filtros.capacidadMin" name="capacidadMin" placeholder="mín">
+          <span>—</span>
+          <input type="number" [(ngModel)]="filtros.capacidadMax" name="capacidadMax" placeholder="máx">
+        </div>
+
+        <div class="filtro filtro-rango">
+          <label>Precio:</label>
+          <input type="number" [(ngModel)]="filtros.precioMin" name="precioMin" placeholder="mín">
+          <span>—</span>
+          <input type="number" [(ngModel)]="filtros.precioMax" name="precioMax" placeholder="máx">
+        </div>
+
+        <div class="filtro filtro-rango">
+          <label>Fechas:</label>
+          <input type="date" [(ngModel)]="filtros.fechaDesde" name="fechaDesde">
+          <span>—</span>
+          <input type="date" [(ngModel)]="filtros.fechaHasta" name="fechaHasta">
+        </div>
+
       </div>
 
-      <div class="filtro">
-        <label>Capacidad:</label>
-        <input type="number" [(ngModel)]="filtros.capacidadMin" name="capacidadMin" placeholder="mín">
-        <span>—</span>
-        <input type="number" [(ngModel)]="filtros.capacidadMax" name="capacidadMax" placeholder="máx">
+      <div class="filtros-bottom">
+        <button type="button" (click)="aplicarFiltros()">Aplicar</button>
+        <button type="button" (click)="cancelarFiltros()">Cancelar</button>
       </div>
 
-      <div class="filtro">
-        <label>Precio:</label>
-        <input type="number" [(ngModel)]="filtros.precioMin" name="precioMin" placeholder="mín">
-        <span>—</span>
-        <input type="number" [(ngModel)]="filtros.precioMax" name="precioMax" placeholder="máx">
-      </div>
-
-      <div class="filtro">
-        <label>Fechas:</label>
-        <input type="date" [(ngModel)]="filtros.fechaDesde" name="fechaDesde">
-        <span>—</span>
-        <input type="date" [(ngModel)]="filtros.fechaHasta" name="fechaHasta">
-      </div>
-
-      <div class="filtro">
-        <label for="orden">Ordenar por:</label>
-        <select id="orden" [(ngModel)]="orden" name="orden" (change)="ordenarHabitaciones()">
-          <option hidden value="">Seleccionar</option>
-          <option value="Numero asc">Número ↑</option>
-          <option value="Numero desc">Número ↓</option>
-          <option value="Precio asc">Precio ↑</option>
-          <option value="Precio desc">Precio ↓</option>
-          <option value="Capacidad asc">Capacidad ↑</option>
-          <option value="Capacidad desc">Capacidad ↓</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="filtros-bottom">
-      <button type="button" (click)="aplicarFiltros()">Aplicar</button>
-      <button type="button" (click)="cancelarFiltros()">Cancelar</button>
-    </div>
-
-    @if (rangeError) {
-    <p class="error">La fecha "hasta" no puede ser anterior a la "desde".</p>
-    }
-  </form>
+      @if (rangeError) {
+        <p class="error">La fecha "hasta" no puede ser anterior a la "desde".</p>
+      }
+      @if (filtros.fechaDesde && filtros.fechaHasta) {
+        <p class="warning">
+          Al filtrar por fechas se buscará disponibilidad real y se ignorarán los otros filtros (Estado, Capacidad, Precio, etc.).
+        </p>
+      }
+    </form>
   }
 
   @if (loading) {
-  <p class="loading">Cargando habitaciones...</p>
+    <p class="loading">Cargando habitaciones...</p>
   } @else if (errorMsg) {
-  <p class="error">{{ errorMsg }}</p>
+    <p class="error">{{ errorMsg }}</p>
   } @else {
-  <div class="habitaciones-grid">
-    @for (hab of habitacionesFiltradas; track hab.id) {
-    <div class="habitacion-card">
-      <div class="habitacion-card__image-wrapper">
-        @if (getMainImageDataUrl(hab)) {
-        <img [src]="getMainImageDataUrl(hab)" [alt]="'Habitación ' + hab.numero" class="habitacion-card__image" />
-        } @else {
-        <div class="habitacion-card__image habitacion-card__image--placeholder">
-          <p>No posee imágenes</p>
-        </div>
-        }
-        <span class="habitacion-card__badge">{{ hab.estado }}</span>
-      </div>
+    <div class="habitaciones-grid">
+      @for (hab of habitacionesFiltradas; track hab.id) {
+        <div class="habitacion-card" [class.inactiva]="!hab.activo">
+          
+          <div class="habitacion-card__image-wrapper">
+            @if (getMainImageDataUrl(hab)) {
+              <img [src]="getMainImageDataUrl(hab)" [alt]="'Habitación ' + hab.numero" class="habitacion-card__image" />
+            } @else {
+              <div class="habitacion-card__image habitacion-card__image--placeholder">
+                <p>No posee imágenes</p>
+              </div>
+            }
+            <span class="habitacion-card__badge">{{ hab.estado }}</span>
+            
+            @if (puedeGestionarHabitaciones && !hab.activo) {
+              <span class="habitacion-card__badge badge-inactiva">INACTIVA</span>
+            }
+          </div>
 
-      <div class="habitacion-card__body">
-        <div class="habitacion-card__title">Hab. {{ hab.numero }} · {{ hab.tipo }}</div>
-        <div class="habitacion-card__sub">Piso {{ hab.piso }}</div>
-        <div class="habitacion-card__details">
-          <p>Capacidad: {{ hab.capacidad }}</p>
-          <p>Camas: {{ hab.cantCamas }}</p>
-          <p class="price">Precio/noche: ${{ hab.precioNoche }}</p>
-        </div>
-        @if (hab.comentario) {
-        <div class="detail-row">
-          <span class="label">Nota:</span>
-          <span class="value">{{ hab.comentario }}</span>
-        </div>
-        }
-      </div>
+          <div class="habitacion-card__body">
+            <div class="habitacion-card__title">Hab. {{ hab.numero }} · {{ hab.tipo }}</div>
+            <div class="habitacion-card__sub">Piso {{ hab.piso }}</div>
+            <div class="habitacion-card__details">
+              <p>Capacidad: {{ hab.capacidad }}</p>
+              <p>Camas: {{ hab.cantCamas }}</p>
+              <p class="price">Precio/noche: ${{ hab.precioNoche }}</p>
+            </div>
+            @if (hab.comentario) {
+              <div class="detail-row">
+                <span class="label">Nota:</span>
+                <span class="value">{{ hab.comentario }}</span>
+              </div>
+            }
+          </div>
 
-      <div class="buttons">
-        <button (click)="reservarHabitacion(hab)">Reservar</button>
-        <button (click)="detailHabitacion(hab)">Detalle</button>
-        
-        @if (puedeGestionarHabitaciones) {
-        <button (click)="editHabitacion(hab)">Editar</button>
-        <button (click)="deleteHabitacion(hab.id)">Eliminar</button>
-        }
-      </div>
+          <div class="buttons">
+            <button (click)="reservarHabitacion(hab)">Reservar</button>
+            <button (click)="detailHabitacion(hab)">Detalle</button>
+            
+            @if (puedeGestionarHabitaciones) {
+              <button class="btn-edit" (click)="editHabitacion(hab)">Editar</button>
+              
+              @if (hab.activo) {
+                <button class="btn-delete" (click)="inhabilitarHabitacion(hab)">Inhabilitar</button>
+              } @else {
+                <button class="btn-reactivate" (click)="reactivarHabitacion(hab)">Reactivar</button>
+              }
+            }
+          </div>
+
+        </div>
+      }
     </div>
-    }
-  </div>
   }
 </section>
