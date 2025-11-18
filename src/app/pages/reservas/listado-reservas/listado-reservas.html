@@ -118,16 +118,16 @@
 
                               @if (modoAdmin) {
                                 <div class="client-line">
-                                  {{ r.usuario?.nombre }} {{ r.usuario?.apellido }}
+                                  {{ r.usuario.nombre }} {{ r.usuario.apellido }}
                                   ·
                                   <span class="client-role">
-                                      {{ rolLabel(r.usuario?.role) }}
+                                      {{ rolLabel(r.usuario.role) }}
                                   </span>
                                 </div>
                               }
                           </div>
 
-                          <span class="status-chip" [ngClass]="r.estado?.toLowerCase()">
+                          <span class="status-chip" [ngClass]="r.estado.toLowerCase()">
                               {{ estadoLabel(r.estado) }}
                           </span>
                       </header>
