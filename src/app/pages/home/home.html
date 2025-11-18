@@ -1,57 +1,71 @@
 <div class="home-wrapper">
+<!-- HERO TIPO ANGULAR -->
+<section class="restinn-hero" #restinnHero>
 
-  <!-- VISTA PÚBLICO / CLIENTE   -->
-  <!-- VISTA PÚBLICO / CLIENTE   -->
-@if (!isAdminPanel) {
+  <!-- SHAPES DE FONDO -->
+  <div class="restinn-hero__shapes">
+    <div class="restinn-hero__shape restinn-hero__shape--left"></div>
+    <div class="restinn-hero__shape restinn-hero__shape--right"></div>
+  </div>
 
-  <!-- HERO / BIENVENIDA -->
-  <section class="hero">
+  <!-- CONTENIDO CENTRAL -->
+  <div class="restinn-hero__content">
+    <div class="restinn-hero__logo">
+      <img src="assets/logos/logo-header.png" alt="RestInn · Gestión Hotelera">
+    </div>
 
-    <header class="hero-header">
-      <span class="hero-eyebrow">RestInn · tu estadía online</span>
-      <h2>Elegí por dónde empezar</h2>
-      <p class="hero-subtitle">
-        Reservá, explorá habitaciones o revisá tu historial desde este panel principal.
+    <div class="restinn-hero__text">
+      <h1>Gestioná tu hotel a cualquier escala</h1>
+      <p>
+        RestInn conecta reservas, habitaciones, usuarios y facturación en un
+        solo panel, sin perder la calidez de la atención personalizada.
       </p>
-    </header>
+    </div>
+  </div>
+</section>
 
-    <!-- BLOQUES VERTICALES QUE APARECEN AL SCROLLEAR -->
-    <div class="hero-scroll">
-      <div
-        class="hero-step"
-        #heroStep
-        *ngFor="let section of publicHeroSections; let i = index"
-        [class.hero-step--active]="i === activeHeroIndex"
-        [class.hero-step--past]="i < activeHeroIndex"
-        (click)="onHeroSectionClick(section.key, $event)"
-        tabindex="0">
+ <!-- VISTA PÚBLICO / CLIENTE   -->
+  @if (!isAdminPanel) {
 
+    <!-- HERO / BIENVENIDA -->
+    <section class="hero">
+
+      <!-- BLOQUES VERTICALES QUE APARECEN AL SCROLLEAR -->
+      <div class="hero-scroll">
         <div
-          class="hero-step__image"
-          [style.backgroundImage]="'url(' + section.imageUrl + ')'">
-        </div>
+          class="hero-step"
+          #heroStep
+          *ngFor="let section of publicHeroSections; let i = index"
+          [class.hero-step--active]="i === activeHeroIndex"
+          [class.hero-step--past]="i < activeHeroIndex"
+          [class.hero-step--reverse]="i % 2 === 1"
+          (click)="onHeroSectionClick(section.key, $event)"
+          tabindex="0">
 
-        <div class="hero-step__content">
-          <span class="hero-step__tag">{{ section.tag }}</span>
-          <h3 class="hero-step__title">{{ section.title }}</h3>
-          <p class="hero-step__text">
-            {{ section.description }}
-          </p>
+          <!-- imagen: alterna izquierda/derecha según el índice -->
+          <div
+            class="hero-step__image"
+            [style.backgroundImage]="'url(' + section.imageUrl + ')'">
+          </div>
+
+          <!-- contenido textual (lado opuesto a la imagen) -->
+          <div class="hero-step__content">
+            <span class="hero-step__tag">{{ section.tag }}</span>
+            <h3 class="hero-step__title">{{ section.title }}</h3>
+
+            <p class="hero-step__text">
+              {{ section.description }}
+            </p>
+
+            <!-- tip typewriter SOLO para el bloque activo -->
+            <p class="hero-step__tip" *ngIf="currentHeroKey === section.key">
+              {{ typedHeroText }}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- TEXTO TIP DINÁMICO -->
-    <div class="hero-dynamic">
-      <span class="hero-dynamic__prefix">
-        {{ currentHeroKey === 'default' ? 'Tip' : (currentHeroKey | titlecase) }}
-      </span>
-      <span class="hero-dynamic__text">
-        {{ typedHeroText }}
-      </span>
-    </div>
-
-  </section>
+    </section>
 
   } @else {
 
@@ -79,10 +93,8 @@
           (click)="goToGestionUsuarios($event)">
           <div class="admin-action__icon">
             <svg class="admin-icon admin-icon--usuarios" viewBox="0 0 32 32" aria-hidden="true">
-              <!-- usuario principal -->
               <circle cx="12" cy="11" r="4.2" />
               <path d="M5.5 21.5c1.2-2.5 3.2-4 6.5-4s5.3 1.5 6.5 4" />
-              <!-- usuario secundario -->
               <circle cx="22" cy="11" r="3.2" />
               <path d="M18.5 21c.7-1.9 2.1-3 3.9-3 1.9 0 3.2 1 3.9 3" />
             </svg>
@@ -100,12 +112,9 @@
           (click)="goToAdminHabitaciones($event)">
           <div class="admin-action__icon">
             <svg class="admin-icon admin-icon--habitaciones" viewBox="0 0 32 32" aria-hidden="true">
-              <!-- cama -->
               <rect x="5" y="14" width="22" height="8" rx="1.6" />
-              <!-- cabecero/pared -->
               <line x1="5" y1="22" x2="5" y2="26" />
               <line x1="27" y1="22" x2="27" y2="26" />
-              <!-- almohada -->
               <rect x="6" y="11" width="7" height="4" rx="1" />
             </svg>
           </div>
@@ -122,14 +131,10 @@
           (click)="goToGestionReservas($event)">
           <div class="admin-action__icon">
             <svg class="admin-icon admin-icon--reservas" viewBox="0 0 32 32" aria-hidden="true">
-              <!-- marco calendario -->
               <rect x="6" y="7" width="20" height="18" rx="2.5" />
-              <!-- línea separadora -->
               <line x1="6" y1="13" x2="26" y2="13" />
-              <!-- aros arriba -->
               <line x1="12" y1="5" x2="12" y2="9" />
               <line x1="20" y1="5" x2="20" y2="9" />
-              <!-- “tilde” de reserva -->
               <polyline points="12 18 14.8 20.6 19 16.5" />
             </svg>
           </div>
@@ -146,9 +151,7 @@
           (click)="goToFacturacion($event)">
           <div class="admin-action__icon">
             <svg class="admin-icon admin-icon--facturacion" viewBox="0 0 32 32" aria-hidden="true">
-              <!-- círculo moneda -->
               <circle cx="16" cy="16" r="9" />
-              <!-- símbolo $ -->
               <path d="M16 10v12" />
               <path d="M19.5 12.3c-.7-1.1-1.8-1.8-3.5-1.8-2.1 0-3.6 1.1-3.6 2.8 0 1.7 1.2 2.5 3.4 2.9l1.3.2c2.1.3 3.4 1.2 3.4 3 0 1.8-1.6 3-3.8 3-1.9 0-3.3-.8-4-2" />
             </svg>
@@ -159,6 +162,7 @@
 
       </div>
 
+      <!-- TIP dinámico solo para admin -->
       <div class="hero-dynamic">
         <span class="hero-dynamic__prefix">
           {{ currentHeroKey === 'default' ? 'Tip' : (currentHeroKey | titlecase) }}
@@ -168,7 +172,6 @@
         </span>
       </div>
 
-      <!-- Más adelante acá metés el iframe de Looker -->
     </section>
   }
 

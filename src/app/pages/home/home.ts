@@ -1,9 +1,11 @@
 // src/app/pages/home/home.ts
 import {
   Component,
-  OnDestroy,
   OnInit,
+  OnDestroy,
+  AfterViewInit,
   HostListener,
+  ViewChild,
   ViewChildren,
   ElementRef,
   QueryList,
@@ -41,12 +43,18 @@ interface HeroSection {
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home implements OnInit, OnDestroy {
+export class Home implements OnInit, AfterViewInit, OnDestroy {
 
   private router = inject(Router);
   private auth = inject(AuthService);
 
-  // si es ADMIN, mostramos el panel premium (getter reactivo)
+  @ViewChild('restinnHero')
+  restinnHero?: ElementRef<HTMLElement>;
+
+  @ViewChildren('heroStep')
+  heroStepRefs?: QueryList<ElementRef<HTMLDivElement>>;
+
+  // si es ADMIN, mostramos el panel premium
   get isAdminPanel(): boolean {
     return this.auth.isLoggedIn() && this.auth.hasAnyRole(['ADMINISTRADOR']);
   }
@@ -57,39 +65,39 @@ export class Home implements OnInit, OnDestroy {
       key: 'reservas',
       tag: '📅 Reservar',
       title: 'Reservá en las fechas que quieras',
-      description: 'Buscá disponibilidad por fecha de ingreso y salida, elegí la habitación ideal y confirmá tu reserva en pocos pasos.',
+      description:
+        'Buscá disponibilidad por fecha de ingreso y salida, elegí la habitación ideal y confirmá tu reserva en pocos pasos.',
       imageUrl: 'assets/restinn/hero-reservas.jpg'
     },
     {
       key: 'habitaciones',
       tag: '🛏️ Habitaciones',
       title: 'Explorá las habitaciones del hotel',
-      description: 'Vas a poder ver fotos, servicios incluidos y capacidad de cada habitación antes de decidirte.',
+      description:
+        'Vas a poder ver fotos, servicios incluidos y capacidad de cada habitación antes de decidirte.',
       imageUrl: 'assets/restinn/hero-servicios.jpg'
     },
     {
       key: 'historial',
       tag: '📊 Historial',
       title: 'Revisá tu historial de reservas',
-      description: 'Consultá reservas pasadas, próximas estadías y el detalle de cada una asociada a tu usuario.',
+      description:
+        'Consultá reservas pasadas, próximas estadías y el detalle de cada una asociada a tu usuario.',
       imageUrl: 'assets/restinn/hero-historial.jpg'
     },
     {
       key: 'facturacion',
       tag: '💳 Facturación & pagos',
       title: 'Accedé a tus facturas y comprobantes',
-      description: 'Descargá los comprobantes en PDF, revisá estados de pago y mantené tu facturación al día.',
+      description:
+        'Descargá los comprobantes en PDF, revisá estados de pago y mantené tu facturación al día.',
       imageUrl: 'assets/restinn/hero-facturacion.jpg'
     }
   ];
 
-  // referencias a los bloques para calcular cuál está “en foco”
-  @ViewChildren('heroStep')
-  heroStepRefs?: QueryList<ElementRef<HTMLDivElement>>;
-
   activeHeroIndex = 0;
 
-  // --- texto dinámico ---
+  // --- texto dinámico tipo "tip" (se usa en el hero público y en admin) ---
   heroTextMap: Record<HeroKey, string> = {
     // ===== VISTA PÚBLICO / CLIENTE =====
     default:
@@ -121,7 +129,13 @@ export class Home implements OnInit, OnDestroy {
   private typingIntervalId: any = null;
 
   ngOnInit(): void {
+    // para que el panel admin tenga un tip inicial
     this.startHeroTyping('default');
+  }
+
+  ngAfterViewInit(): void {
+    // inicializamos el estado según dónde está el scroll al entrar
+    this.updateHeroScrollProgress();
   }
 
   ngOnDestroy(): void {
@@ -166,9 +180,12 @@ export class Home implements OnInit, OnDestroy {
   // ---------------------------
   // SCROLL VERTICAL – detectar bloque activo
   // ---------------------------
-  @HostListener('window:scroll', [])
+    @HostListener('window:scroll', [])
   onWindowScroll(): void {
-    // si es admin o no hay bloques, salimos
+    // 1) scroll del hero tipo Angular
+    this.updateHeroScrollProgress();
+
+    // 2) lógica que ya tenías para los bloques de abajo
     if (this.isAdminPanel) return;
 
     const steps = this.heroStepRefs;
@@ -321,4 +338,20 @@ export class Home implements OnInit, OnDestroy {
 
     this.router.navigate(['/gestion_reservas']);
   }
+
+    private updateHeroScrollProgress(): void {
+    const el = this.restinnHero?.nativeElement;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    // raw = 1 cuando la sección está centrada, 0 cuando se fue arriba o todavía está abajo
+    const raw = 1 - Math.abs(rect.top) / windowHeight;
+    const clamped = Math.max(0, Math.min(1, raw));
+
+    el.style.setProperty('--scroll-progress', clamped.toString());
+  }
+
+
 }
