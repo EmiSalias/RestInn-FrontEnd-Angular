@@ -1,58 +1,8 @@
-// src/app/services/reservas-service.ts
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpHeaders,
-  HttpParams
-} from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-// ------- DTOs ---------
-
-export interface HuespedRequest {
-  nombre: string;
-  apellido: string;
-  dni: string;
-}
-
-export interface HuespedResponse {
-  nombre: string;
-  apellido: string;
-  dni: string;
-}
-
-export interface UsuarioReservaDTO {
-  id: number;
-  nombre: string;
-  apellido: string;
-  nombreLogin: string;
-  role: string; // simplificado para el front
-  email?: string | null;
-}
-
-export interface ReservaRequest {
-  fechaIngreso: string;   // YYYY-MM-DD
-  fechaSalida: string;    // YYYY-MM-DD
-  habitacionId: number;
-  huespedes: HuespedRequest[];
-  fechaReserva?: string | null;
-  estadoReserva?: string | null;
-}
-
-export interface ReservaResponse {
-  id: number;
-  fechaIngreso: string;
-  fechaSalida: string;
-  fechaReserva: string;
-  estado: string;
-  habitacionId: number;
-  habitacionNumero?: number;
-  usuario: UsuarioReservaDTO;
-  huespedes?: HuespedResponse[];
-}
-
-// ------- SERVICE ---------
+import Reserva from '../models/User';
 
 @Injectable({ providedIn: 'root' })
 export class ReservasService {
@@ -70,43 +20,40 @@ export class ReservasService {
     );
   }
 
-  // ================================
-  // CREAR / ACTUALIZAR / ELIMINAR
-  // ================================
+  // #region CREAR / ACTUALIZAR / ELIMINAR
 
-  /** POST /api/reservas  (crea reserva como usuario autenticado) */
-  crearReserva(dto: ReservaRequest): Observable<ReservaResponse> {
-    return this.http.post<ReservaResponse>(this.baseUrl, dto, {
+  // POST /api/reservas  (crea reserva como usuario autenticado)
+  crearReserva(dto: Reserva): Observable<Reserva> {
+    return this.http.post<Reserva>(this.baseUrl, dto, {
       headers: this.authHeaders()
     });
   }
 
-  /** PUT /api/reservas/{id}  (actualiza fechas/huespedes) */
-  actualizarReserva(id: number, dto: ReservaRequest): Observable<ReservaResponse> {
-    return this.http.put<ReservaResponse>(`${this.baseUrl}/${id}`, dto, {
+  // PUT /api/reservas/{id}  (actualiza fechas/huespedes) 
+  actualizarReserva(id: number, dto: Reserva): Observable<Reserva> {
+    return this.http.put<Reserva>(`${this.baseUrl}/${id}`, dto, {
       headers: this.authHeaders()
     });
   }
 
-  /** DELETE /api/reservas/{id}  (CLIENTE cancela su propia reserva) */
+  // DELETE /api/reservas/{id}  (CLIENTE cancela su propia reserva)
   cancelarReserva(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`, {
       headers: this.authHeaders()
     });
   }
 
-  /** DELETE /api/reservas/administrador/{id}  (ADMIN elimina reserva) */
+  // DELETE /api/reservas/administrador/{id}  (ADMIN elimina reserva)
   eliminarReservaAdmin(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/administrador/${id}`, {
       headers: this.authHeaders()
     });
   }
+  // #endregion
 
-  // ================================
-  // CONSULTAS
-  // ================================
+  // #region CONSULTAS
 
-  /** GET /api/reservas/ocupadas?ingreso=YYYY-MM-DD&salida=YYYY-MM-DD */
+  // GET /api/reservas/ocupadas?ingreso=YYYY-MM-DD&salida=YYYY-MM-DD
   getHabitacionesOcupadas(ingreso: string, salida: string): Observable<number[]> {
     const params = new HttpParams()
       .set('ingreso', ingreso)
@@ -115,73 +62,69 @@ export class ReservasService {
     return this.http.get<number[]>(`${this.baseUrl}/ocupadas`, { params });
   }
 
-  /** GET /api/reservas/mis-reservas  (cliente actual) */
-  getMisReservas(): Observable<ReservaResponse[]> {
-    return this.http.get<ReservaResponse[]>(`${this.baseUrl}/mis-reservas`, {
+  // GET /api/reservas/mis-reservas  (cliente actual) 
+  getMisReservas(): Observable<Reserva[]> {
+    return this.http.get<Reserva[]>(`${this.baseUrl}/mis-reservas`, {
       headers: this.authHeaders()
     });
   }
 
-  /**
-   * GET /api/reservas  (ADMIN / RECEPCIONISTA)
-   * Opcionalmente filtra por estado o por id de reserva.
-   */
-  getReservasAdmin(opts?: { estado?: string; reservaId?: number }): Observable<ReservaResponse[]> {
+  //  GET /api/reservas  (ADMIN / RECEPCIONISTA)
+  getReservasAdmin(opts?: { estado?: string; reservaId?: number }): Observable<Reserva[]> {
     let params = new HttpParams();
     if (opts?.estado) params = params.set('estado', opts.estado);
     if (opts?.reservaId) params = params.set('reservaId', String(opts.reservaId));
 
-    return this.http.get<ReservaResponse[]>(this.baseUrl, {
+    return this.http.get<Reserva[]>(this.baseUrl, {
       headers: this.authHeaders(),
       params
     });
   }
 
-  /** GET /api/reservas/{idCliente}  (reservas de un cliente, ADMIN / RECEPCIONISTA) */
-  getReservasPorCliente(clienteId: number): Observable<ReservaResponse[]> {
-    return this.http.get<ReservaResponse[]>(`${this.baseUrl}/${clienteId}`, {
+  // GET /api/reservas/{idCliente}  (reservas de un cliente, ADMIN / RECEPCIONISTA)
+  getReservasPorCliente(clienteId: number): Observable<Reserva[]> {
+    return this.http.get<Reserva[]>(`${this.baseUrl}/${clienteId}`, {
       headers: this.authHeaders()
     });
   }
 
 
-  /** DETALLE DE UNA RESERVA POR ID */
-  getReservaDetalle(id: number): Observable<ReservaResponse> {
-    return this.http.get<ReservaResponse>(
+  // DETALLE DE UNA RESERVA POR ID
+  getReservaDetalle(id: number): Observable<Reserva> {
+    return this.http.get<Reserva>(
       `${this.baseUrl}/detalle/${id}`,
       { headers: this.authHeaders() }
     );
   }
+  // #endregion
 
+  // #region ESTADO DE RESERVA (workflow)
 
-  // ================================
-  // ESTADO DE RESERVA (workflow)
-  // ================================
-
-  /** POST /api/reservas/confirmar/{reservaId} */
-  confirmarReserva(reservaId: number): Observable<ReservaResponse> {
-    return this.http.post<ReservaResponse>(
+  // POST /api/reservas/confirmar/{reservaId}
+  confirmarReserva(reservaId: number): Observable<Reserva> {
+    return this.http.post<Reserva>(
       `${this.baseUrl}/confirmar/${reservaId}`,
       {},
       { headers: this.authHeaders() }
     );
   }
 
-  /** POST /api/reservas/checkin/{reservaId} */
-  checkIn(reservaId: number): Observable<ReservaResponse> {
-    return this.http.post<ReservaResponse>(
+  // POST /api/reservas/checkin/{reservaId}
+  checkIn(reservaId: number): Observable<Reserva> {
+    return this.http.post<Reserva>(
       `${this.baseUrl}/checkin/${reservaId}`,
       {},
       { headers: this.authHeaders() }
     );
   }
 
-  /** POST /api/reservas/checkout/{reservaId} */
-  checkOut(reservaId: number): Observable<ReservaResponse> {
-    return this.http.post<ReservaResponse>(
+  // POST /api/reservas/checkout/{reservaId}
+  checkOut(reservaId: number): Observable<Reserva> {
+    return this.http.post<Reserva>(
       `${this.baseUrl}/checkout/${reservaId}`,
       {},
       { headers: this.authHeaders() }
     );
   }
+  // #endregion
 }

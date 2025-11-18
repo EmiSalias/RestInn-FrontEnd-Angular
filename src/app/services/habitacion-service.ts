@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-// HttpClient y HttpParams son necesarios
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import Habitacion from '../models/Habitacion';
@@ -101,7 +100,7 @@ export class HabitacionService {
     );
   }
 
-  // Manejo centralizado de errores HTTP
+  // Manejo de errores HTTP
   private handleError(error: any) {
     console.error('Error en HabitacionService:', error);
     if (error.error && typeof error.error === 'string') {

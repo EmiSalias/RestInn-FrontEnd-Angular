@@ -8,12 +8,10 @@ import {
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { combineLatest, of, BehaviorSubject } from 'rxjs';
 import { catchError, map, shareReplay, startWith } from 'rxjs/operators';
-import {
-  FacturasService,
-  FacturaResponseDTO
-} from '../../../services/facturas-service';
 import { AuthService } from '../../../services/auth-service';
 import { Router } from '@angular/router';
+import { Factura } from '../../../models/Factura';
+import { FacturasService } from '../../../services/facturas-service';
 
 type SortField =
   | 'id'
@@ -45,7 +43,7 @@ interface SortState {
 })
 export class ListadoFacturas implements OnInit {
 
-  facturas$ = of<FacturaResponseDTO[]>([]);
+  facturas$ = of<Factura[]>([]);
   error: string | null = null;
   cargando = true;
   isAdminOrRecep = false;
@@ -85,7 +83,7 @@ export class ListadoFacturas implements OnInit {
       catchError(err => {
         console.error(err);
         this.error = err?.error?.mensaje || 'No se pudieron cargar las facturas.';
-        return of<FacturaResponseDTO[]>([]);
+        return of<Factura[]>([]);
       }),
       shareReplay(1)
     );
@@ -104,10 +102,10 @@ export class ListadoFacturas implements OnInit {
   }
 
   private aplicarFiltrosYOrden(
-    facturas: FacturaResponseDTO[],
+    facturas: Factura[],
     filtros: any,
     sort: SortState
-  ): FacturaResponseDTO[] {
+  ): Factura[] {
 
     const texto  = (filtros.texto  || '').toLowerCase().trim();
     const tipo   = filtros.tipo   || '';
@@ -147,7 +145,7 @@ export class ListadoFacturas implements OnInit {
     return res;
   }
 
-  private ordenarFacturas(arr: FacturaResponseDTO[], sort: SortState): FacturaResponseDTO[] {
+  private ordenarFacturas(arr: Factura[], sort: SortState): Factura[] {
     const dir = sort.dir === 'asc' ? 1 : -1;
 
     return [...arr].sort((a, b) => {
@@ -202,7 +200,7 @@ export class ListadoFacturas implements OnInit {
     this.sortSubject.next(this.sortState);
   }
 
-  abrirPdf(f: FacturaResponseDTO): void {
+  abrirPdf(f: Factura): void {
     this.facturasService.descargarPdf(f.id).subscribe({
       next: blob => {
         const url = window.URL.createObjectURL(blob);
@@ -215,7 +213,7 @@ export class ListadoFacturas implements OnInit {
     });
   }
 
-  irADetalleReserva(f: FacturaResponseDTO): void {
+  irADetalleReserva(f: Factura): void {
     if (!f.reservaId) {
       return;
     }

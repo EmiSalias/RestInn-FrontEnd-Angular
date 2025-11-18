@@ -1,70 +1,48 @@
-// region Acceso público - IMPORTS
-import { Home } from './pages/home/home';
-import { SignUp } from './pages/usuarios/sign-up/sign-up';
-import { SignIn } from './pages/usuarios/sign-in/sign-in';
-// #endregion
-// region Usuarios       - IMPORTS
-import { DetallesUsuario } from './pages/usuarios/detalles-usuario/detalles-usuario';
-import { FormUsuario } from './pages/usuarios/form-usuario/form-usuario';
-// #endregion
-// region CLIENTEs       - IMPORTS
-import { ListadoEmpleados } from './pages/usuarios/empleados/listado-empleados/listado-empleados';
-import { FormEmpleado } from './pages/usuarios/empleados/form-empleado/form-empleado';
-// #endregion
-// region EMPLEADOS       - IMPORTS
-import { FormCliente } from './pages/usuarios/clientes/form-cliente/form-cliente';
-import { ListadoClientes } from './pages/usuarios/clientes/listado-clientes/listado-clientes';
-// #endregion
-
-// region Habitaciones   - IMPORTS
-import { ListadoHabitaciones } from './pages/habitaciones/listado-habitaciones/listado-habitaciones';
-import { DetallesHabitacion } from './pages/habitaciones/detalles-habitacion/detalles-habitacion';
-import { FormHabitacion } from './pages/habitaciones/form-habitacion/form-habitacion';
-import { InhabilitarHabitacion } from './pages/habitaciones/inhabilitar-habitacion/inhabilitar-habitacion';
-import { GestionHabitaciones } from './pages/habitaciones/gestion-habitaciones/gestion-habitaciones';
-// #endregion
-// region Reservas       - IMPORTS
-import { ListadoReservas } from './pages/reservas/listado-reservas/listado-reservas';
-import { DetallesReserva } from './pages/reservas/detalles-reserva/detalles-reserva';
-import { FormReserva } from './pages/reservas/form-reserva/form-reserva';
-import { CrearReservaBusqueda } from './pages/reservas/crear-reserva-busqueda/crear-reserva-busqueda';
-// #endregion
-// region Consumos       - IMPORTS
-import { ListadoConsumos } from './pages/consumos/listado-consumos/listado-consumos';
-import { FormConsumo } from './pages/consumos/form-consumo/form-consumo';
-// #endregion
-// region Facturación    - IMPORTS
-import { FacturaReserva } from './pages/facturaciones/factura-reserva/factura-reserva';
-import { ListadoFacturas } from './pages/facturaciones/listado-facturas/listado-facturas';
-import { DetalleFactura } from './pages/facturaciones/detalle-factura/detalle-factura';
-import { CambiarEstadoFactura } from './pages/facturaciones/cambiar-estado-factura/cambiar-estado-factura';
-// #endregion
-// region Perfil         - IMPORTS
-import { PerfilUsuario } from './pages/usuarios/perfil-usuario/perfil-usuario';
-import { EditarPerfilUsuario } from './pages/usuarios/editar-perfil-usuario/editar-perfil-usuario';
-// #endregion
-// region Normas         - IMPORTS
-import { PrivacyPolicy } from './pages/User-Policy/privacy-policy/privacy-policy';
-import { CancelPolicy } from './pages/User-Policy/cancel-policy/cancel-policy';
-import { CookiesPolicy } from './pages/User-Policy/cookies-policy/cookies-policy'; import { TermsConditions } from './pages/User-Policy/terms-conditions/terms-conditions';
-import { Nosotros } from './pages/nosotros/nosotros';
-import { Contact } from './pages/contact/contact';
-// #endregion
-import { Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth-guard';
-import { Unauthorized } from './pages/usuarios/unauthorized/unauthorized';
-import { GestionReservas } from './pages/reservas/gestion-reservas/gestion-reservas';
+import { Home }                     from './pages/home/home';
+import { SignUp }                   from './pages/usuarios/sign-up/sign-up';
+import { SignIn }                   from './pages/usuarios/sign-in/sign-in';
+import { DetallesUsuario }          from './pages/usuarios/detalles-usuario/detalles-usuario';
+import { FormUsuario }              from './pages/usuarios/form-usuario/form-usuario';
+import { ListadoEmpleados }         from './pages/usuarios/empleados/listado-empleados/listado-empleados';
+import { FormEmpleado }             from './pages/usuarios/empleados/form-empleado/form-empleado';
+import { FormCliente }              from './pages/usuarios/clientes/form-cliente/form-cliente';
+import { ListadoClientes }          from './pages/usuarios/clientes/listado-clientes/listado-clientes';
+import { ListadoHabitaciones }      from './pages/habitaciones/listado-habitaciones/listado-habitaciones';
+import { DetallesHabitacion }       from './pages/habitaciones/detalles-habitacion/detalles-habitacion';
+import { FormHabitacion }           from './pages/habitaciones/form-habitacion/form-habitacion';
+import { InhabilitarHabitacion }    from './pages/habitaciones/inhabilitar-habitacion/inhabilitar-habitacion';
+import { GestionHabitaciones }      from './pages/habitaciones/gestion-habitaciones/gestion-habitaciones';
+import { ListadoReservas }          from './pages/reservas/listado-reservas/listado-reservas';
+import { DetallesReserva }          from './pages/reservas/detalles-reserva/detalles-reserva';
+import { FormReserva }              from './pages/reservas/form-reserva/form-reserva';
+import { CrearReservaBusqueda }     from './pages/reservas/crear-reserva-busqueda/crear-reserva-busqueda';
+import { ListadoConsumos }          from './pages/consumos/listado-consumos/listado-consumos';
+import { FormConsumo }              from './pages/consumos/form-consumo/form-consumo';
+import { FacturaReserva }           from './pages/facturaciones/factura-reserva/factura-reserva';
+import { ListadoFacturas }          from './pages/facturaciones/listado-facturas/listado-facturas';
+import { DetalleFactura }           from './pages/facturaciones/detalle-factura/detalle-factura';
+import { CambiarEstadoFactura }     from './pages/facturaciones/cambiar-estado-factura/cambiar-estado-factura';
+import { PrivacyPolicy }            from './pages/User-Policy/privacy-policy/privacy-policy';
+import { CancelPolicy }             from './pages/User-Policy/cancel-policy/cancel-policy';
+import { CookiesPolicy }            from './pages/User-Policy/cookies-policy/cookies-policy';
+import { TermsConditions }          from './pages/User-Policy/terms-conditions/terms-conditions';
+import { Nosotros }                 from './pages/nosotros/nosotros';
+import { Contact }                  from './pages/contact/contact';
+import { Routes }                   from '@angular/router';
+import { AuthGuard }                from './guards/auth-guard';
+import { Unauthorized }             from './pages/usuarios/unauthorized/unauthorized';
+import { GestionReservas }          from './pages/reservas/gestion-reservas/gestion-reservas';
 
 export const routes: Routes = [
 
-    // region Acceso público
+    // #region Acceso público
     { path: '', component: Home },
     { path: 'sign_in', component: SignIn },
     { path: 'sign_up', component: SignUp },
     { path: 'recovery', loadComponent: () => import('./pages/usuarios/recovery/recovery').then(m => m.Recovery) },
-    // endregion
+    // #endregion
 
-    // region Usuarios - CRUD
+    // #region Usuarios - CRUD
     {
         path: 'gestion_usuarios',
         loadComponent: () =>
@@ -119,7 +97,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-    // region CLIENTES - CRUD
+    // #region CLIENTES - CRUD
     {
         path: 'listado_CLIENTEs',
         component: ListadoClientes,
@@ -144,9 +122,9 @@ export const routes: Routes = [
             roles: ['RECEPCIONISTA']
         }
     },
-    // endregion
+    // #endregion
 
-    // region Habitaciones - CRUD
+    // #region Habitaciones - CRUD
     {
         path: 'listado_habitaciones',
         component: ListadoHabitaciones
@@ -193,10 +171,9 @@ export const routes: Routes = [
             ]
         }
     },
-    // endregion
+    // #endregion
 
-    // region Reservas - CRUD
-
+    // #region Reservas - CRUD
     { path: 'crear_reserva', component: CrearReservaBusqueda },
 
     // === ADMIN / RECEPCIONISTA: hub de gestión ===
@@ -258,9 +235,9 @@ export const routes: Routes = [
             roles: ['ADMINISTRADOR', 'RECEPCIONISTA']
         }
     },
-    // endregion
+    // #endregion
 
-    // region Consumos - CRUD
+    // #region Consumos - CRUD
     {
         path: 'consumos_reserva/:id',
         component: ListadoConsumos,
@@ -297,7 +274,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-    // region Facturación
+    // #region Facturación
     {
         path: 'facturas_reserva/:id',
         component: FacturaReserva,
@@ -348,7 +325,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-    // region Perfil
+    // #region Perfil
     {
         path: 'mi_perfil',
         component: FormUsuario,
@@ -370,7 +347,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-    // region Footer
+    // #region Footer
     {
         path: 'nosotros',
         component: Nosotros
@@ -397,7 +374,7 @@ export const routes: Routes = [
     },
     // #endregion
 
-    // region Errores
+    // #region Errores
     {
         path: '',
         redirectTo: '/',

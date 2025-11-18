@@ -13,7 +13,7 @@ export class LoadingService {
     this.activeRequests++;
 
     if (this.activeRequests === 1) {
-      // Solo cuando pasa de 0 → 1 empezamos el timer
+      // Solo cuando pasa de 0 a 1 empezamos el timer
       if (this.showTimeoutId) {
         clearTimeout(this.showTimeoutId);
       }
@@ -30,7 +30,7 @@ export class LoadingService {
     this.activeRequests--;
 
     if (this.activeRequests === 0) {
-      // Si todavía no llegó a mostrarse, cancelamos el timer
+      // Si no llegó a mostrarse, se cancela el timer
       if (this.showTimeoutId) {
         clearTimeout(this.showTimeoutId);
         this.showTimeoutId = null;

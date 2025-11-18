@@ -9,7 +9,8 @@ import {
   AbstractControl,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AuthService, UsuarioRequest } from '../../../services/auth-service';
+import { AuthService } from '../../../services/auth-service';
+import User from '../../../models/User';
 
 function samePassword(group: AbstractControl) {
   const p = group.get('password')?.value;
@@ -104,7 +105,7 @@ export class SignUp implements OnInit {
     }
 
     const raw = this.form.value;
-    const dto: UsuarioRequest = {
+    const dto: Partial<User> = {
       nombre: raw.nombre,
       apellido: raw.apellido,
       nombreLogin: raw.nombreLogin,

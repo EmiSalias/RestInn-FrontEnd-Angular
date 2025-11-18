@@ -2,33 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-export interface ConsumoResponseDTO {
-  id: number;
-  descripcion: string;
-  cantidad: number;
-  precioUnitario: number;
-  subtotal: number;
-}
-
-export interface FacturaResponseDTO {
-  id: number;
-  clienteNombre: string;
-  ingreso: string;
-  salida: string;
-  habitacionNumero: string;
-  reservaId: number;
-  fechaEmision: string;
-  tipoFactura: string;
-  estado: string;
-  subtotal: number;
-  metodoPago: string;
-  cuotas: number;
-  descuento: number;
-  interes: number;
-  totalFinal: number;
-  consumos?: ConsumoResponseDTO[];
-}
+import { Factura } from '../models/Factura';
 
 @Injectable({ providedIn: 'root' })
 export class FacturasService {
@@ -44,28 +18,28 @@ export class FacturasService {
     );
   }
 
-  listarTodas(): Observable<FacturaResponseDTO[]> {
-    return this.http.get<FacturaResponseDTO[]>(this.baseUrl, {
+  listarTodas(): Observable<Factura[]> {
+    return this.http.get<Factura[]>(this.baseUrl, {
       headers: this.authHeaders()
     });
   }
 
-  listarPorCliente(clienteId: number): Observable<FacturaResponseDTO[]> {
-    return this.http.get<FacturaResponseDTO[]>(
+  listarPorCliente(clienteId: number): Observable<Factura[]> {
+    return this.http.get<Factura[]>(
       `${this.baseUrl}/cliente/${clienteId}`,
       { headers: this.authHeaders() }
     );
   }
 
-  listarMias(): Observable<FacturaResponseDTO[]> {
-    return this.http.get<FacturaResponseDTO[]>(
+  listarMias(): Observable<Factura[]> {
+    return this.http.get<Factura[]>(
       `${this.baseUrl}/mias`,
       { headers: this.authHeaders() }
     );
   }
 
-  getFacturaPorReserva(reservaId: number): Observable<FacturaResponseDTO> {
-    return this.http.get<FacturaResponseDTO>(
+  getFacturaPorReserva(reservaId: number): Observable<Factura> {
+    return this.http.get<Factura>(
       `${this.baseUrl}/reserva/${reservaId}`,
       { headers: this.authHeaders() }
     );
