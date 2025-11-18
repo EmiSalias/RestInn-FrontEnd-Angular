@@ -262,4 +262,14 @@ export class FormUsuario implements OnInit {
   isLoggedIn(): boolean {
     return this.auth.isLoggedIn();
   }
+
+  get canShowSaveButton(): boolean {
+    // En la pestaña de seguridad siempre puede guardar (cambiar contraseña)
+    if (this.activeTab === 'seguridad') {
+      return true;
+    }
+    // En la pestaña de datos solo admin/cliente pueden editar
+    return this.canEditProfileData;
+  }
+
 }

@@ -251,4 +251,9 @@ export class FormEmpleado implements OnInit {
       }
     });
   }
+
+    goBack(): void {
+    this.router.navigate(['/empleados']);
+  }
+
 }

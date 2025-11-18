@@ -1,86 +1,100 @@
 .empleados-page {
-  padding: 40px 60px; /* Aumentamos aún más el padding para mejorar la separación */
+  padding: 110px 40px 40px;        /* espacio por header fijo */
   color: var(--color-text);
 }
 
+/* tabla como card */
 .tabla-empleados {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px; /* Más espacio arriba */
-  margin-bottom: 20px; /* Más espacio abajo */
+  margin: 20px;
   font-size: 0.9rem;
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
 }
 
 .tabla-empleados th,
 .tabla-empleados td {
-  padding: 0.8rem 1.2rem; /* Aumentamos el padding para mejor separación */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--color-border);
   text-align: left;
   white-space: nowrap;
+  color: var(--color-text);
 }
 
 .tabla-empleados thead {
-  background-color: #3a2a1c;
+  background-color: var(--color-h-f);
 }
 
 .tabla-empleados tbody tr:nth-child(even) {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(0, 0, 0, 0.03);  /* leve zebra en ambos temas */
 }
 
 .tabla-empleados tbody tr:hover {
-  background-color: rgba(197, 127, 255, 0.08);
+  background-color: rgba(0, 0, 0, 0.06);
 }
 
-.tabla-empleados td .estado {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
+/* chip de estado */
+.tabla-empleados .estado {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.7rem;
   border-radius: 999px;
-  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  background: transparent;
 }
 
-.tabla-empleados td.activo .estado {
-  background-color: #4caf50; /* Verde */
+/* ACTIVO: verde */
+.tabla-empleados .estado.activo {
+  color: #2e7d32; /* verde letra */
+  background-color: rgba(76, 175, 80, 0.12);
+  border-color: rgba(76, 175, 80, 0.7);
 }
 
-.tabla-empleados td.inactivo .estado {
-  background-color: #f44336; /* Rojo */
+/* INACTIVO: rojo */
+.tabla-empleados .estado.inactivo {
+  color: #c62828; /* rojo letra */
+  background-color: rgba(244, 67, 54, 0.12);
+  border-color: rgba(244, 67, 54, 0.7);
 }
 
+
+/* link de acción */
 .btn-link {
   border: none;
   background: transparent;
-  color: #f1c36f;
+  color: var(--color-primary);
   cursor: pointer;
   font-size: 13px;
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .btn-link:hover {
-  color: #ffd78b;
+  color: var(--color-secondary);
 }
 
 .empty {
   margin-top: 16px;
   font-size: 14px;
-  opacity: 0.8;
+  color: var(--color-text-muted);
 }
 
-/* Añadir márgenes generales */
+/* acciones arriba de la tabla */
 .actions {
-  margin-bottom: 20px; /* Márgenes en las acciones */
+  margin-bottom: 20px;
 }
 
 .status {
   margin-bottom: 12px;
   font-size: 14px;
+  color: var(--color-text);
 }
 
 .status.error {
-  color: #ff6b6b;
-}
-
-/* Alineación de la tabla y margenes */
-.tabla-empleados {
-  margin-left: 20px; /* Espacio a la izquierda */
-  margin-right: 20px; /* Espacio a la derecha */
+  color: var(--color-error);
 }

@@ -1,1 +1,33 @@
-<p>NO TIENES PERMISO PARA ACCEDER AQUI</p>
+<section class="unauth">
+  <div class="unauth__card">
+
+    <div class="unauth__icon-wrapper">
+      <span class="unauth__ring unauth__ring--outer"></span>
+      <span class="unauth__ring unauth__ring--inner"></span>
+
+      <svg class="unauth__icon" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="7" y="14" width="18" height="12" rx="2.3" />
+        <path d="M11 14v-3.2A5 5 0 0 1 16 6a5 5 0 0 1 5 4.8V14" />
+        <circle cx="16" cy="20" r="1.6" />
+        <path d="M16 21.6v2.4" />
+      </svg>
+    </div>
+
+    <h1 class="unauth__title">No autorizado</h1>
+
+    <p class="unauth__text">
+      No tenés permisos para acceder a esta sección de RestInn.
+      Si creés que es un error, contactá con un administrador.
+    </p>
+
+    <button
+      type="button"
+      class="unauth__btn"
+      routerLink="/home"
+    >
+      <span class="unauth__btn-icon" aria-hidden="true">🏠</span>
+      <span>Volver al inicio</span>
+    </button>
+
+  </div>
+</section>

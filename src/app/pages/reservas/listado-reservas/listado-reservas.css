@@ -7,24 +7,26 @@
 .admin-reservations-page h1 {
   font-size: 26px;
   margin-bottom: 8px;
+  color: var(--color-primary);
 }
 
 .admin-reservations-page .subtitle {
   margin-bottom: 24px;
   font-size: 14px;
-  opacity: 0.9;
+  color: var(--color-text-secondary);
 }
 
 /* Panel de filtros */
 .filters-panel {
-  background-color: #21160d;
+  background-color: var(--color-surface);
   border-radius: 24px;
   padding: 20px 24px 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   margin-bottom: 18px;
+  border: 1px solid var(--color-border);
 }
 
-/* Ahora los filtros se acomodan en 2/3 columnas, no 6 en línea */
+/* layout filtros */
 .filters-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -41,7 +43,7 @@
 .filtro label {
   font-size: 13px;
   font-weight: 500;
-  opacity: 0.9;
+  color: var(--color-text-secondary);
 }
 
 .filtro select,
@@ -50,8 +52,8 @@
   width: 100%;
   padding: 8px 12px;
   border-radius: 999px;
-  border: 1px solid #3a2920;
-  background-color: #1a120c;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
   color: var(--color-text);
   font-size: 13px;
   outline: none;
@@ -60,8 +62,8 @@
 
 .filtro select:focus,
 .filtro input:focus {
-  border-color: #f1c36f;
-  box-shadow: 0 0 0 1px rgba(241, 195, 111, 0.7);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
 .dates-filter {
@@ -72,7 +74,7 @@
 
 .dates-filter span {
   font-size: 13px;
-  opacity: 0.7;
+  color: var(--color-text-muted);
 }
 
 /* Botón limpiar */
@@ -82,33 +84,11 @@
   justify-content: flex-end;
 }
 
-.filters-actions button {
-  padding: 8px 16px;
-  border-radius: 999px;
-  border: none;
-  background-color: #c5924a;
-  color: #1d140c;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
-  transition:
-    background-color 0.18s ease,
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
-}
-
-.filters-actions button:hover {
-  background-color: #f1c36f;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
-}
-
 /* Resumen resultados */
 .reservations-summary {
   margin-bottom: 14px;
   font-size: 13px;
-  opacity: 0.85;
+  color: var(--color-text-muted);
 }
 
 /* Mensajes de estado */
@@ -116,21 +96,21 @@
   margin-top: 24px;
   font-size: 14px;
   text-align: center;
-  opacity: 0.9;
+  color: var(--color-text);
 }
 
 .status.error {
-  color: #ff8b8b;
+  color: var(--color-error);
 }
 
 .empty {
   margin-top: 24px;
   font-size: 14px;
   text-align: center;
-  opacity: 0.9;
+  color: var(--color-text-muted);
 }
 
-/* GRID de reservas (multi fila, cards algo más anchas) */
+/* GRID de reservas */
 .reservations-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -140,23 +120,26 @@
 
 /* Card de reserva */
 .reservation-card {
-  background-color: #21160d;
+  background-color: var(--color-surface);
   border-radius: 22px;
   padding: 16px 18px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--color-border);
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease,
-    background-color 0.18s ease;
+    background-color 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .reservation-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.7);
-  background-color: #2a1a10;
+  background-color: var(--color-h-f);
+  border-color: var(--color-primary);
 }
 
 /* Layout interno: mini foto + contenido */
@@ -165,13 +148,13 @@
   gap: 14px;
 }
 
-/* Thumbnail habitación (al costado) */
+/* Thumbnail habitación */
 .thumb-wrapper {
   flex: 0 0 82px;
   height: 82px;
   border-radius: 16px;
   overflow: hidden;
-  background-color: #1a120c;
+  background-color: var(--color-bg);
   box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.7);
 }
 
@@ -182,7 +165,7 @@
   display: block;
 }
 
-/* Contenido de la card al lado de la foto */
+/* Contenido de la card */
 .reservation-main-content {
   flex: 1;
   display: flex;
@@ -200,18 +183,18 @@
 .room-tag {
   font-size: 13px;
   font-weight: 600;
-  color: #f1c36f;
+  color: var(--color-primary);
   margin-bottom: 4px;
 }
 
 .client-line {
   font-size: 13px;
-  opacity: 0.9;
+  color: var(--color-text);
 }
 
 .client-role {
   font-size: 12px;
-  opacity: 0.8;
+  color: var(--color-text-muted);
 }
 
 /* Chip de estado */
@@ -223,7 +206,7 @@
   text-transform: uppercase;
 }
 
-/* Colores por estado */
+/* Colores por estado (dejamos acentos propios) */
 .status-chip.pendiente {
   background-color: #3c2a13;
   color: #f7c56b;
@@ -267,41 +250,43 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  opacity: 0.7;
+  color: var(--color-text-muted);
 }
 
 .dates .value {
   display: block;
   font-size: 13px;
   font-weight: 500;
+  color: var(--color-text);
 }
 
 .extra {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  opacity: 0.85;
+  color: var(--color-text-secondary);
 }
 
 .reservation-footer {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid #2b1c12;
+  border-top: 1px solid var(--color-border);
   display: flex;
+  gap: 8px;
   justify-content: flex-end;
 }
 
-/* botón un toque más compacto en la card */
+/* botón compacto en la card */
 .reservation-footer .btn-gold {
   padding: 6px 14px;
   font-size: 12px;
 }
 
-
+/* Botón tipo link */
 .link-btn {
   background: none;
   border: none;
-  color: #f1c36f;
+  color: var(--color-primary);
   font-size: 13px;
   cursor: pointer;
   padding: 0;
@@ -311,27 +296,16 @@
 }
 
 .link-btn:hover {
-  color: #ffd88b;
+  color: var(--color-secondary);
 }
 
-/* Responsive */
-@media (max-width: 700px) {
-  .admin-reservations-page {
-    padding: 96px 16px 24px;
-  }
-
-  .filters-panel {
-    padding: 16px;
-    border-radius: 18px;
-  }
-}
-/* Botón dorado reutilizable (Limpiar filtros / Ver detalle) */
+/* Botón dorado reutilizable */
 .btn-gold {
   padding: 8px 16px;
   border-radius: 999px;
   border: none;
-  background-color: #c5924a;
-  color: #1d140c;
+  background-color: var(--color-primary);
+  color: var(--color-bg);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -347,7 +321,7 @@
 }
 
 .btn-gold:hover {
-  background-color: #f1c36f;
+  background-color: var(--color-secondary);
   transform: translateY(-1px);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
 }
@@ -356,13 +330,14 @@
   transform: translateY(0);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
+
 /* Botón de cancelar (rojo, outline) */
 .btn-danger-outline {
   padding: 8px 14px;
   border-radius: 999px;
-  border: 1px solid #ff6b6b;
+  border: 1px solid var(--color-error);
   background: transparent;
-  color: #ff6b6b;
+  color: var(--color-error);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -374,8 +349,20 @@
 }
 
 .btn-danger-outline:hover {
-  background-color: #ff6b6b;
-  color: #1b0f0b;
+  background-color: var(--color-error);
+  color: var(--color-bg);
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .admin-reservations-page {
+    padding: 96px 16px 24px;
+  }
+
+  .filters-panel {
+    padding: 16px;
+    border-radius: 18px;
+  }
 }

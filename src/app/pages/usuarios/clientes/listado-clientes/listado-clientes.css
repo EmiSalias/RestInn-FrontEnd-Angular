@@ -1,3 +1,5 @@
+/* src/app/pages/usuarios/listado-clientes/listado-clientes.css */
+
 .clients-page {
   padding: 110px 40px 40px;
   color: var(--color-text);
@@ -6,23 +8,27 @@
 .clients-page h1 {
   margin-bottom: 20px;
   font-size: 24px;
+  color: var(--color-primary);
 }
 
 .status {
   margin-bottom: 12px;
   font-size: 14px;
+  color: var(--color-text-secondary);
 }
 
 .status.error {
-  color: #ff6b6b;
+  color: var(--color-error);
 }
 
+/* Tabla de clientes */
 .clients-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #2a2118;
+  background-color: var(--color-surface);
   border-radius: 12px;
   overflow: hidden;
+  border: 1px solid var(--color-border);
 }
 
 .clients-table th,
@@ -33,32 +39,38 @@
 }
 
 .clients-table thead {
-  background-color: #3a2a1c;
+  background-color: var(--color-h-f);
+  color: var(--color-text-secondary);
+}
+
+.clients-table tbody tr {
+  color: var(--color-text);
 }
 
 .clients-table tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: rgba(0, 0, 0, 0.08); /* queda bien en dark y light */
 }
 
 .clients-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
+/* Link "Ver detalles" */
 .btn-link {
   border: none;
   background: transparent;
-  color: #f1c36f;
+  color: var(--color-primary);
   cursor: pointer;
   font-size: 13px;
   text-decoration: underline;
 }
 
 .btn-link:hover {
-  color: #ffd78b;
+  color: var(--color-text-secondary);
 }
 
 .empty {
   margin-top: 16px;
   font-size: 14px;
-  opacity: 0.8;
+  color: var(--color-text-muted);
 }

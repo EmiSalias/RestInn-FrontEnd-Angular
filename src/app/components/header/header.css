@@ -25,7 +25,6 @@ header {
 
 .nav_container:has(.nav_input:checked) .nav_toggle {
   background-image: url("../../../assets/icons/menu-close.png");
-  
 }
 
 .nav_list {
@@ -79,17 +78,18 @@ a:hover {
 }
 
 .nav_toggle {
-    margin-right: 70px;
-    width: 40px;
-    height: 40px;
-    background-image: url("../../../assets/icons/menu-open.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: transparent;
-    cursor: pointer;
-    transition: background-image .5s;
+  margin-right: 70px;
+  width: 40px;
+  height: 40px;
+  background-image: url("../../../assets/icons/menu-open.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-image .5s;
 }
+
 
 .nav_input {
     display: none;
@@ -159,6 +159,7 @@ a:hover {
 /* Animación general del contenedor */
 .nav_container:has(.nav_input:checked) .nav_list {
   height: auto;
+  
 }
 
 /* Que el contenedor ocupe todo el ancho del header */
@@ -343,4 +344,26 @@ a:hover {
   .nav_actions {
     gap: 6px;
   }
+}
+/* ============================= */
+/* ICONOS MENÚ SEGÚN EL TEMA    */
+/* ============================= */
+
+/* Tema oscuro: (podés usar los defaults de arriba, esto es opcional) */
+:host-context([data-theme="dark"]) .nav_toggle {
+  background-image: url("../../../assets/icons/menu-open.png");
+}
+
+:host-context([data-theme="dark"]) .nav_container:has(.nav_input:checked) .nav_toggle {
+  background-image: url("../../../assets/icons/menu-close.png");
+}
+
+/* Tema claro: versión light */
+:host-context([data-theme="light"]) .nav_toggle {
+  background-image: url("../../../assets/icons/menu-open-light.png");
+}
+
+/* menú abierto en tema claro */
+:host-context([data-theme="light"]) .nav_container:has(.nav_input:checked) .nav_toggle {
+  background-image: url("../../../assets/icons/menu-close-light.png");
 }

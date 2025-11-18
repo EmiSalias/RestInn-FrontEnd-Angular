@@ -180,7 +180,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   // ---------------------------
   // SCROLL VERTICAL – detectar bloque activo
   // ---------------------------
-    @HostListener('window:scroll', [])
+  @HostListener('window:scroll', [])
   onWindowScroll(): void {
     // 1) scroll del hero tipo Angular
     this.updateHeroScrollProgress();
@@ -260,6 +260,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   goToHistorial(event?: Event): void {
     event?.preventDefault();
 
+    // 1) Si no está logueado → login con returnUrl
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/sign_in'], {
         queryParams: { returnUrl: '/mis_reservas' }
@@ -267,11 +268,20 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    // 2) Roles permitidos
+    const allowed = ['CLIENTE', 'ADMINISTRADOR', 'RECEPCIONISTA'];
+    if (!this.auth.hasAnyRole(allowed)) {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
+
+    // 3) Cliente → /mis_reservas | Admin/Recep → /reservas/listado
     const esCliente = this.auth.hasAnyRole(['CLIENTE']);
     const target = esCliente ? '/mis_reservas' : '/reservas/listado';
 
     this.router.navigate([target]);
   }
+
 
   goToHabitaciones(event?: Event): void {
     event?.preventDefault();
@@ -324,7 +334,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.router.navigate(['/listado_habitaciones']);
+    this.router.navigate(['/gestion_habitaciones']);
   }
 
   goToGestionReservas(event?: Event): void {
@@ -339,7 +349,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/gestion_reservas']);
   }
 
-    private updateHeroScrollProgress(): void {
+  private updateHeroScrollProgress(): void {
     const el = this.restinnHero?.nativeElement;
     if (!el) return;
 

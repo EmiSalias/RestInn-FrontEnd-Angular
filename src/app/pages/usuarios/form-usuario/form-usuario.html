@@ -2,130 +2,125 @@
 
   <!-- si no está logueado -->
   @if (isLoggedIn()) {
-    <div class="profile-layout">
-      <!-- menú lateral tipo Booking -->
-      <aside class="profile-menu">
-        <div class="menu-title">Cuenta</div>
+  <div class="profile-layout">
+    <!-- menú lateral tipo Booking -->
+    <aside class="profile-menu">
+      <div class="menu-title">Cuenta</div>
 
-        <button
-          class="menu-item"
-          type="button"
-          [class.active]="activeTab === 'datos'"
-          (click)="setTab('datos')">
-          Datos personales
+      <button class="menu-item" type="button" [class.active]="activeTab === 'datos'" (click)="setTab('datos')">
+        Datos personales
+      </button>
+
+      <button class="menu-item" type="button" [class.active]="activeTab === 'seguridad'" (click)="setTab('seguridad')">
+        Seguridad
+      </button>
+    </aside>
+
+    <!-- formulario -->
+    <form class="profile-card" [formGroup]="form" (ngSubmit)="guardar()">
+
+      <!-- ===== CONTENIDO SEGÚN PESTAÑA ===== -->
+      @switch (activeTab) {
+
+      <!-- ===== TAB DATOS ===== -->
+      @case ('datos') {
+      <h1>Datos personales</h1>
+      <p class="subtitle">
+        Actualizá tu nombre y teléfono. Tu usuario y email se usan para iniciar sesión.
+      </p>
+
+      <div class="grid-2">
+        <label>
+          <span class="label">Nombre</span>
+          <input type="text" formControlName="nombre" />
+        </label>
+
+        <label>
+          <span class="label">Apellido</span>
+          <input type="text" formControlName="apellido" />
+        </label>
+
+        <label>
+          <span class="label">Usuario</span>
+          <input type="text" formControlName="nombreLogin" [disabled]="true" />
+        </label>
+
+        <label>
+          <span class="label">Email</span>
+          <input type="email" formControlName="email" [disabled]="true" />
+        </label>
+
+        <label>
+          <span class="label">Teléfono</span>
+          <input type="text" formControlName="phoneNumber" />
+        </label>
+
+        <label>
+          <span class="label">Rol</span>
+          <input type="text" [value]="user?.role" disabled />
+        </label>
+      </div>
+      }
+
+      <!-- ===== TAB SEGURIDAD ===== -->
+      @case ('seguridad') {
+      <h1>Seguridad</h1>
+      <p class="subtitle small">
+        Cambiá tu contraseña. Si no querés cambiarla, dejá estos campos vacíos.
+      </p>
+
+      <div class="security-grid" formGroupName="passGroup">
+        <li style="list-style: none;">
+          <label>
+            <span class="label">Contraseña actual</span>
+            <input type="password" formControlName="oldPassword" />
+          </label>
+
+          <label>
+            <span class="label">Nueva contraseña</span>
+            <input type="password" formControlName="newPassword" />
+          </label>
+
+          <label>
+            <span class="label">Confirmar nueva contraseña</span>
+            <input type="password" formControlName="confirm" />
+          </label>
+        </li>
+      </div>
+
+      @if (isEmpleado) {
+      <p class="hint">
+        Como empleado solo podés cambiar tu contraseña. Otros datos se gestionan desde Administración.
+      </p>
+      }
+      }
+      }
+
+      <!-- Botón común a ambas pestañas -->
+      <div class="actions">
+        @if (canShowSaveButton) {
+        <button class="btn-gold" type="submit" [disabled]="loading">
+          Guardar cambios
         </button>
-
-        <button
-          class="menu-item"
-          type="button"
-          [class.active]="activeTab === 'seguridad'"
-          (click)="setTab('seguridad')">
-          Seguridad
-        </button>
-      </aside>
-
-      <!-- formulario -->
-      <form class="profile-card" [formGroup]="form" (ngSubmit)="guardar()">
-
-        <!-- ===== CONTENIDO SEGÚN PESTAÑA ===== -->
-        @switch (activeTab) {
-
-          <!-- ===== TAB DATOS ===== -->
-          @case ('datos') {
-            <h1>Datos personales</h1>
-            <p class="subtitle">
-              Actualizá tu nombre y teléfono. Tu usuario y email se usan para iniciar sesión.
-            </p>
-
-            <div class="grid-2">
-              <label>
-                <span class="label">Nombre</span>
-                <input type="text" formControlName="nombre" />
-              </label>
-
-              <label>
-                <span class="label">Apellido</span>
-                <input type="text" formControlName="apellido" />
-              </label>
-
-              <label>
-                <span class="label">Usuario</span>
-                <input type="text" formControlName="nombreLogin" [disabled]="true" />
-              </label>
-
-              <label>
-                <span class="label">Email</span>
-                <input type="email" formControlName="email" [disabled]="true" />
-              </label>
-
-              <label>
-                <span class="label">Teléfono</span>
-                <input type="text" formControlName="phoneNumber" />
-              </label>
-
-              <label>
-                <span class="label">Rol</span>
-                <input type="text" [value]="user?.role" disabled />
-              </label>
-            </div>
-          }
-
-          <!-- ===== TAB SEGURIDAD ===== -->
-          @case ('seguridad') {
-            <h1>Seguridad</h1>
-            <p class="subtitle small">
-              Cambiá tu contraseña. Si no querés cambiarla, dejá estos campos vacíos.
-            </p>
-
-            <div class="security-grid" formGroupName="passGroup">
-                <li style="list-style: none;">
-              <label>
-                <span class="label">Contraseña actual</span>
-                <input type="password" formControlName="oldPassword" />
-              </label>
-
-              <label>
-                <span class="label">Nueva contraseña</span>
-                <input type="password" formControlName="newPassword" />
-              </label>
-
-              <label>
-                <span class="label">Confirmar nueva contraseña</span>
-                <input type="password" formControlName="confirm" />
-              </label>
-              </li>
-            </div>
-
-            @if (isEmpleado) {
-              <p class="hint">
-                Como empleado solo podés cambiar tu contraseña. Otros datos se gestionan desde Administración.
-              </p>
-            }
-          }
         }
-
-        <!-- Botón común a ambas pestañas -->
-        <div class="actions">
-          <button class="btn-gold" type="submit" [disabled]="loading">
-            Guardar cambios
-          </button>
-          @if (loading) {
-            <span class="saving">Guardando…</span>
-          }
-        </div>
-
-        @if (infoMsg) {
-          <p class="info">{{ infoMsg }}</p>
+        @if (loading) {
+        <span class="saving">Guardando…</span>
         }
-        @if (errorMsg) {
-          <p class="err">{{ errorMsg }}</p>
-        }
+      </div>
 
-      </form>
-    </div>
+
+      @if (infoMsg) {
+      <p class="info">{{ infoMsg }}</p>
+      }
+      @if (errorMsg) {
+      <p class="err">{{ errorMsg }}</p>
+      }
+
+    </form>
+  </div>
   } @else {
-    <div class="profile-card">
-      <p>Necesitás iniciar sesión para editar tu perfil.</p>
-    </div>
+  <div class="profile-card">
+    <p>Necesitás iniciar sesión para editar tu perfil.</p>
+  </div>
   }
 </section>
