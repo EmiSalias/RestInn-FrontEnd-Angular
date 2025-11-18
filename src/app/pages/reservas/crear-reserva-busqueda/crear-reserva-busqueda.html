@@ -37,58 +37,73 @@
             </div>
         </div>
 
-
-        <div class="error" *ngIf="rangoInvalido">
+        @if (rangoInvalido) {
+          <div class="error">
             La fecha de salida debe ser posterior a la fecha de ingreso.
-        </div>
+          </div>
+        }
     </section>
 
     <!-- RESULTADOS -->
-    <section class="result-section" *ngIf="fechaIngreso && fechaSalida">
+    @if (fechaIngreso && fechaSalida) {
+      <section class="result-section">
 
-        <div class="status" *ngIf="loading">Buscando habitaciones disponibles...</div>
-        <div class="status error" *ngIf="!loading && errorMsg">{{ errorMsg }}</div>
+        @if (loading) {
+          <div class="status">Buscando habitaciones disponibles...</div>
+        }
+        @if (!loading && errorMsg) {
+          <div class="status error">{{ errorMsg }}</div>
+        }
 
-        <ng-container *ngIf="!loading && !errorMsg && !rangoInvalido">
-            <div class="result-summary" *ngIf="habitacionesDisponibles.length">
-                Habitaciones disponibles del
-                <strong>{{ fechaIngreso }}</strong>
-                al
-                <strong>{{ fechaSalida }}</strong>
-                ({{ habitacionesDisponibles.length }})
+        @if (!loading && !errorMsg && !rangoInvalido) {
+          
+          @if (habitacionesDisponibles.length > 0) {
+            <div class="result-summary">
+              Habitaciones disponibles del
+              <strong>{{ fechaIngreso }}</strong>
+              al
+              <strong>{{ fechaSalida }}</strong>
+              ({{ habitacionesDisponibles.length }})
             </div>
-
-            <div class="empty" *ngIf="!habitacionesDisponibles.length">
-                No hay habitaciones disponibles en ese rango de fechas.
+          } @else {
+            <div class="empty">
+              No hay habitaciones disponibles en ese rango de fechas.
             </div>
+          }
 
-            <div class="grid-habs" *ngIf="habitacionesDisponibles.length">
-                <article class="hab-card" *ngFor="let h of habitacionesDisponibles">
+          @if (habitacionesDisponibles.length > 0) {
+            <div class="grid-habs">
+              @for (h of habitacionesDisponibles; track h.id) {
+                <article class="hab-card">
 
-                    <div class="hab-card__img" *ngIf="getMainImageDataUrl(h) as url; else sinImg">
-                        <img [src]="url" [alt]="'Habitación ' + h.numero" (error)="onImgError($event)">
+                  @if (getMainImageDataUrl(h); as url) {
+                    <div class="hab-card__img">
+                      <img [src]="url" [alt]="'Habitación ' + h.numero" (error)="onImgError($event)">
                     </div>
-                    <ng-template #sinImg>
-                        <div class="hab-card__img hab-card__img--placeholder">
-                            Sin imagen
-                        </div>
-                    </ng-template>
-
-                    <div class="hab-card__body">
-                        <div class="hab-card__title">Habitación {{ h.numero }}</div>
-                        <div class="hab-card__meta">
-                            <span>{{ h.capacidad }} huésped(es)</span>
-                            <span>\${{ h.precioNoche }} / noche</span>
-                        </div>
+                  } @else {
+                    <div class="hab-card__img hab-card__img--placeholder">
+                        Sin imagen
                     </div>
+                  }
 
-                    <div class="hab-card__footer">
-                        <button type="button" (click)="reservar(h)">
-                            Reservar
-                        </button>
-                    </div>
+                  <div class="hab-card__body">
+                      <div class="hab-card__title">Habitación {{ h.numero }}</div>
+                      <div class="hab-card__meta">
+                          <span>{{ h.capacidad }} huésped(es)</span>
+                          <span>\${{ h.precioNoche }} / noche</span>
+                      </div>
+                  </div>
+
+                  <div class="hab-card__footer">
+                      <button type="button" (click)="reservar(h)">
+                          Reservar
+                      </button>
+                  </div>
                 </article>
+              }
             </div>
-        </ng-container>
-    </section>
+          }
+        }
+      </section>
+    }
 </main>

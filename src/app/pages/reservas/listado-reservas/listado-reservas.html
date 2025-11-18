@@ -1,4 +1,3 @@
-<!-- src/app/pages/reservas/listado-reservas/listado-reservas.html -->
 <section class="admin-reservations-page">
     <h1>{{ titulo }}</h1>
     <p class="subtitle">
@@ -23,26 +22,30 @@
             </div>
 
             <!-- Creada por (solo admin/recepción) -->
-            <div class="filtro" *ngIf="modoAdmin">
-                <label>Creada por</label>
-                <select [(ngModel)]="filtros.rolUsuario" (change)="aplicarFiltros()">
-                    <option value="">Cualquiera</option>
-                    <option value="CLIENTE">Cliente</option>
-                    <option value="RECEPCIONISTA">Recepcionista</option>
-                    <option value="ADMINISTRADOR">Administrador</option>
-                </select>
-            </div>
+            @if (modoAdmin) {
+              <div class="filtro">
+                  <label>Creada por</label>
+                  <select [(ngModel)]="filtros.rolUsuario" (change)="aplicarFiltros()">
+                      <option value="">Cualquiera</option>
+                      <option value="CLIENTE">Cliente</option>
+                      <option value="RECEPCIONISTA">Recepcionista</option>
+                      <option value="ADMINISTRADOR">Administrador</option>
+                  </select>
+              </div>
 
-            <!-- Cliente (solo admin/recepción) -->
-            <div class="filtro" *ngIf="modoAdmin">
-                <label>Cliente</label>
-                <select [(ngModel)]="filtros.clienteId" (change)="aplicarFiltros()">
-                    <option [ngValue]="null">Todos</option>
-                    <option *ngFor="let c of clientesUnicos" [ngValue]="c.id">
-                        {{ c.nombre }}
-                    </option>
-                </select>
-            </div>
+              <!-- Cliente (solo admin/recepción) -->
+              <div class="filtro">
+                  <label>Cliente</label>
+                  <select [(ngModel)]="filtros.clienteId" (change)="aplicarFiltros()">
+                      <option [ngValue]="null">Todos</option>
+                      @for (c of clientesUnicos; track c.id) {
+                        <option [ngValue]="c.id">
+                          {{ c.nombre }}
+                        </option>
+                      }
+                  </select>
+              </div>
+            }
 
             <!-- Fechas (ambos modos) -->
             <div class="filtro">
@@ -79,83 +82,97 @@
     </div>
 
     <!-- RESUMEN -->
-    <div class="reservations-summary" *ngIf="!loading && !errorMsg && reservasFiltradas.length">
+    @if (!loading && !errorMsg && reservasFiltradas.length > 0) {
+      <div class="reservations-summary">
         Mostrando {{ reservasFiltradas.length }} reservas.
-    </div>
+      </div>
+    }
 
-    <div class="status" *ngIf="loading">Cargando reservas...</div>
-    <div class="status error" *ngIf="!loading && errorMsg">{{ errorMsg }}</div>
+    @if (loading) {
+      <div class="status">Cargando reservas...</div>
+    }
+    @if (!loading && errorMsg) {
+      <div class="status error">{{ errorMsg }}</div>
+    }
 
     <!-- GRID -->
-    <div class="reservations-grid" *ngIf="!loading && !errorMsg && reservasFiltradas.length">
+    @if (!loading && !errorMsg && reservasFiltradas.length > 0) {
+      <div class="reservations-grid">
 
-        <article class="reservation-card" *ngFor="let r of reservasFiltradas">
-            <div class="reservation-main">
-                <!-- FOTO DE LA HABITACIÓN -->
-                <div class="thumb-wrapper">
-                    <img [src]="getHabitacionThumb(r.habitacionId) || defaultRoomImg"
-                        alt="Habitación {{ r.habitacionNumero || r.habitacionId }}" (error)="onImgError($event)" />
-                </div>
+        @for (r of reservasFiltradas; track r.id) {
+          <article class="reservation-card">
+              <div class="reservation-main">
+                  <!-- FOTO DE LA HABITACIÓN -->
+                  <div class="thumb-wrapper">
+                      <img [src]="getHabitacionThumb(r.habitacionId) || defaultRoomImg"
+                          alt="Habitación {{ r.habitacionNumero || r.habitacionId }}" (error)="onImgError($event)" />
+                  </div>
 
-                <!-- CONTENIDO -->
-                <div class="reservation-main-content">
-                    <header class="reservation-header">
-                        <div>
-                            <div class="room-tag">
-                                Habitación {{ r.habitacionNumero || r.habitacionId }}
-                            </div>
+                  <!-- CONTENIDO -->
+                  <div class="reservation-main-content">
+                      <header class="reservation-header">
+                          <div>
+                              <div class="room-tag">
+                                  Habitación {{ r.habitacionNumero || r.habitacionId }}
+                              </div>
 
-                            <div class="client-line" *ngIf="modoAdmin">
-                                {{ r.usuario?.nombre }} {{ r.usuario?.apellido }}
-                                ·
-                                <span class="client-role">
-                                    {{ rolLabel(r.usuario?.role) }}
-                                </span>
-                            </div>
-                        </div>
+                              @if (modoAdmin) {
+                                <div class="client-line">
+                                  {{ r.usuario?.nombre }} {{ r.usuario?.apellido }}
+                                  ·
+                                  <span class="client-role">
+                                      {{ rolLabel(r.usuario?.role) }}
+                                  </span>
+                                </div>
+                              }
+                          </div>
 
-                        <span class="status-chip" [ngClass]="r.estado?.toLowerCase()">
-                            {{ estadoLabel(r.estado) }}
-                        </span>
-                    </header>
+                          <span class="status-chip" [ngClass]="r.estado?.toLowerCase()">
+                              {{ estadoLabel(r.estado) }}
+                          </span>
+                      </header>
 
-                    <div class="reservation-body">
-                        <div class="dates">
-                            <div>
-                                <span class="label">Ingreso</span>
-                                <span class="value">
-                                    {{ r.fechaIngreso | date:'dd/MM/yyyy' }}
-                                </span>
-                            </div>
-                            <div>
-                                <span class="label">Salida</span>
-                                <span class="value">
-                                    {{ r.fechaSalida | date:'dd/MM/yyyy' }}
-                                </span>
-                            </div>
-                        </div>
+                      <div class="reservation-body">
+                          <div class="dates">
+                              <div>
+                                  <span class="label">Ingreso</span>
+                                  <span class="value">
+                                      {{ r.fechaIngreso | date:'dd/MM/yyyy' }}
+                                  </span>
+                              </div>
+                              <div>
+                                  <span class="label">Salida</span>
+                                  <span class="value">
+                                      {{ r.fechaSalida | date:'dd/MM/yyyy' }}
+                                  </span>
+                              </div>
+                          </div>
 
-                        <div class="extra">
-                            <span>{{ contarHuespedes(r) }} huésped(es)</span>
-                            <span>Reserva #{{ r.id }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                          <div class="extra">
+                              <span>{{ contarHuespedes(r) }} huésped(es)</span>
+                              <span>Reserva #{{ r.id }}</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
 
-            <footer class="reservation-footer">
-                <button class="btn-gold" [routerLink]="['/reserva', r.id]">
-                    Ver detalle
-                </button>
-                <button *ngIf="puedeCancelar(r)" type="button" class="btn-danger-outline" (click)="onCancelarClick(r)">
-                    Cancelar reserva
-                </button>
-            </footer>
+              <footer class="reservation-footer">
+                  <button class="btn-gold" [routerLink]="['/reserva', r.id]">
+                      Ver detalle
+                  </button>
+                  @if (puedeCancelar(r)) {
+                    <button type="button" class="btn-danger-outline" (click)="onCancelarClick(r)">
+                      Cancelar reserva
+                    </button>
+                  }
+              </footer>
 
-        </article>
-    </div>
-
-    <div class="empty" *ngIf="!loading && !errorMsg && !reservasFiltradas.length">
+          </article>
+        }
+      </div>
+    } @else if (!loading && !errorMsg) {
+      <div class="empty">
         No se encontraron reservas con los filtros actuales.
-    </div>
+      </div>
+    }
 </section>

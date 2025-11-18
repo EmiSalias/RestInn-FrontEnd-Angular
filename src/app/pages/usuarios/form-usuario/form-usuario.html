@@ -1,7 +1,7 @@
 <section class="profile-page">
 
   <!-- si no está logueado -->
-  <ng-container *ngIf="isLoggedIn(); else notLogged">
+  @if (isLoggedIn()) {
     <div class="profile-layout">
       <!-- menú lateral tipo Booking -->
       <aside class="profile-menu">
@@ -28,10 +28,10 @@
       <form class="profile-card" [formGroup]="form" (ngSubmit)="guardar()">
 
         <!-- ===== CONTENIDO SEGÚN PESTAÑA ===== -->
-        <ng-container [ngSwitch]="activeTab">
+        @switch (activeTab) {
 
           <!-- ===== TAB DATOS ===== -->
-          <ng-container *ngSwitchCase="'datos'">
+          @case ('datos') {
             <h1>Datos personales</h1>
             <p class="subtitle">
               Actualizá tu nombre y teléfono. Tu usuario y email se usan para iniciar sesión.
@@ -68,10 +68,10 @@
                 <input type="text" [value]="user?.role" disabled />
               </label>
             </div>
-          </ng-container>
+          }
 
           <!-- ===== TAB SEGURIDAD ===== -->
-          <ng-container *ngSwitchCase="'seguridad'">
+          @case ('seguridad') {
             <h1>Seguridad</h1>
             <p class="subtitle small">
               Cambiá tu contraseña. Si no querés cambiarla, dejá estos campos vacíos.
@@ -96,31 +96,36 @@
               </li>
             </div>
 
-            <p class="hint" *ngIf="isEmpleado">
-              Como empleado solo podés cambiar tu contraseña. Otros datos se gestionan desde Administración.
-            </p>
-          </ng-container>
-
-        </ng-container>
+            @if (isEmpleado) {
+              <p class="hint">
+                Como empleado solo podés cambiar tu contraseña. Otros datos se gestionan desde Administración.
+              </p>
+            }
+          }
+        }
 
         <!-- Botón común a ambas pestañas -->
         <div class="actions">
           <button class="btn-gold" type="submit" [disabled]="loading">
             Guardar cambios
           </button>
-          <span class="saving" *ngIf="loading">Guardando…</span>
+          @if (loading) {
+            <span class="saving">Guardando…</span>
+          }
         </div>
 
-        <p class="info" *ngIf="infoMsg">{{ infoMsg }}</p>
-        <p class="err" *ngIf="errorMsg">{{ errorMsg }}</p>
+        @if (infoMsg) {
+          <p class="info">{{ infoMsg }}</p>
+        }
+        @if (errorMsg) {
+          <p class="err">{{ errorMsg }}</p>
+        }
 
       </form>
     </div>
-  </ng-container>
-
-  <ng-template #notLogged>
+  } @else {
     <div class="profile-card">
       <p>Necesitás iniciar sesión para editar tu perfil.</p>
     </div>
-  </ng-template>
+  }
 </section>

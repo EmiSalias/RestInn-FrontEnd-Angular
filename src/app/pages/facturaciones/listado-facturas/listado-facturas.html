@@ -2,7 +2,9 @@
 
     <div class="header-row">
         <h2>Facturas</h2>
-        <span class="rol-badge" *ngIf="isAdminOrRecep">Vista administrador</span>
+        @if (isAdminOrRecep) {
+          <span class="rol-badge">Vista administrador</span>
+        }
     </div>
 
     <form [formGroup]="filtrosForm" class="filtros">
@@ -32,65 +34,86 @@
         </label>
     </form>
 
-    <div *ngIf="error" class="estado estado-error">
+    @if (error) {
+      <div class="estado estado-error">
         {{ error }}
-    </div>
+      </div>
+    }
 
-    <div *ngIf="cargando" class="estado">
+    @if (cargando) {
+      <div class="estado">
         Cargando facturas...
-    </div>
+      </div>
+    }
 
-    <!-- SACAMOS el *ngIf="!cargando" del contenedor -->
-    <table class="tabla-facturas" *ngIf="(facturas$ | async) as facturas; else empty">
+    
+    @if (facturas$ | async; as facturas) {
+      <table class="tabla-facturas">
         <thead>
             <tr>
                 <th class="sortable" (click)="onSort('id')">
                     #
-                    <span class="sort-indicator" *ngIf="sortState.field === 'id'">
+                    @if (sortState.field === 'id') {
+                      <span class="sort-indicator">
                         {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                    </span>
+                      </span>
+                    }
                 </th>
                 <th class="sortable" (click)="onSort('fechaEmision')">
                     Fecha
-                    <span class="sort-indicator" *ngIf="sortState.field === 'fechaEmision'">
+                    @if (sortState.field === 'fechaEmision') {
+                      <span class="sort-indicator">
                         {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                    </span>
+                      </span>
+                    }
                 </th>
                 <th class="sortable" (click)="onSort('clienteNombre')">
                     Cliente
-                    <span class="sort-indicator" *ngIf="sortState.field === 'clienteNombre'">
+                    @if (sortState.field === 'clienteNombre') {
+                      <span class="sort-indicator">
                         {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                    </span>
+                      </span>
+                    }
                 </th>
                 <th class="sortable" (click)="onSort('reservaId')">
                     Reserva
-                    <span class="sort-indicator" *ngIf="sortState.field === 'reservaId'">
+                    @if (sortState.field === 'reservaId') {
+                      <span class="sort-indicator">
                         {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                    </span>
+                      </span>
+                    }
                 </th>
                 <th class="sortable" (click)="onSort('habitacionNumero')">
                     Hab.
-                    <span class="sort-indicator" *ngIf="sortState.field === 'habitacionNumero'">
+                    @if (sortState.field === 'habitacionNumero') {
+                      <span class="sort-indicator">
                         {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                    </span>
+                      </span>
+                    }
                 </th>
                 <th class="sortable" (click)="onSort('tipoFactura')">
                     Tipo
-                    <span class="sort-indicator" *ngIf="sortState.field === 'tipoFactura'">
+                    @if (sortState.field === 'tipoFactura') {
+                      <span class="sort-indicator">
                         {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                    </span>
+                      </span>
+                    }
                 </th>
                 <th class="sortable" (click)="onSort('estado')">
                     Estado
-                    <span class="sort-indicator" *ngIf="sortState.field === 'estado'">
+                    @if (sortState.field === 'estado') {
+                      <span class="sort-indicator">
                         {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                    </span>
+                      </span>
+                    }
                 </th>
                 <th class="sortable total-col" (click)="onSort('totalFinal')">
                     Total
-                    <span class="sort-indicator" *ngIf="sortState.field === 'totalFinal'">
+                    @if (sortState.field === 'totalFinal') {
+                      <span class="sort-indicator">
                         {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                    </span>
+                      </span>
+                    }
                 </th>
                 <th class="pdf-col">
                     PDF
@@ -98,7 +121,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let f of facturas">
+            @for (f of facturas; track f.id) {
+              <tr>
                 <td>{{ f.id }}</td>
                 <td>{{ f.fechaEmision | date:'dd/MM/yyyy' }}</td>
                 <td>{{ f.clienteNombre }}</td>
@@ -118,15 +142,23 @@
                         Ver PDF
                     </button>
                 </td>
-            </tr>
+              </tr>
+            }
         </tbody>
-    </table>
-
-
-    <ng-template #empty>
-        <div class="estado" *ngIf="!cargando && !error">
+      </table>
+      
+      @if (facturas.length === 0 && !cargando && !error) {
+        <div class="estado">
             No hay facturas que coincidan con los filtros.
         </div>
-    </ng-template>
+      }
+      
+    } @else {
+      @if (!cargando && !error) {
+        <div class="estado">
+            No hay facturas para mostrar.
+        </div>
+      }
+    }
 
 </div>
