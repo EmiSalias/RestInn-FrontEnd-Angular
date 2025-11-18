@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-detalle-reserva',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './detalles-reserva.html',
   styleUrls: ['./detalles-reserva.css']
 })

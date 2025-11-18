@@ -1,5 +1,5 @@
 <section class="profile-page">
-  <ng-container *ngIf="isLoggedIn; else notLogged">
+  @if (isLoggedIn) {
     <div class="profile-layout">
 
       <!-- Formulario solo para visualización -->
@@ -38,11 +38,9 @@
         </div>
       </form>
     </div>
-  </ng-container>
-
-  <ng-template #notLogged>
+  } @else {
     <div class="profile-card">
       <p>Necesitas iniciar sesión para ver tu perfil.</p>
     </div>
-  </ng-template>
+  }
 </section>

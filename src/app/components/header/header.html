@@ -5,48 +5,57 @@
       <!-- Checkbox de control del menú -->
       <input type="checkbox" id="menu_input" class="nav_input" #menuInput>
 
-
       <!-- Botón hamburguesa / cruz -->
       <label class="nav_toggle" for="menu_input"></label>
 
       <!-- Menú lateral -->
       <ul class="nav_list">
-        <li class="nav_item" *ngFor="let item of (menu$ | async)">
-          <!-- Item sin hijos -->
-          <a *ngIf="!item.children" [routerLink]="item.link" class="nav_link" (click)="onMenuItemClick()">
-            <fa-icon *ngIf="item.icon" [icon]="item.icon"></fa-icon>{{ item.label }}
-          </a>
+        @for (item of (menu$ | async); track item.label) {
+          <li class="nav_item">
 
+            <!-- Item sin hijos -->
+            @if (!item.children) {
+              <a [routerLink]="item.link" class="nav_link" (click)="onMenuItemClick()">
+                @if (item.icon) {
+                  <fa-icon [icon]="item.icon"></fa-icon>
+                }
+                {{ item.label }}
+              </a>
+            }
 
-          <!-- Item con hijos -->
-          <ng-container *ngIf="item.children">
-            <button class="nav_link" (click)="toggle(item.label)" [attr.aria-expanded]="openLabel === item.label">
-              <fa-icon *ngIf="item.icon" [icon]="item.icon"></fa-icon> {{ item.label }}
-              <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
-            </button>
+            <!-- Item con hijos -->
+            @if (item.children) {
+              <button class="nav_link" (click)="toggle(item.label)" [attr.aria-expanded]="openLabel === item.label">
+                @if (item.icon) {
+                  <fa-icon [icon]="item.icon"></fa-icon>
+                }
+                {{ item.label }}
+                <fa-icon [icon]="faChevronDown" class="chevron"></fa-icon>
+              </button>
 
-            <ul class="submenu" [class.open]="openLabel === item.label">
-              <li *ngFor="let sub of item.children">
-                <a [routerLink]="sub.link" (click)="onMenuItemClick()">
-                  {{ sub.label }}
-                </a>
-              </li>
-            </ul>
+              <ul class="submenu" [class.open]="openLabel === item.label">
+                @for (sub of item.children; track sub.label) {
+                  <li>
+                    <a [routerLink]="sub.link" (click)="onMenuItemClick()">
+                      {{ sub.label }}
+                    </a>
+                  </li>
+                }
+              </ul>
+            }
 
-          </ng-container>
-        </li>
+          </li>
+        }
       </ul>
 
       <!-- Overlay clicable para cerrar el menú -->
       <label class="nav_overlay" for="menu_input"></label>
 
-      <!-- Logo -->
       <figure class="nav_figure">
         <a routerLink="/" class="nav_logo-link" aria-label="Ir al inicio">
           <img src="assets/logos/logo-header.png" alt="Logo RestInn, gestión hotelera" class="nav_logo">
         </a>
       </figure>
-
 
       <div class="nav_actions">
         <!-- BOTÓN TEMA -->
@@ -60,41 +69,40 @@
 
         <div class="user-menu" #userMenu>
           @if (userInfo$ | async; as info) {
-          <span class="user-greeting">
-            Bienvenido, {{ info.displayName }}
-          </span>
+            <span class="user-greeting">
+              Bienvenido, {{ info.displayName }}
+            </span>
 
-          <button type="button" class="user-menu-btn" (click)="toggleUserMenu()">
-            <fa-icon [icon]="getRoleIcon(info.roleRaw)"></fa-icon>
-          </button>
+            <button type="button" class="user-menu-btn" (click)="toggleUserMenu()">
+              <fa-icon [icon]="getRoleIcon(info.roleRaw)"></fa-icon>
+            </button>
           } @else {
-          <button type="button" class="user-menu-btn" (click)="toggleUserMenu()">
-            <fa-icon [icon]="faUser"></fa-icon>
-          </button>
+            <button type="button" class="user-menu-btn" (click)="toggleUserMenu()">
+              <fa-icon [icon]="faUser"></fa-icon>
+            </button>
           }
 
           <div class="user-menu-dropdown" [class.open]="userMenuOpen">
             @if (isLoggedIn$ | async) {
-            <button type="button" class="user-menu-item" routerLink="/mi_perfil" (click)="closeUserMenu()">
-              Mi perfil
-            </button>
+              <button type="button" class="user-menu-item" routerLink="/mi_perfil" (click)="closeUserMenu()">
+                Mi perfil
+              </button>
 
-            <button type="button" class="user-menu-item user-menu-logout" (click)="logout()">
-              Cerrar sesión
-            </button>
+              <button type="button" class="user-menu-item user-menu-logout" (click)="logout()">
+                Cerrar sesión
+              </button>
             } @else {
-            <button type="button" class="user-menu-item" routerLink="/sign_in" (click)="closeUserMenu()">
-              Iniciar sesión
-            </button>
+              <button type="button" class="user-menu-item" routerLink="/sign_in" (click)="closeUserMenu()">
+                Iniciar sesión
+              </button>
 
-            <button type="button" class="user-menu-item" routerLink="/sign_up" (click)="closeUserMenu()">
-              Registrarse
-            </button>
+              <button type="button" class="user-menu-item" routerLink="/sign_up" (click)="closeUserMenu()">
+                Registrarse
+              </button>
             }
           </div>
         </div>
       </div>
-
 
     </div>
   </nav>

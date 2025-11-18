@@ -1,3 +1,5 @@
-<div class="loading-backdrop" *ngIf="loading$ | async">
-  <div class="loading-spinner"></div>
-</div>
+@if (loading$ | async) {
+  <div class="loading-backdrop">
+    <div class="loading-spinner"></div>
+  </div>
+}

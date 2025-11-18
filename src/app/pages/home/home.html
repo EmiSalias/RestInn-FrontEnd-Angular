@@ -1,10 +1,7 @@
-<!-- src/app/pages/home/home.html -->
 <div class="home-wrapper">
 
-  <!-- ========================= -->
   <!-- VISTA PÚBLICO / CLIENTE   -->
-  <!-- ========================= -->
-  <ng-container *ngIf="!isAdminPanel; else adminHero">
+  @if (!isAdminPanel) {
 
     <!-- HERO / BIENVENIDA -->
     <section class="hero">
@@ -90,8 +87,7 @@
             </a>
           </article>
           -->
-
-        </div>
+          </div>
       </div>
 
       <div class="hero-dynamic">
@@ -105,12 +101,13 @@
 
     </section>
 
-  </ng-container>
+    <section id="habitaciones-home">
+      <app-listado-habitaciones></app-listado-habitaciones>
+    </section>
 
-    <!-- ========================= -->
-  <!-- VISTA ADMIN PREMIUM       -->
-  <!-- ========================= -->
-  <ng-template #adminHero>
+  } @else {
+
+    <!-- VISTA ADMIN PREMIUM       -->
     <section class="admin-home">
 
       <header class="hero-header admin-header">
@@ -123,7 +120,6 @@
       </header>
 
       <!-- ICONOS "SUELTOS" -->
-            <!-- ICONOS "SUELTOS" -->
       <div class="admin-actions">
 
         <!-- Gestión de usuarios -->
@@ -225,9 +221,7 @@
       </div>
 
       <!-- Más adelante acá metés el iframe de Looker -->
-
-    </section>
-  </ng-template>
-
+      </section>
+  }
 
 </div>
