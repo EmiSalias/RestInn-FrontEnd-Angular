@@ -3,12 +3,16 @@
   <h1>{{ isEditing ? 'Editar empleado' : 'Crear nuevo empleado' }}</h1>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+    @if (errorMsg) {
+      <div class="error">{{ errorMsg }}</div>
+    }
 
     <!-- Selección de rol, visible en ambas situaciones -->
     <label for="rolEmpleado">Rol</label>
     <select id="rolEmpleado" formControlName="rolEmpleado" (change)="onRoleChange()" required>
-      <option *ngFor="let rol of roles" [value]="rol">{{ rol }}</option>
+      @for (rol of roles; track rol) {
+        <option [value]="rol">{{ rol }}</option>
+      }
     </select>
 
     <!-- Campos adicionales que se muestran después de elegir el rol -->
@@ -38,10 +42,13 @@
       <input id="oldPassword" formControlName="oldPassword" type="password">
     </div>
 
-    <button type="submit" [disabled]="form.invalid">{{ isEditing ? 'Actualizar Empleado' : 'Crear Empleado' }}</button>
+    <button type="submit" [disabled]="form.invalid">{{ isEditing ? 'Actualizar Emlado' : 'Crear Empleado' }}</button>
 
     <!-- Botón para activar o desactivar -->
-    <button type="button" (click)="markAsInactive()" *ngIf="form.value.activo" class="btn btn-danger">Marcar como Inactivo</button>
-    <button type="button" (click)="markAsActive()" *ngIf="!form.value.activo" class="btn btn-success">Marcar como Activo</button>
+    @if (form.value.activo) {
+      <button type="button" (click)="markAsInactive()" class="btn btn-danger">Marcar como Inactivo</button>
+    } @else {
+      <button type="button" (click)="markAsActive()" class="btn btn-success">Marcar como Activo</button>
+    }
   </form>
 </section>
