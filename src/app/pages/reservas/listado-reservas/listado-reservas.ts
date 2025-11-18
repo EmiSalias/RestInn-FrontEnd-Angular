@@ -2,7 +2,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { ReservasService, ReservaResponse } from '../../../services/reservas-service';
 import Habitacion from '../../../models/Habitacion';
 import { HabitacionService } from '../../../services/habitacion-service';
@@ -22,6 +22,7 @@ export class ListadoReservas implements OnInit {
   private reservasSrv = inject(ReservasService);
   private auth = inject(AuthService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   // modo de uso
   modoAdmin = false;
@@ -68,9 +69,9 @@ export class ListadoReservas implements OnInit {
     }
 
     if (body) {
-      if (body.mensaje) return body.mensaje;    // 👈 lo que armamos en el Handler
-      if (body.message) return body.message;    // por si viene ErrorDetails
-      if (body.detail) return body.detail;     // formato ProblemDetail
+      if (body.mensaje) return body.mensaje;
+      if (body.message) return body.message;
+      if (body.detail) return body.detail;
     }
 
     if (httpErr.status >= 500) {
@@ -80,30 +81,59 @@ export class ListadoReservas implements OnInit {
     return fallback;
   }
 
-
-
+  // =======================
+  //       INIT
+  // =======================
   ngOnInit(): void {
     const modoRuta = this.route.snapshot.data['modo'] as 'admin' | 'cliente' | undefined;
 
-    if (modoRuta === 'admin') {
-      this.modoAdmin = true;
-    } else if (modoRuta === 'cliente') {
-      this.modoAdmin = false;
-    } else {
-      this.modoAdmin = this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA']);
-    }
+    const esAdminRecep = this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA']);
+    const esCliente = this.auth.hasAnyRole(['CLIENTE']);
 
-    if (this.modoAdmin) {
+    // 1) Si la ruta fuerza modo admin/cliente, validamos rol
+    if (modoRuta === 'admin') {
+      if (!esAdminRecep) {
+        return this.irUnauthorized();
+      }
+      this.modoAdmin = true;
       this.titulo = 'Reservas';
       this.subtitulo = 'Revisá y filtrá todas las reservas del sistema.';
       this.cargarReservasAdmin();
-    } else {
+    } else if (modoRuta === 'cliente') {
+      if (!esCliente) {
+        return this.irUnauthorized();
+      }
+      this.modoAdmin = false;
       this.titulo = 'Mis reservas';
       this.subtitulo = 'Revisá el estado de tus reservas y consultá el detalle.';
       this.cargarMisReservas();
+    } else {
+      // 2) Sin modo en la ruta: decidimos según rol
+      if (esAdminRecep) {
+        this.modoAdmin = true;
+        this.titulo = 'Reservas';
+        this.subtitulo = 'Revisá y filtrá todas las reservas del sistema.';
+        this.cargarReservasAdmin();
+      } else if (esCliente) {
+        this.modoAdmin = false;
+        this.titulo = 'Mis reservas';
+        this.subtitulo = 'Revisá el estado de tus reservas y consultá el detalle.';
+        this.cargarMisReservas();
+      } else {
+        // 3) No es admin, ni recepcionista, ni cliente => fuera
+        return this.irUnauthorized();
+      }
     }
 
+    // Solo llegamos acá si el usuario está autorizado
     this.cargarHabitaciones();
+  }
+
+  // =======================
+  //  REDIRECCIÓN UNAUTHORIZED
+  // =======================
+  private irUnauthorized(): void {
+    this.router.navigate(['/unauthorized']);
   }
 
   // =======================
@@ -191,7 +221,6 @@ export class ListadoReservas implements OnInit {
 
     const claveRolFiltro = this.normalizarRol(rolUsuario);
 
-    // 🛠 Si el usuario puso Hasta < Desde, los invertimos
     if (dDesde && dHasta && dHasta < dDesde) {
       const tmp = dDesde;
       dDesde = dHasta;
@@ -202,38 +231,29 @@ export class ListadoReservas implements OnInit {
       const fIng = new Date(r.fechaIngreso);
       const fSal = new Date(r.fechaSalida);
 
-      // filtro por rango de fechas
       if (dDesde && fIng < dDesde) return false;
 
       if (dHasta) {
         const h = new Date(dHasta);
-        h.setHours(23, 59, 59, 999); // incluye todo el día "hasta"
+        h.setHours(23, 59, 59, 999);
         if (fSal > h) return false;
       }
 
-      // estado
       if (estado && r.estado !== estado) return false;
 
-      // rol creador (modo admin)
       if (this.modoAdmin && claveRolFiltro) {
         const rolReserva = this.normalizarRol(r.usuario?.role);
         if (rolReserva !== claveRolFiltro) return false;
       }
 
-      // cliente concreto (modo admin)
       if (this.modoAdmin && clienteId && r.usuario?.id !== clienteId) return false;
 
-      // búsqueda de texto
       if (termino) {
         const nom = `${r.usuario?.nombre ?? ''} ${r.usuario?.apellido ?? ''}`.toLowerCase();
         const hab = String(r.habitacionNumero ?? r.habitacionId ?? '').toLowerCase();
         const id = String(r.id);
 
-        if (
-          !nom.includes(termino) &&
-          !hab.includes(termino) &&
-          !id.includes(termino)
-        ) {
+        if (!nom.includes(termino) && !hab.includes(termino) && !id.includes(termino)) {
           return false;
         }
       }
@@ -243,7 +263,6 @@ export class ListadoReservas implements OnInit {
 
     this.ordenar();
   }
-
 
   ordenar(): void {
     this.reservasFiltradas.sort((a, b) => {
@@ -296,7 +315,6 @@ export class ListadoReservas implements OnInit {
   //  CANCELACIÓN CLIENTE
   // =======================
 
-  /** Solo mostramos botón en modo cliente y estado PENDIENTE */
   puedeCancelar(r: ReservaResponse): boolean {
     if (this.modoAdmin) return false;
     return r.estado === 'PENDIENTE';
@@ -324,7 +342,6 @@ export class ListadoReservas implements OnInit {
             text: 'La reserva fue cancelada correctamente.'
           });
 
-          // Recargamos mis reservas (modo cliente)
           if (!this.modoAdmin) {
             this.cargarMisReservas();
           }
@@ -343,8 +360,6 @@ export class ListadoReservas implements OnInit {
             text: msg
           });
         }
-
-
       });
     });
   }

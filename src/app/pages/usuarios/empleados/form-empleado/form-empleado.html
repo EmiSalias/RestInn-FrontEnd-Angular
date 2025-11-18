@@ -1,17 +1,26 @@
 <!-- Agregar botones para activar o desactivar al empleado -->
+
 <section class="form-creacion-empleado">
-  <h1>{{ isEditing ? 'Editar empleado' : 'Crear nuevo empleado' }}</h1>
+  <button type="button" class="back-arrow" (click)="goBack()">
+    ←
+  </button>
+  <div class="form-header">
+
+
+    <h1>{{ isEditing ? 'Editar empleado' : 'Crear nuevo empleado' }}</h1>
+  </div>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     @if (errorMsg) {
-      <div class="error">{{ errorMsg }}</div>
+    <div class="error">{{ errorMsg }}</div>
     }
+
 
     <!-- Selección de rol, visible en ambas situaciones -->
     <label for="rolEmpleado">Rol</label>
     <select id="rolEmpleado" formControlName="rolEmpleado" (change)="onRoleChange()" required>
       @for (rol of roles; track rol) {
-        <option [value]="rol">{{ rol }}</option>
+      <option [value]="rol">{{ rol }}</option>
       }
     </select>
 
@@ -46,9 +55,13 @@
 
     <!-- Botón para activar o desactivar -->
     @if (form.value.activo) {
-      <button type="button" (click)="markAsInactive()" class="btn btn-danger">Marcar como Inactivo</button>
+    <button type="button" (click)="markAsInactive()" class="btn btn-danger">
+      Marcar como Inactivo
+    </button>
     } @else {
-      <button type="button" (click)="markAsActive()" class="btn btn-success">Marcar como Activo</button>
+    <button type="button" (click)="markAsActive()" class="btn btn-success">
+      Marcar como Activo
+    </button>
     }
   </form>
 </section>
