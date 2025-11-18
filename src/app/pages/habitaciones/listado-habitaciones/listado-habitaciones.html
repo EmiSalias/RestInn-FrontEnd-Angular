@@ -7,7 +7,7 @@
     </button>
     <button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
 
-    @if (puedeGestionarHabitaciones) {
+    @if (isAdmin) {
       <button type="button" (click)="agregarNueva()">Agregar nueva</button>
     }
   </div>
@@ -16,8 +16,7 @@
     <form class="filtros" [class.activo]="filtrosVisibles">
       <div class="filtros-row">
 
-        <div classa="filtro">
-          <label for="orden">Ordenar por:</label>
+        <div class="filtro"> <label for="orden">Ordenar por:</label>
           <select id="orden" [(ngModel)]="orden" name="orden" (change)="ordenarHabitaciones()">
             <option value="Numero asc">Número ↑</option>
             <option value="Numero desc">Número ↓</option>
@@ -29,20 +28,19 @@
         </div>
 
         <div class="filtro">
-          <label>Estado:</label>
-          <select [(ngModel)]="filtros.estado" name="estado">
-            <option hidden value="">Seleccionar</option>
-            <option value="DISPONIBLE">Disponible</option>
+          <label for="filtroEstado">Estado:</label>
+          <select id="filtroEstado" [(ngModel)]="filtros.estado" name="estado">
+            <option value="">Todos</option> <option value="DISPONIBLE">Disponible</option>
             <option value="OCUPADA">Ocupada</option>
             <option value="MANTENIMIENTO">Mantenimiento</option>
             <option value="LIMPIEZA">Limpieza</option>
           </select>
         </div>
 
-        @if (puedeGestionarHabitaciones) {
+        @if (isAdmin) {
           <div class="filtro">
-            <label>Visibilidad:</label>
-            <select [(ngModel)]="filtros.filtroActivo" name="filtroActivo">
+            <label for="filtroActivo">Visibilidad:</label>
+            <select id="filtroActivo" [(ngModel)]="filtros.filtroActivo" name="filtroActivo">
               <option value="todas">Todas</option>
               <option value="activas">Solo Activas</option>
               <option value="inactivas">Solo Inactivas</option>
@@ -50,25 +48,50 @@
           </div>
         }
 
-        <div class="filtro filtro-rango">
+        <div class="filtro">
+          <label for="filtroTipo">Tipo:</label>
+          <select id="filtroTipo" [(ngModel)]="filtros.tipo" name="tipo">
+            <option value="">Todos</option>
+            @for (tipo of tiposHabitacion; track tipo) {
+              <option [value]="tipo">{{ tipo | titlecase }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filtro">
+          <label for="filtroNumero">Número:</label>
+          <input id="filtroNumero" type="number" [(ngModel)]="filtros.numero" name="numero" placeholder="Ej: 101">
+        </div>
+
+        <div class="filtro">
+          <label for="filtroPiso">Piso:</label>
+          <input id="filtroPiso" type="number" [(ngModel)]="filtros.piso" name="piso" placeholder="Ej: 1">
+        </div>
+        <div class="filtro-rango">
           <label>Capacidad:</label>
-          <input type="number" [(ngModel)]="filtros.capacidadMin" name="capacidadMin" placeholder="mín">
-          <span>—</span>
-          <input type="number" [(ngModel)]="filtros.capacidadMax" name="capacidadMax" placeholder="máx">
+          <div class="filtro-rango-inputs">
+            <input type="number" [(ngModel)]="filtros.capacidadMin" name="capacidadMin" placeholder="mín">
+            <span>—</span>
+            <input type="number" [(ngModel)]="filtros.capacidadMax" name="capacidadMax" placeholder="máx">
+          </div>
         </div>
 
-        <div class="filtro filtro-rango">
+        <div class="filtro-rango">
           <label>Precio:</label>
-          <input type="number" [(ngModel)]="filtros.precioMin" name="precioMin" placeholder="mín">
-          <span>—</span>
-          <input type="number" [(ngModel)]="filtros.precioMax" name="precioMax" placeholder="máx">
+          <div class="filtro-rango-inputs">
+            <input type="number" [(ngModel)]="filtros.precioMin" name="precioMin" placeholder="mín">
+            <span>—</span>
+            <input type="number" [(ngModel)]="filtros.precioMax" name="precioMax" placeholder="máx">
+          </div>
         </div>
 
-        <div class="filtro filtro-rango">
+        <div class="filtro-rango">
           <label>Fechas:</label>
-          <input type="date" [(ngModel)]="filtros.fechaDesde" name="fechaDesde">
-          <span>—</span>
-          <input type="date" [(ngModel)]="filtros.fechaHasta" name="fechaHasta">
+          <div class="filtro-rango-inputs">
+            <input type="date" [(ngModel)]="filtros.fechaDesde" name="fechaDesde">
+            <span>—</span>
+            <input type="date" [(ngModel)]="filtros.fechaHasta" name="fechaHasta">
+          </div>
         </div>
 
       </div>
@@ -83,7 +106,7 @@
       }
       @if (filtros.fechaDesde && filtros.fechaHasta) {
         <p class="warning">
-          Al filtrar por fechas se buscará disponibilidad real y se ignorarán los otros filtros (Estado, Capacidad, Precio, etc.).
+          Al filtrar por fechas se buscará disponibilidad real y se ignorarán los otros filtros.
         </p>
       }
     </form>
@@ -108,7 +131,7 @@
             }
             <span class="habitacion-card__badge">{{ hab.estado }}</span>
             
-            @if (puedeGestionarHabitaciones && !hab.activo) {
+            @if (isAdmin && !hab.activo) {
               <span class="habitacion-card__badge badge-inactiva">INACTIVA</span>
             }
           </div>
@@ -130,16 +153,20 @@
           </div>
 
           <div class="buttons">
-            <button (click)="reservarHabitacion(hab)">Reservar</button>
+             @if (isAdmin || isCliente || isRecepcionista) {
+              <button (click)="reservarHabitacion(hab)">Reservar</button>
+             }
+             
             <button (click)="detailHabitacion(hab)">Detalle</button>
             
             @if (puedeGestionarHabitaciones) {
               <button class="btn-edit" (click)="editHabitacion(hab)">Editar</button>
-              
-              @if (hab.activo) {
-                <button class="btn-delete" (click)="inhabilitarHabitacion(hab)">Inhabilitar</button>
-              } @else {
-                <button class="btn-reactivate" (click)="reactivarHabitacion(hab)">Reactivar</button>
+              @if (isAdmin) {
+                @if (hab.activo) {
+                  <button class="btn-delete" (click)="inhabilitarHabitacion(hab)">Inhabilitar</button>
+                } @else {
+                 <button class="btn-reactivate" (click)="reactivarHabitacion(hab)">Reactivar</button>
+                }
               }
             }
           </div>

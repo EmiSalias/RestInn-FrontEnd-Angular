@@ -5,44 +5,158 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
       <div class="grid-2">
+        
+        <!-- CAMPO NUMERO -->
         <div class="field">
-          <label>Número</label>
-          <input type="number" formControlName="numero" min="1" />
-          @if (form.get('numero')?.invalid && form.get('numero')?.touched) {
-            <small class="error">Número obligatorio</small>
+          <label for="numeroHab">Número</label>
+          <input id="numeroHab" type="number" formControlName="numero" min="1" max="9999" placeholder="Ej: 101" />
+          
+          <!-- MENSAJE DE VERIFICACION -->
+          @if (form.get('numero')?.pending) {
+            <small class="hint">Verificando disponibilidad...</small>
+          }
+
+          <!-- MENSAJE EN CASO DE VALIDO -->
+          @if (form.get('numero')?.valid && (form.get('numero')?.touched || form.get('numero')?.dirty) && !form.get('numero')?.pending) {
+            <small class="success">✓ Número disponible</small>
+          }
+
+          <!-- MENSAJES EN CASO DE ERROR -->
+          @if (form.get('numero')?.touched && form.get('numero')?.invalid && !form.get('numero')?.pending) {
+            <div class="errors-container">
+              @if (form.get('numero')?.hasError('required')) {
+                <small class="error">El número es obligatorio.</small>
+              }
+              @if (form.get('numero')?.hasError('min')) {
+                <small class="error">No puede ser negativo ni cero.</small>
+              }
+              @if (form.get('numero')?.hasError('max')) {
+                <small class="error">Máximo permitido: 9999.</small>
+              }
+              @if (form.get('numero')?.hasError('numeroDuplicado')) {
+                <small class="error">Ya existe una habitación con este número.</small>
+              }
+            </div>
           }
         </div>
 
+        <!-- CAMPO PISO -->
         <div class="field">
-          <label>Piso</label>
-          <input type="number" formControlName="piso" min="0" />
+          <label for="pisoHab">Piso</label>
+          <input id="pisoHab" type="number" formControlName="piso" min="1" max="4" placeholder="1-4" />
+          
+          <!-- MENSAJE EN CASO DE VALIDO -->
+          @if (form.get('piso')?.valid && (form.get('piso')?.dirty || form.get('piso')?.touched)) {
+            <small class="success">✓ Piso válido</small>
+          }
+
+          <!-- MENSAJES EN CASO DE ERROR -->
+          @if (form.get('piso')?.touched && form.get('piso')?.invalid) {
+            <div class="errors-container">
+              @if (form.get('piso')?.hasError('required')) {
+                <small class="error">El piso es obligatorio.</small>
+              }
+              @if (form.get('piso')?.hasError('min')) {
+                <small class="error">El piso mínimo es 1.</small>
+              }
+              @if (form.get('piso')?.hasError('max')) {
+                <small class="error">El piso máximo es 4.</small>
+              }
+            </div>
+          }
         </div>
 
+        <!-- CAMPO CAPACIDAD -->
         <div class="field">
           <label>Capacidad</label>
-          <input type="number" formControlName="capacidad" min="1" />
+          <input id="capacHab" type="number" formControlName="capacidad" min="1" max="5" placeholder="1-5" />
+
+          <!-- MENSAJE EN CASO DE VALIDO -->
+          @if (form.get('capacidad')?.valid && (form.get('capacidad')?.dirty || form.get('capacidad')?.touched)) {
+            <small class="success">✓ Capacidad válida</small>
+          }
+
+          <!-- MENSAJES EN CASO DE ERROR -->
+          @if (form.get('capacidad')?.invalid && (form.get('capacidad')?.dirty || form.get('capacidad')?.touched)) {
+            <div class="errors-container">
+              @if (form.get('capacidad')?.hasError('required')) {
+                <small class="error">La capacidad es obligatoria.</small>
+              }
+              @if (form.get('capacidad')?.hasError('min')) {
+                <small class="error">Mínimo 1 persona.</small>
+              }
+              @if (form.get('capacidad')?.hasError('max')) {
+                <small class="error">Máximo 5 personas.</small>
+              }
+            </div>
+          }
         </div>
 
+        <!-- CAMPO CAMAS -->
         <div class="field">
           <label>Camas</label>
-          <input type="number" formControlName="cantCamas" min="1" />
+          <input id="camasHab" type="number" formControlName="cantCamas" min="1" max="4" placeholder="1-4" />
+
+          <!-- MENSAJE EN CASO DE VALIDO -->
+          @if (form.get('cantCamas')?.valid && (form.get('cantCamas')?.dirty || form.get('cantCamas')?.touched)) {
+            <small class="success">✓ Cantidad de camas válida</small>
+          }
+
+          <!-- MENSAJES EN CASO DE ERROR -->
+          @if (form.get('cantCamas')?.invalid && (form.get('cantCamas')?.dirty || form.get('cantCamas')?.touched)) {
+            <div class="errors-container">
+              @if (form.get('cantCamas')?.hasError('required')) {
+                <small class="error">La cantidad de camas es obligatoria.</small>
+              }
+              @if (form.get('cantCamas')?.hasError('min')) {
+                <small class="error">Mínimo 1 cama.</small>
+              }
+              @if (form.get('cantCamas')?.hasError('max')) {
+                <small class="error">Máximo 4 camas.</small>
+              }
+            </div>
+          }
         </div>
 
+        <!-- CAMPO PRECIO -->
         <div class="field">
           <label>Precio por noche</label>
-          <input type="number" formControlName="precioNoche" min="0" step="0.01" />
+          <input id="precioHab" type="number" formControlName="precioNoche" min="0.01" max="999999999.99" step="0.01" placeholder="$" />
+
+          <!-- MENSAJE EN CASO DE VALIDO -->
+          @if (form.get('precioNoche')?.valid && (form.get('precioNoche')?.dirty || form.get('precioNoche')?.touched)) {
+            <small class="success">✓ Precio válido</small>
+          }
+
+          <!-- MENSAJES EN CASO DE ERROR -->
+          @if (form.get('precioNoche')?.invalid && (form.get('precioNoche')?.dirty || form.get('precioNoche')?.touched)) {
+            <div class="errors-container">
+              @if (form.get('precioNoche')?.hasError('required')) {
+                <small class="error">El precio es obligatorio.</small>
+              }
+              @if (form.get('precioNoche')?.hasError('min')) {
+                <small class="error">Mínimo $0.01</small>
+              }
+              @if (form.get('precioNoche')?.hasError('max')) {
+                <small class="error">Máximo $999999999.99</small>
+              }
+            </div>
+          }
         </div>
 
+        <!-- CAMPO ESTADO -->
         <div class="field">
           <label>Estado</label>
           <select formControlName="estado">
-            <option value="DISPONIBLE">Disponible</option>
-            <option value="OCUPADA">Ocupada</option>
-            <option value="MANTENIMIENTO">Mantenimiento</option>
-            <option value="LIMPIEZA">Limpieza</option>
+
+            <!-- MANEJO DE ESTADO -->
+            @for (estado of estadosPermitidos; track estado) {
+              <option [value]="estado">{{ estado | titlecase }}</option>
+            }
           </select>
         </div>
 
+        <!-- CAMPO TIPO -->
         <div class="field">
           <label>Tipo</label>
           <select formControlName="tipo">
@@ -54,6 +168,7 @@
           </select>
         </div>
 
+        <!-- CAMPO ACTIVO -->
         @if (editMode) {
           <div class="field field-toggle">
             <label for="activo">Habitación Activa</label>
@@ -66,16 +181,59 @@
         }
       </div>
 
+      <!-- CAMPO COMENTARIO -->
       <div class="field">
-        <label>Comentario (Opcional)</label>
-        <textarea rows="2" formControlName="comentario"></textarea>
+          <label>Comentario (Opcional)</label>
+          <textarea rows="2" formControlName="comentario" placeholder="Detalles adicionales..."></textarea>
+
+          <!-- MENSAJES EN CASO DE ERROR -->
+          @if (form.get('comentario')?.hasError('maxlength') && (form.get('comentario')?.dirty || form.get('comentario')?.touched)) {
+            <small class="error">
+              El comentario es muy largo (máximo 255 caracteres). 
+              Estás usando {{ form.get('comentario')?.errors?.['maxlength'].actualLength }}.
+            </small>
+          }
+        </div>
+
+      <!-- CAMPO IMAGENES -->
+      <div class="field">
+        <label>Imágenes <small class="hint">({{ imagenesPreview.length }} / 30)</small></label>
+        
+        <div 
+          class="upload-container"
+          [class.dragging]="isDragging"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)">
+          
+          <input 
+            type="file" 
+            id="fileInput" 
+            multiple 
+            (change)="onFilesSelected($event)" 
+            accept="image/*" 
+            hidden 
+          />
+
+          <label for="fileInput" class="upload-btn">
+            <span class="icon">📁</span> Elegir archivos
+          </label>
+
+          <span class="upload-hint">
+            @if (isDragging) {
+              ¡Soltá los archivos acá!
+            } @else {
+              o arrastralos y soltalos aquí
+            }
+          </span>
+        </div>
+        
+        @if (imageError) {
+          <small class="error">{{ imageError }}</small>
+        }
       </div>
 
-      <div class="field">
-        <label>Imágenes</label>
-        <input type="file" multiple (change)="onFilesSelected($event)" accept="image/*" />
-      </div>
-
+      <!-- GESTION Y VISUALIZACION DE IMAGENES -->
       @if (imagenesPreview.length > 0) {
         <section class="galeria">
           <div class="galeria__thumbs">
@@ -91,6 +249,7 @@
         <div class="galeria galeria--empty">Sin imágenes cargadas</div>
       }
 
+      <!-- BOTONES -->
       <div class="actions">
         <button type="submit" [disabled]="loading || form.invalid">
           @if (loading) {

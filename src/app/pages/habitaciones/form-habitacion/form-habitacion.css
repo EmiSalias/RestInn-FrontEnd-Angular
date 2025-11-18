@@ -25,12 +25,18 @@ h2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.grid-2 .field {
+  margin-bottom: 0;
 }
 
 .field label {
@@ -44,10 +50,18 @@ h2 {
 textarea {
   background-color: var(--color-bg);
   font-size: 0.95rem;
+  resize: none;
+  field-sizing: content;
 }
 
 .error {
   color: var(--color-error);
+  font-size: 0.8rem;
+  margin-top: -0.25rem;
+}
+
+.success {
+  color: var(--color-success);
   font-size: 0.8rem;
   margin-top: -0.25rem;
 }
@@ -202,4 +216,69 @@ button {
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.upload-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0;
+  padding: 1.5rem;
+  border: 2px dashed var(--color-border);
+  border-radius: 12px;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.upload-container:hover {
+  border-color: var(--color-primary);
+}
+
+/* El botón falso (label) */
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-h-f);
+  color: var(--color-text);
+  border: 1px solid var(--color-primary);
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.upload-btn:hover {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.upload-btn .icon {
+  font-size: 1.1rem;
+}
+
+/* Texto "o arrastrá..." */
+.upload-hint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* Responsive: en móviles, apilar verticalmente */
+@media (max-width: 480px) {
+  .upload-container {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* ESTADO CUANDO SE ARRASTRA UN ARCHIVO ENCIMA */
+.upload-container.dragging {
+  border-color: var(--color-primary);
+  background-color: rgba(241, 195, 111, 0.15);
+  transform: scale(1.01);
 }

@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth-service';
 import { Subscription, Observable } from 'rxjs';
 import Swal from 'sweetalert2';
+import { H_Tipo } from '../../../models/enums/H_Tipo';
 
 @Component({
   selector: 'app-listado-habitaciones',
@@ -22,15 +23,21 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
 
   private subs = new Subscription();
 
-  habitaciones: Habitacion[] = []; // Contiene TODAS las habitaciones (activas o no)
+  habitaciones: Habitacion[] = []; 
   habitacionesFiltradas: Habitacion[] = [];
 
   filtrosVisibles = false;
   rangeError = false;
   loading = false;
   errorMsg = '';
+  
+  // Flags de permisos
   isCliente = false;
-  puedeGestionarHabitaciones = false;
+  isAdmin = false;
+  isRecepcionista = false;
+  puedeGestionarHabitaciones = false; // Admin + Empleados
+
+  tiposHabitacion = Object.values(H_Tipo);
 
   filtros = {
     estado: '',
@@ -40,10 +47,13 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
     precioMax: null as number | null,
     fechaDesde: '',
     fechaHasta: '',
-    filtroActivo: 'activas' 
+    filtroActivo: 'activas',
+    numero: null as number | null,
+    piso: null as number | null,
+    tipo: ''
   };
 
-  orden = 'Numero asc'; // Orden por defecto
+  orden = 'Numero asc';
 
   ngOnInit(): void {
     const s = this.auth.state$.subscribe(state => {
@@ -51,13 +61,18 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
       const logged = state.isLoggedIn;
 
       this.isCliente = logged && roles.includes('CLIENTE');
+      this.isAdmin = logged && roles.includes('ADMINISTRADOR');
+      this.isRecepcionista = logged && roles.includes('RECEPCIONISTA');
+      
       this.puedeGestionarHabitaciones = logged && roles.some(r =>
         ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA'].includes(r)
       );
 
-      // Si es admin, que por defecto vea todas
-      if (this.puedeGestionarHabitaciones) {
+      // SOLO el Admin puede ver 'todas' (inactivas)
+      if (this.isAdmin) {
         this.filtros.filtroActivo = 'todas';
+      } else {
+        this.filtros.filtroActivo = 'activas';
       }
 
       if (this.habitaciones.length === 0 && !this.loading) {
@@ -89,7 +104,10 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
       precioMax: null,
       fechaDesde: '',
       fechaHasta: '',
-      filtroActivo: this.puedeGestionarHabitaciones ? 'todas' : 'activas'
+      filtroActivo: this.isAdmin ? 'todas' : 'activas', 
+      numero: null,
+      piso: null,
+      tipo: ''
     };
     this.errorMsg = '';
     this.rangeError = false;
@@ -106,9 +124,11 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
     this.loading = true;
     this.errorMsg = '';
 
-    const endpoint$ = this.puedeGestionarHabitaciones
-      ? this.habService.listarTodasIncluidasInactivas() // Admin ve activas e inactivas
-      : this.habService.getHabitaciones();              // Cliente solo ve activas
+    // Solo ADMIN llama a 'listarTodasIncluidasInactivas'.
+    // Recepcionistas y demás usan 'getHabitaciones' (solo activas).
+    const endpoint$ = this.isAdmin
+      ? this.habService.listarTodasIncluidasInactivas() 
+      : this.habService.getHabitaciones();
 
     endpoint$.subscribe({
       next: (data) => {
@@ -118,7 +138,11 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error al cargar habitaciones:', err);
-        this.errorMsg = 'Error al cargar las habitaciones.';
+        if (err.status === 403) {
+           this.errorMsg = 'No tienes permisos para ver este listado.';
+        } else {
+           this.errorMsg = 'Error al cargar las habitaciones.';
+        }
         this.loading = false;
       }
     });
@@ -129,6 +153,7 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
     this.errorMsg = '';
     this.rangeError = false;
 
+    // 1. Filtro de Fechas (Backend)
     if (this.filtros.fechaDesde && this.filtros.fechaHasta) {
       if (new Date(this.filtros.fechaHasta) < new Date(this.filtros.fechaDesde)) {
         this.rangeError = true;
@@ -151,17 +176,27 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
       return;
     }
 
+    // 2. Filtros Locales (Client-side)
     const f = this.filtros;
     this.habitacionesFiltradas = this.habitaciones.filter(h => {
 
+      // Filtro Activo/Inactivo
       if (f.filtroActivo === 'activas' && !h.activo) return false;
       if (f.filtroActivo === 'inactivas' && h.activo) return false;
       
+      // Filtros de Atributos
       if (f.estado && h.estado !== f.estado) return false;
+      
+      // Rangos numéricos
       if (f.capacidadMin !== null && h.capacidad < f.capacidadMin) return false;
       if (f.capacidadMax !== null && h.capacidad > f.capacidadMax) return false;
       if (f.precioMin !== null && h.precioNoche < f.precioMin) return false;
       if (f.precioMax !== null && h.precioNoche > f.precioMax) return false;
+      
+      // Filtros exactos
+      if (f.numero != null && h.numero !== f.numero) return false;
+      if (f.piso != null && h.piso !== f.piso) return false;
+      if (f.tipo && h.tipo !== f.tipo) return false;
       
       return true;
     });
@@ -170,7 +205,6 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
     this.loading = false;
     this.filtrosVisibles = false;
   }
-
 
   ordenarHabitaciones() {
     if (!this.orden) return;
@@ -195,6 +229,29 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
   }
 
   reservarHabitacion(hab: Habitacion) {
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/sign_in'], {
+        queryParams: {
+          returnUrl: '/crear_reserva/form',
+          habitacionId: hab.id,
+          capacidad: hab.capacidad
+        }
+      });
+      return;
+    }
+
+    const allowed = ['CLIENTE', 'ADMINISTRADOR', 'RECEPCIONISTA'];
+    if (!this.auth.hasAnyRole(allowed)) {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
+
+    this.router.navigate(['/crear_reserva/form'], {
+      queryParams: {
+        habitacionId: hab.id,
+        capacidad: hab.capacidad
+      }
+    });
   }
 
   editHabitacion(hab: Habitacion) {
@@ -215,19 +272,11 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
       if (result.isConfirmed) {
         this.habService.inhabilitarHabitacion(hab.id).subscribe({
           next: () => {
-            Swal.fire(
-              'Inhabilitada',
-              'La habitación ha sido marcada como inactiva.',
-              'success'
-            );
+            Swal.fire('Inhabilitada', 'La habitación ha sido marcada como inactiva.', 'success');
             this.getHabitaciones();
           },
           error: (err) => {
-            Swal.fire(
-              'Error',
-              err.message || 'No se pudo inhabilitar. Verifique si tiene reservas activas.',
-              'error'
-            );
+            Swal.fire('Error', err.message || 'No se pudo inhabilitar.', 'error');
           }
         });
       }
@@ -248,19 +297,11 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
       if (result.isConfirmed) {
         this.habService.reactivarHabitacion(hab.id).subscribe({
           next: () => {
-            Swal.fire(
-              'Reactivada',
-              'La habitación está activa nuevamente.',
-              'success'
-            );
+            Swal.fire('Reactivada', 'La habitación está activa nuevamente.', 'success');
             this.getHabitaciones();
           },
           error: (err) => {
-            Swal.fire(
-              'Error',
-              err.message || 'No se pudo reactivar la habitación.',
-              'error'
-            );
+            Swal.fire('Error', err.message || 'No se pudo reactivar la habitación.', 'error');
           }
         });
       }

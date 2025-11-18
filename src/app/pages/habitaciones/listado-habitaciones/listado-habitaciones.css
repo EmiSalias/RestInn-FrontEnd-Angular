@@ -23,7 +23,6 @@
 }
 
 .filtros-toggle button {
-  background-color: var(--color-primary);
   color: var(--color-bg);
   border: none;
   border-radius: 6px;
@@ -120,8 +119,6 @@
 }
 
 .filtros-bottom button {
-  background-color: var(--color-secondary);
-  color: var(--color-bg);
   border: none;
   border-radius: 6px;
   padding: 0.4rem 1rem;
@@ -131,6 +128,7 @@
 }
 .filtros-bottom button:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
 }
 
 /* --- Mensajes de Estado (Cargando, Error, Warning) --- */
