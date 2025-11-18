@@ -981,12 +981,27 @@
   max-width: 760px;
 }
 
-.restinn-hero__logo img {
+/* LOGO HERO – base */
+.hero-logo {
   height: 60px;
   filter: drop-shadow(0 0 18px rgba(0,0,0,0.85));
   transform: translateY(calc(25px - 25px * var(--scroll-progress)));
   opacity: calc(0.2 + 0.8 * var(--scroll-progress));
   transition: opacity .15s linear;
+}
+
+/* por defecto mostramos el de tema oscuro */
+.hero-logo--light {
+  display: none;
+}
+
+/* cuando el <html> tiene data-theme="light", cambiamos */
+:host-context([data-theme="light"]) .hero-logo--dark {
+  display: none;
+}
+
+:host-context([data-theme="light"]) .hero-logo--light {
+  display: block;
 }
 
 .restinn-hero__text h1 {
@@ -1021,7 +1036,7 @@
     width: 65vw;
   }
 
-  .restinn-hero__logo img {
+  .hero-logo {
     height: 50px;
   }
 
@@ -1031,5 +1046,12 @@
 
   .restinn-hero__text p {
     font-size: 0.9rem;
+  }
+}
+
+/* Logo un poco más grande en resoluciones altas */
+@media (min-width: 1440px) {
+  .hero-logo {
+    height: 80px;
   }
 }

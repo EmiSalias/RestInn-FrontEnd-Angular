@@ -1,29 +1,30 @@
 .habitaciones-hub {
-  padding: 110px 40px 40px; /* Espacio por el header fijo */
+  padding: 110px 40px 40px;        /* espacio por el header fijo */
   color: var(--color-text);
 }
 
 .habitaciones-hub h1 {
   font-size: 26px;
   margin-bottom: 8px;
+  color: var(--color-primary);
 }
 
 .habitaciones-hub .subtitle {
   margin-bottom: 24px;
   font-size: 14px;
-  opacity: 0.9;
+  color: var(--color-text-muted);
 }
 
 /* Layout de las cards */
 .cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columnas */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 
 /* Cada card es un “botón grande” */
 .card {
-  background-color: #21160d;
+  background-color: var(--color-surface);
   border-radius: 24px;
   padding: 32px;
   display: flex;
@@ -31,18 +32,22 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
   cursor: pointer;
+  border: 1px solid var(--color-border);
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease,
-    background-color 0.18s ease;
+    background-color 0.18s ease,
+    border-color 0.18s ease;
 }
 
-.card:hover {
+.card:hover,
+.card:focus-visible {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
-  background-color: #2b1c10;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
+  border-color: var(--color-primary);
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 /* Icono grande ocupando casi toda la card */
@@ -50,7 +55,7 @@
   width: 140px;
   height: 140px;
   border-radius: 32px;
-  background: linear-gradient(135deg, #f1c36f, #e09b3a);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,13 +67,14 @@
 
 .icon-wrapper fa-icon {
   font-size: 64px;
-  color: #2b2219;
+  color: var(--color-bg);
 }
 
 /* Efecto hover directo sobre el icono */
-.card:hover .icon-wrapper {
+.card:hover .icon-wrapper,
+.card:focus-visible .icon-wrapper {
   transform: scale(1.05);
-  box-shadow: 0 0 22px rgba(241, 195, 111, 0.9);
+  box-shadow: 0 0 22px rgba(241, 195, 111, 0.9); /* glow dorado */
 }
 
 .card h2 {
@@ -78,7 +84,7 @@
 
 .card p {
   font-size: 14px;
-  opacity: 0.9;
+  color: var(--color-text-muted);
 }
 
 /* Responsive */
