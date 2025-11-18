@@ -8,8 +8,12 @@
   </div>
 
   <form [formGroup]="filtrosForm" class="filtros">
+    @if (!isAdminOrRecep) {
+    <input type="text" placeholder="Buscar por reserva u habitación..." formControlName="texto">
+    }
+    @else {
     <input type="text" placeholder="Buscar por cliente, reserva u habitación..." formControlName="texto">
-
+    }
     <select formControlName="tipo">
       <option value="">Todos los tipos</option>
       <option value="RESERVA">Reserva</option>
