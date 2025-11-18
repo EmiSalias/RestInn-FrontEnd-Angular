@@ -324,7 +324,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.router.navigate(['/listado_habitaciones']);
+    this.router.navigate(['/gestion_habitaciones']);
   }
 
   goToGestionReservas(event?: Event): void {
