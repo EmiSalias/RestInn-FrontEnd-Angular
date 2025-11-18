@@ -1,109 +1,57 @@
 <div class="home-wrapper">
 
   <!-- VISTA PÚBLICO / CLIENTE   -->
-  @if (!isAdminPanel) {
+  <!-- VISTA PÚBLICO / CLIENTE   -->
+@if (!isAdminPanel) {
 
-    <!-- HERO / BIENVENIDA -->
-    <section class="hero">
+  <!-- HERO / BIENVENIDA -->
+  <section class="hero">
 
-      <header class="hero-header">
-        <span class="hero-eyebrow">RestInn · tu estadía online</span>
-        <h2>Elegí por dónde empezar</h2>
-        <p class="hero-subtitle">
-          Reservá, explorá habitaciones o revisá tu historial desde este panel principal.
-        </p>
-      </header>
+    <header class="hero-header">
+      <span class="hero-eyebrow">RestInn · tu estadía online</span>
+      <h2>Elegí por dónde empezar</h2>
+      <p class="hero-subtitle">
+        Reservá, explorá habitaciones o revisá tu historial desde este panel principal.
+      </p>
+    </header>
 
-      <!-- Wrapper centrado + fades -->
-      <div class="hero-cards-wrapper">
-        <div class="hero-cards"
-             #heroCards
-             (mousemove)="onHeroMouseMove($event)"
-             (mouseleave)="stopHeroScroll()">
+    <!-- BLOQUES VERTICALES QUE APARECEN AL SCROLLEAR -->
+    <div class="hero-scroll">
+      <div
+        class="hero-step"
+        #heroStep
+        *ngFor="let section of publicHeroSections; let i = index"
+        [class.hero-step--active]="i === activeHeroIndex"
+        [class.hero-step--past]="i < activeHeroIndex"
+        (click)="onHeroSectionClick(section.key, $event)"
+        tabindex="0">
 
-          <!-- CARD 1 · Reservas -->
-          <article class="hero-card hero-card--reservas"
-                   (mouseenter)="setHeroText('reservas')"
-                   (mouseleave)="setHeroText('default')">
-            <a class="hero-card__link" href="#" (click)="goToReservas($event)">
-              <div class="hero-card__bg"></div>
-              <div class="hero-card__overlay"></div>
-              <div class="hero-card__content">
-                <span class="hero-card__tag">📅 Reservar</span>
-              </div>
-            </a>
-          </article>
+        <div
+          class="hero-step__image"
+          [style.backgroundImage]="'url(' + section.imageUrl + ')'">
+        </div>
 
-          <!-- CARD 2 · Habitaciones -->
-          <article class="hero-card hero-card--habitaciones"
-                   (mouseenter)="setHeroText('habitaciones')"
-                   (mouseleave)="setHeroText('default')">
-            <a class="hero-card__link" href="#habitaciones-home" (click)="goToHabitaciones($event)">
-              <div class="hero-card__bg"></div>
-              <div class="hero-card__overlay"></div>
-              <div class="hero-card__content">
-                <span class="hero-card__tag">🛏️ Habitaciones</span>
-              </div>
-            </a>
-          </article>
-
-          <!-- CARD 3 · Historial -->
-          <article class="hero-card hero-card--historial"
-                   (mouseenter)="setHeroText('historial')"
-                   (mouseleave)="setHeroText('default')">
-            <a class="hero-card__link" href="#" (click)="goToHistorial($event)">
-              <div class="hero-card__bg"></div>
-              <div class="hero-card__overlay"></div>
-              <div class="hero-card__content">
-                <span class="hero-card__tag">📊 Historial</span>
-              </div>
-            </a>
-          </article>
-
-          <!-- CARD 4 · Facturación & pagos -->
-          <article class="hero-card hero-card--facturacion"
-                   (mouseenter)="setHeroText('facturacion')"
-                   (mouseleave)="setHeroText('default')">
-            <a class="hero-card__link" href="#" (click)="goToFacturacion($event)">
-              <div class="hero-card__bg"></div>
-              <div class="hero-card__overlay"></div>
-              <div class="hero-card__content">
-                <span class="hero-card__tag">💳 Facturación &amp; pagos</span>
-              </div>
-            </a>
-          </article>
-
-          <!-- CARD 5 · Favoritos (desactivado por ahora) -->
-          <!--
-          <article class="hero-card hero-card--favoritos"
-                   (mouseenter)="setHeroText('favoritos')"
-                   (mouseleave)="setHeroText('default')">
-            <a class="hero-card__link" href="#" (click)="goToFavoritos($event)">
-              <div class="hero-card__bg"></div>
-              <div class="hero-card__overlay"></div>
-              <div class="hero-card__content">
-                <span class="hero-card__tag">⭐ Favoritos</span>
-              </div>
-            </a>
-          </article>
-          -->
-          </div>
+        <div class="hero-step__content">
+          <span class="hero-step__tag">{{ section.tag }}</span>
+          <h3 class="hero-step__title">{{ section.title }}</h3>
+          <p class="hero-step__text">
+            {{ section.description }}
+          </p>
+        </div>
       </div>
+    </div>
 
-      <div class="hero-dynamic">
-        <span class="hero-dynamic__prefix">
-          {{ currentHeroKey === 'default' ? 'Tip' : (currentHeroKey | titlecase) }}
-        </span>
-        <span class="hero-dynamic__text">
-          {{ typedHeroText }}
-        </span>
-      </div>
+    <!-- TEXTO TIP DINÁMICO -->
+    <div class="hero-dynamic">
+      <span class="hero-dynamic__prefix">
+        {{ currentHeroKey === 'default' ? 'Tip' : (currentHeroKey | titlecase) }}
+      </span>
+      <span class="hero-dynamic__text">
+        {{ typedHeroText }}
+      </span>
+    </div>
 
-    </section>
-
-    <section id="habitaciones-home">
-      <app-listado-habitaciones></app-listado-habitaciones>
-    </section>
+  </section>
 
   } @else {
 
@@ -221,7 +169,7 @@
       </div>
 
       <!-- Más adelante acá metés el iframe de Looker -->
-      </section>
+    </section>
   }
 
 </div>

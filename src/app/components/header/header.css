@@ -29,24 +29,26 @@ header {
 }
 
 .nav_list {
-    transform: var(--transform-menu-show);
-    position: fixed;
-    top: 65px;
-    left: 0;
-    height: 40%;
-    width: 20%;
-    gap: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 40px 30px;
-    background-color: var(--color-h-f);
-    list-style: none;
-    transition: .5s transform;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
-    z-index: 1000;
+  transform: var(--transform-menu-show);
+  position: fixed;
+  top: var(--header-h);                            /* antes 65px */
+  left: 0;
+  height: calc(100vh - var(--header-h));          /* ocupa todo el alto bajo el header */
+  width: 260px;                                   /* ancho fijo razonable */
+  max-width: 80vw;                                /* pero no más del 80% de la pantalla */
+  gap: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 40px 30px;
+  background-color: var(--color-h-f);
+  list-style: none;
+  transition: .5s transform;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
 }
+
 
 a {
     color: var(--color-text-secondary);
@@ -308,4 +310,37 @@ a:hover {
 
 .theme-toggle:hover {
   background-color: var(--color-surface);
+}
+/* Ajustes específicos para mobile */
+@media (max-width: 768px) {
+
+  /* Sacar el "Bienvenido, X" en mobile */
+  .user-greeting {
+    display: none;
+  }
+
+  .nav_container {
+    padding: 0 12px;
+  }
+
+  /* Que el toggle no empuje tanto al resto */
+  .nav_toggle {
+    margin-right: 12px;   /* antes 70px */
+  }
+
+  /* Reducir un poco el espacio reservado al logo
+     y centrarlo visualmente */
+  .nav_figure {
+    width: 180px;         /* antes 270px */
+    justify-content: center;
+  }
+
+  .nav_logo {
+    height: 40px;         /* tamaño cómodo en mobile */
+  }
+
+  /* Menos espacio entre acciones (modo oscuro + usuario) */
+  .nav_actions {
+    gap: 6px;
+  }
 }

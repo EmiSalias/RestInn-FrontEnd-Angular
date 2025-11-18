@@ -3,8 +3,10 @@ import {
   Component,
   OnDestroy,
   OnInit,
+  HostListener,
+  ViewChildren,
   ElementRef,
-  ViewChild,
+  QueryList,
   inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -24,6 +26,14 @@ type HeroKey =
   | 'adminReservas'
   | 'adminFacturacion';
 
+interface HeroSection {
+  key: HeroKey;
+  tag: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -41,11 +51,49 @@ export class Home implements OnInit, OnDestroy {
     return this.auth.isLoggedIn() && this.auth.hasAnyRole(['ADMINISTRADOR']);
   }
 
+  // ===== BLOQUES DEL HERO PÚBLICO (SCROLL VERTICAL) =====
+  publicHeroSections: HeroSection[] = [
+    {
+      key: 'reservas',
+      tag: '📅 Reservar',
+      title: 'Reservá en las fechas que quieras',
+      description: 'Buscá disponibilidad por fecha de ingreso y salida, elegí la habitación ideal y confirmá tu reserva en pocos pasos.',
+      imageUrl: 'assets/restinn/hero-reservas.jpg'
+    },
+    {
+      key: 'habitaciones',
+      tag: '🛏️ Habitaciones',
+      title: 'Explorá las habitaciones del hotel',
+      description: 'Vas a poder ver fotos, servicios incluidos y capacidad de cada habitación antes de decidirte.',
+      imageUrl: 'assets/restinn/hero-servicios.jpg'
+    },
+    {
+      key: 'historial',
+      tag: '📊 Historial',
+      title: 'Revisá tu historial de reservas',
+      description: 'Consultá reservas pasadas, próximas estadías y el detalle de cada una asociada a tu usuario.',
+      imageUrl: 'assets/restinn/hero-historial.jpg'
+    },
+    {
+      key: 'facturacion',
+      tag: '💳 Facturación & pagos',
+      title: 'Accedé a tus facturas y comprobantes',
+      description: 'Descargá los comprobantes en PDF, revisá estados de pago y mantené tu facturación al día.',
+      imageUrl: 'assets/restinn/hero-facturacion.jpg'
+    }
+  ];
+
+  // referencias a los bloques para calcular cuál está “en foco”
+  @ViewChildren('heroStep')
+  heroStepRefs?: QueryList<ElementRef<HTMLDivElement>>;
+
+  activeHeroIndex = 0;
+
   // --- texto dinámico ---
   heroTextMap: Record<HeroKey, string> = {
     // ===== VISTA PÚBLICO / CLIENTE =====
     default:
-      'Pasá el cursor sobre una opción para ver qué podés hacer desde acá.',
+      'Pasá el cursor o scrolleá para ver qué podés hacer desde acá.',
     reservas:
       'Realizá una nueva reserva usando el buscador de fechas o revisá las que ya hiciste.',
     habitaciones:
@@ -72,13 +120,6 @@ export class Home implements OnInit, OnDestroy {
   typedHeroText = '';
   private typingIntervalId: any = null;
 
-  // referencia al carrusel SOLO de la vista público/cliente
-  @ViewChild('heroCards')
-  heroCardsRef?: ElementRef<HTMLDivElement>;
-
-  private heroScrollDir: 'left' | 'right' | null = null;
-  private heroScrollId: number | null = null;
-
   ngOnInit(): void {
     this.startHeroTyping('default');
   }
@@ -87,7 +128,6 @@ export class Home implements OnInit, OnDestroy {
     if (this.typingIntervalId) {
       clearInterval(this.typingIntervalId);
     }
-    this.stopHeroScroll();
   }
 
   // ---------------------------
@@ -124,80 +164,58 @@ export class Home implements OnInit, OnDestroy {
   }
 
   // ---------------------------
-  // AUTO-SCROLL DE CARDS (solo público/cliente)
+  // SCROLL VERTICAL – detectar bloque activo
   // ---------------------------
-  onHeroMouseMove(ev: MouseEvent): void {
-    if (window.innerWidth < 720) {
-      this.stopHeroScroll();
-      return;
-    }
+  @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    // si es admin o no hay bloques, salimos
+    if (this.isAdminPanel) return;
 
-    const el = this.heroCardsRef?.nativeElement;
-    if (!el) return;
+    const steps = this.heroStepRefs;
+    if (!steps || steps.length === 0) return;
 
-    const rect = el.getBoundingClientRect();
-    const x = ev.clientX - rect.left;
-    const width = rect.width;
-    const edgeZone = Math.min(120, width / 4);
+    const viewportCenter = window.innerHeight / 2;
+    let closestIndex = 0;
+    let minDistance = Number.MAX_VALUE;
 
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    if (maxScroll <= 0) {
-      this.stopHeroScroll();
-      return;
-    }
+    steps.forEach((step, index) => {
+      const rect = step.nativeElement.getBoundingClientRect();
+      const stepCenter = rect.top + rect.height / 2;
+      const distance = Math.abs(stepCenter - viewportCenter);
 
-    if (x < edgeZone && el.scrollLeft > 0) {
-      this.startHeroScroll('left');
-    } else if (x > width - edgeZone && el.scrollLeft < maxScroll) {
-      this.startHeroScroll('right');
-    } else {
-      this.stopHeroScroll();
-    }
-  }
-
-  private startHeroScroll(dir: 'left' | 'right'): void {
-    const el = this.heroCardsRef?.nativeElement;
-    if (!el) return;
-
-    if (this.heroScrollDir === dir && this.heroScrollId !== null) return;
-
-    this.heroScrollDir = dir;
-
-    if (this.heroScrollId !== null) {
-      cancelAnimationFrame(this.heroScrollId);
-    }
-
-    const step = 85;
-
-    const tick = () => {
-      const maxScroll = el.scrollWidth - el.clientWidth;
-
-      if (dir === 'right') {
-        el.scrollLeft = Math.min(maxScroll, el.scrollLeft + step);
-        if (el.scrollLeft >= maxScroll) {
-          this.stopHeroScroll();
-          return;
-        }
-      } else {
-        el.scrollLeft = Math.max(0, el.scrollLeft - step);
-        if (el.scrollLeft <= 0) {
-          this.stopHeroScroll();
-          return;
-        }
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
       }
+    });
 
-      this.heroScrollId = requestAnimationFrame(tick);
-    };
-
-    this.heroScrollId = requestAnimationFrame(tick);
+    if (closestIndex !== this.activeHeroIndex) {
+      this.activeHeroIndex = closestIndex;
+      const section = this.publicHeroSections[closestIndex];
+      this.startHeroTyping(section.key);
+    }
   }
 
-  stopHeroScroll(): void {
-    if (this.heroScrollId !== null) {
-      cancelAnimationFrame(this.heroScrollId);
-      this.heroScrollId = null;
+  // click en un bloque del hero (público/cliente)
+  onHeroSectionClick(key: HeroKey, event?: Event): void {
+    event?.preventDefault();
+
+    switch (key) {
+      case 'reservas':
+        this.goToReservas(event);
+        break;
+      case 'habitaciones':
+        this.goToHabitaciones(event);
+        break;
+      case 'historial':
+        this.goToHistorial(event);
+        break;
+      case 'facturacion':
+        this.goToFacturacion(event);
+        break;
+      default:
+        break;
     }
-    this.heroScrollDir = null;
   }
 
   // ---------------------------
@@ -233,21 +251,19 @@ export class Home implements OnInit, OnDestroy {
     }
 
     const esCliente = this.auth.hasAnyRole(['CLIENTE']);
-    const target = esCliente
-      ? '/mis_reservas'  // Aquí cambiamos la ruta a 'mis_reservas' para el cliente
-      : '/reservas/listado';
+    const target = esCliente ? '/mis_reservas' : '/reservas/listado';
 
     this.router.navigate([target]);
   }
 
-
   goToHabitaciones(event?: Event): void {
-  event?.preventDefault();
-  this.router.navigate(['/listado_habitaciones']);
-}
+    event?.preventDefault();
+    this.router.navigate(['/listado_habitaciones']);
+  }
 
   goToFavoritos(event?: Event): void {
     event?.preventDefault();
+    // feature futura
   }
 
   goToFacturacion(event?: Event): void {
