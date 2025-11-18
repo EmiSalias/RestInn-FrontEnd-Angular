@@ -1,10 +1,14 @@
 // src/app/pages/home/home.ts
 import {
   Component,
-  OnDestroy,
   OnInit,
-  ElementRef,
+  OnDestroy,
+  AfterViewInit,
+  HostListener,
   ViewChild,
+  ViewChildren,
+  ElementRef,
+  QueryList,
   inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -24,6 +28,14 @@ type HeroKey =
   | 'adminReservas'
   | 'adminFacturacion';
 
+interface HeroSection {
+  key: HeroKey;
+  tag: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -31,21 +43,65 @@ type HeroKey =
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home implements OnInit, OnDestroy {
+export class Home implements OnInit, AfterViewInit, OnDestroy {
 
   private router = inject(Router);
   private auth = inject(AuthService);
 
-  // si es ADMIN, mostramos el panel premium (getter reactivo)
+  @ViewChild('restinnHero')
+  restinnHero?: ElementRef<HTMLElement>;
+
+  @ViewChildren('heroStep')
+  heroStepRefs?: QueryList<ElementRef<HTMLDivElement>>;
+
+  // si es ADMIN, mostramos el panel premium
   get isAdminPanel(): boolean {
     return this.auth.isLoggedIn() && this.auth.hasAnyRole(['ADMINISTRADOR']);
   }
 
-  // --- texto dinámico ---
+  // ===== BLOQUES DEL HERO PÚBLICO (SCROLL VERTICAL) =====
+  publicHeroSections: HeroSection[] = [
+    {
+      key: 'reservas',
+      tag: '📅 Reservar',
+      title: 'Reservá en las fechas que quieras',
+      description:
+        'Buscá disponibilidad por fecha de ingreso y salida, elegí la habitación ideal y confirmá tu reserva en pocos pasos.',
+      imageUrl: 'assets/restinn/hero-reservas.jpg'
+    },
+    {
+      key: 'habitaciones',
+      tag: '🛏️ Habitaciones',
+      title: 'Explorá las habitaciones del hotel',
+      description:
+        'Vas a poder ver fotos, servicios incluidos y capacidad de cada habitación antes de decidirte.',
+      imageUrl: 'assets/restinn/hero-servicios.jpg'
+    },
+    {
+      key: 'historial',
+      tag: '📊 Historial',
+      title: 'Revisá tu historial de reservas',
+      description:
+        'Consultá reservas pasadas, próximas estadías y el detalle de cada una asociada a tu usuario.',
+      imageUrl: 'assets/restinn/hero-historial.jpg'
+    },
+    {
+      key: 'facturacion',
+      tag: '💳 Facturación & pagos',
+      title: 'Accedé a tus facturas y comprobantes',
+      description:
+        'Descargá los comprobantes en PDF, revisá estados de pago y mantené tu facturación al día.',
+      imageUrl: 'assets/restinn/hero-facturacion.jpg'
+    }
+  ];
+
+  activeHeroIndex = 0;
+
+  // --- texto dinámico tipo "tip" (se usa en el hero público y en admin) ---
   heroTextMap: Record<HeroKey, string> = {
     // ===== VISTA PÚBLICO / CLIENTE =====
     default:
-      'Pasá el cursor sobre una opción para ver qué podés hacer desde acá.',
+      'Pasá el cursor o scrolleá para ver qué podés hacer desde acá.',
     reservas:
       'Realizá una nueva reserva usando el buscador de fechas o revisá las que ya hiciste.',
     habitaciones:
@@ -72,22 +128,20 @@ export class Home implements OnInit, OnDestroy {
   typedHeroText = '';
   private typingIntervalId: any = null;
 
-  // referencia al carrusel SOLO de la vista público/cliente
-  @ViewChild('heroCards')
-  heroCardsRef?: ElementRef<HTMLDivElement>;
-
-  private heroScrollDir: 'left' | 'right' | null = null;
-  private heroScrollId: number | null = null;
-
   ngOnInit(): void {
+    // para que el panel admin tenga un tip inicial
     this.startHeroTyping('default');
+  }
+
+  ngAfterViewInit(): void {
+    // inicializamos el estado según dónde está el scroll al entrar
+    this.updateHeroScrollProgress();
   }
 
   ngOnDestroy(): void {
     if (this.typingIntervalId) {
       clearInterval(this.typingIntervalId);
     }
-    this.stopHeroScroll();
   }
 
   // ---------------------------
@@ -124,80 +178,61 @@ export class Home implements OnInit, OnDestroy {
   }
 
   // ---------------------------
-  // AUTO-SCROLL DE CARDS (solo público/cliente)
+  // SCROLL VERTICAL – detectar bloque activo
   // ---------------------------
-  onHeroMouseMove(ev: MouseEvent): void {
-    if (window.innerWidth < 720) {
-      this.stopHeroScroll();
-      return;
-    }
+    @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    // 1) scroll del hero tipo Angular
+    this.updateHeroScrollProgress();
 
-    const el = this.heroCardsRef?.nativeElement;
-    if (!el) return;
+    // 2) lógica que ya tenías para los bloques de abajo
+    if (this.isAdminPanel) return;
 
-    const rect = el.getBoundingClientRect();
-    const x = ev.clientX - rect.left;
-    const width = rect.width;
-    const edgeZone = Math.min(120, width / 4);
+    const steps = this.heroStepRefs;
+    if (!steps || steps.length === 0) return;
 
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    if (maxScroll <= 0) {
-      this.stopHeroScroll();
-      return;
-    }
+    const viewportCenter = window.innerHeight / 2;
+    let closestIndex = 0;
+    let minDistance = Number.MAX_VALUE;
 
-    if (x < edgeZone && el.scrollLeft > 0) {
-      this.startHeroScroll('left');
-    } else if (x > width - edgeZone && el.scrollLeft < maxScroll) {
-      this.startHeroScroll('right');
-    } else {
-      this.stopHeroScroll();
-    }
-  }
+    steps.forEach((step, index) => {
+      const rect = step.nativeElement.getBoundingClientRect();
+      const stepCenter = rect.top + rect.height / 2;
+      const distance = Math.abs(stepCenter - viewportCenter);
 
-  private startHeroScroll(dir: 'left' | 'right'): void {
-    const el = this.heroCardsRef?.nativeElement;
-    if (!el) return;
-
-    if (this.heroScrollDir === dir && this.heroScrollId !== null) return;
-
-    this.heroScrollDir = dir;
-
-    if (this.heroScrollId !== null) {
-      cancelAnimationFrame(this.heroScrollId);
-    }
-
-    const step = 85;
-
-    const tick = () => {
-      const maxScroll = el.scrollWidth - el.clientWidth;
-
-      if (dir === 'right') {
-        el.scrollLeft = Math.min(maxScroll, el.scrollLeft + step);
-        if (el.scrollLeft >= maxScroll) {
-          this.stopHeroScroll();
-          return;
-        }
-      } else {
-        el.scrollLeft = Math.max(0, el.scrollLeft - step);
-        if (el.scrollLeft <= 0) {
-          this.stopHeroScroll();
-          return;
-        }
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
       }
+    });
 
-      this.heroScrollId = requestAnimationFrame(tick);
-    };
-
-    this.heroScrollId = requestAnimationFrame(tick);
+    if (closestIndex !== this.activeHeroIndex) {
+      this.activeHeroIndex = closestIndex;
+      const section = this.publicHeroSections[closestIndex];
+      this.startHeroTyping(section.key);
+    }
   }
 
-  stopHeroScroll(): void {
-    if (this.heroScrollId !== null) {
-      cancelAnimationFrame(this.heroScrollId);
-      this.heroScrollId = null;
+  // click en un bloque del hero (público/cliente)
+  onHeroSectionClick(key: HeroKey, event?: Event): void {
+    event?.preventDefault();
+
+    switch (key) {
+      case 'reservas':
+        this.goToReservas(event);
+        break;
+      case 'habitaciones':
+        this.goToHabitaciones(event);
+        break;
+      case 'historial':
+        this.goToHistorial(event);
+        break;
+      case 'facturacion':
+        this.goToFacturacion(event);
+        break;
+      default:
+        break;
     }
-    this.heroScrollDir = null;
   }
 
   // ---------------------------
@@ -233,21 +268,19 @@ export class Home implements OnInit, OnDestroy {
     }
 
     const esCliente = this.auth.hasAnyRole(['CLIENTE']);
-    const target = esCliente
-      ? '/mis_reservas'  // Aquí cambiamos la ruta a 'mis_reservas' para el cliente
-      : '/reservas/listado';
+    const target = esCliente ? '/mis_reservas' : '/reservas/listado';
 
     this.router.navigate([target]);
   }
 
-
   goToHabitaciones(event?: Event): void {
-  event?.preventDefault();
-  this.router.navigate(['/listado_habitaciones']);
-}
+    event?.preventDefault();
+    this.router.navigate(['/listado_habitaciones']);
+  }
 
   goToFavoritos(event?: Event): void {
     event?.preventDefault();
+    // feature futura
   }
 
   goToFacturacion(event?: Event): void {
@@ -305,4 +338,20 @@ export class Home implements OnInit, OnDestroy {
 
     this.router.navigate(['/gestion_reservas']);
   }
+
+    private updateHeroScrollProgress(): void {
+    const el = this.restinnHero?.nativeElement;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    // raw = 1 cuando la sección está centrada, 0 cuando se fue arriba o todavía está abajo
+    const raw = 1 - Math.abs(rect.top) / windowHeight;
+    const clamped = Math.max(0, Math.min(1, raw));
+
+    el.style.setProperty('--scroll-progress', clamped.toString());
+  }
+
+
 }
