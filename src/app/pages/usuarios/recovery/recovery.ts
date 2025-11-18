@@ -184,4 +184,13 @@ export class Recovery implements OnInit {
   goToSignIn(): void {
     this.router.navigate(['/sign_in']);
   }
+
+  backToEmail(): void {
+    this.step = 'email';
+    this.infoMsg = null;
+    this.errorMsg = null;
+    this.loading = false;
+    this.codeForm.reset();
+    this.passForm.reset();
+  }
 }

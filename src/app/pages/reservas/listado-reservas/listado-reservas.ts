@@ -185,36 +185,55 @@ export class ListadoReservas implements OnInit {
   aplicarFiltros(): void {
     const { estado, rolUsuario, clienteId, fechaDesde, fechaHasta, search } = this.filtros;
 
-    const dDesde = fechaDesde ? new Date(fechaDesde) : null;
-    const dHasta = fechaHasta ? new Date(fechaHasta) : null;
+    let dDesde = fechaDesde ? new Date(fechaDesde) : null;
+    let dHasta = fechaHasta ? new Date(fechaHasta) : null;
     const termino = search.trim().toLowerCase();
 
     const claveRolFiltro = this.normalizarRol(rolUsuario);
+
+    // 🛠 Si el usuario puso Hasta < Desde, los invertimos
+    if (dDesde && dHasta && dHasta < dDesde) {
+      const tmp = dDesde;
+      dDesde = dHasta;
+      dHasta = tmp;
+    }
 
     this.reservasFiltradas = this.reservas.filter(r => {
       const fIng = new Date(r.fechaIngreso);
       const fSal = new Date(r.fechaSalida);
 
+      // filtro por rango de fechas
       if (dDesde && fIng < dDesde) return false;
-      if (dHasta && fSal > dHasta) return false;
 
+      if (dHasta) {
+        const h = new Date(dHasta);
+        h.setHours(23, 59, 59, 999); // incluye todo el día "hasta"
+        if (fSal > h) return false;
+      }
+
+      // estado
       if (estado && r.estado !== estado) return false;
 
+      // rol creador (modo admin)
       if (this.modoAdmin && claveRolFiltro) {
         const rolReserva = this.normalizarRol(r.usuario?.role);
         if (rolReserva !== claveRolFiltro) return false;
       }
 
+      // cliente concreto (modo admin)
       if (this.modoAdmin && clienteId && r.usuario?.id !== clienteId) return false;
 
+      // búsqueda de texto
       if (termino) {
         const nom = `${r.usuario?.nombre ?? ''} ${r.usuario?.apellido ?? ''}`.toLowerCase();
         const hab = String(r.habitacionNumero ?? r.habitacionId ?? '').toLowerCase();
         const id = String(r.id);
 
-        if (!nom.includes(termino) &&
+        if (
+          !nom.includes(termino) &&
           !hab.includes(termino) &&
-          !id.includes(termino)) {
+          !id.includes(termino)
+        ) {
           return false;
         }
       }
@@ -224,6 +243,7 @@ export class ListadoReservas implements OnInit {
 
     this.ordenar();
   }
+
 
   ordenar(): void {
     this.reservasFiltradas.sort((a, b) => {

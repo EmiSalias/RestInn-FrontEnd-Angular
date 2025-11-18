@@ -89,20 +89,23 @@ export class DetallesReserva implements OnInit {
     }
   }
 
-  /** A dónde volver según rol, si no hay history */
-  private rutaListadoFallback(): string {
+  // ======================
+  //  VOLVER
+  // ======================
+
+  /** A dónde volver según rol */
+  private rutaListado(): string {
+    // si es recepcionista/admin: listado de reservas
     if (this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) {
       return '/listado_reservas';
     }
-    return '/mis_reservas';
+
+    // cliente: lista de habitaciones (o la ruta que uses para eso)
+    return '/habitaciones';
   }
 
   volver(): void {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      this.router.navigate([this.rutaListadoFallback()]);
-    }
+    this.router.navigate([this.rutaListado()]);
   }
 
   getHabitacionImage(): string {
@@ -262,6 +265,6 @@ export class DetallesReserva implements OnInit {
       });
     });
   }
-  
-  
+
+
 }

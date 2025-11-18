@@ -23,28 +23,28 @@
 
             <!-- Creada por (solo admin/recepción) -->
             @if (modoAdmin) {
-              <div class="filtro">
-                  <label>Creada por</label>
-                  <select [(ngModel)]="filtros.rolUsuario" (change)="aplicarFiltros()">
-                      <option value="">Cualquiera</option>
-                      <option value="CLIENTE">Cliente</option>
-                      <option value="RECEPCIONISTA">Recepcionista</option>
-                      <option value="ADMINISTRADOR">Administrador</option>
-                  </select>
-              </div>
+            <div class="filtro">
+                <label>Creada por</label>
+                <select [(ngModel)]="filtros.rolUsuario" (change)="aplicarFiltros()">
+                    <option value="">Cualquiera</option>
+                    <option value="CLIENTE">Cliente</option>
+                    <option value="RECEPCIONISTA">Recepcionista</option>
+                    <option value="ADMINISTRADOR">Administrador</option>
+                </select>
+            </div>
 
-              <!-- Cliente (solo admin/recepción) -->
-              <div class="filtro">
-                  <label>Cliente</label>
-                  <select [(ngModel)]="filtros.clienteId" (change)="aplicarFiltros()">
-                      <option [ngValue]="null">Todos</option>
-                      @for (c of clientesUnicos; track c.id) {
-                        <option [ngValue]="c.id">
-                          {{ c.nombre }}
-                        </option>
-                      }
-                  </select>
-              </div>
+            <!-- Cliente (solo admin/recepción) -->
+            <div class="filtro">
+                <label>Cliente</label>
+                <select [(ngModel)]="filtros.clienteId" (change)="aplicarFiltros()">
+                    <option [ngValue]="null">Todos</option>
+                    @for (c of clientesUnicos; track c.id) {
+                    <option [ngValue]="c.id">
+                        {{ c.nombre }}
+                    </option>
+                    }
+                </select>
+            </div>
             }
 
             <!-- Fechas (ambos modos) -->
@@ -53,9 +53,11 @@
                 <div class="dates-filter">
                     <input type="date" [(ngModel)]="filtros.fechaDesde" (change)="aplicarFiltros()">
                     <span>—</span>
-                    <input type="date" [(ngModel)]="filtros.fechaHasta" (change)="aplicarFiltros()">
+                    <input type="date" [(ngModel)]="filtros.fechaHasta" [attr.min]="filtros.fechaDesde || null"
+                        (change)="aplicarFiltros()">
                 </div>
             </div>
+
 
             <!-- Buscar (ambos modos) -->
             <div class="filtro filtro-search">
@@ -83,96 +85,96 @@
 
     <!-- RESUMEN -->
     @if (!loading && !errorMsg && reservasFiltradas.length > 0) {
-      <div class="reservations-summary">
+    <div class="reservations-summary">
         Mostrando {{ reservasFiltradas.length }} reservas.
-      </div>
+    </div>
     }
 
     @if (loading) {
-      <div class="status">Cargando reservas...</div>
+    <div class="status">Cargando reservas...</div>
     }
     @if (!loading && errorMsg) {
-      <div class="status error">{{ errorMsg }}</div>
+    <div class="status error">{{ errorMsg }}</div>
     }
 
     <!-- GRID -->
     @if (!loading && !errorMsg && reservasFiltradas.length > 0) {
-      <div class="reservations-grid">
+    <div class="reservations-grid">
 
         @for (r of reservasFiltradas; track r.id) {
-          <article class="reservation-card">
-              <div class="reservation-main">
-                  <!-- FOTO DE LA HABITACIÓN -->
-                  <div class="thumb-wrapper">
-                      <img [src]="getHabitacionThumb(r.habitacionId) || defaultRoomImg"
-                          alt="Habitación {{ r.habitacionNumero || r.habitacionId }}" (error)="onImgError($event)" />
-                  </div>
+        <article class="reservation-card">
+            <div class="reservation-main">
+                <!-- FOTO DE LA HABITACIÓN -->
+                <div class="thumb-wrapper">
+                    <img [src]="getHabitacionThumb(r.habitacionId) || defaultRoomImg"
+                        alt="Habitación {{ r.habitacionNumero || r.habitacionId }}" (error)="onImgError($event)" />
+                </div>
 
-                  <!-- CONTENIDO -->
-                  <div class="reservation-main-content">
-                      <header class="reservation-header">
-                          <div>
-                              <div class="room-tag">
-                                  Habitación {{ r.habitacionNumero || r.habitacionId }}
-                              </div>
+                <!-- CONTENIDO -->
+                <div class="reservation-main-content">
+                    <header class="reservation-header">
+                        <div>
+                            <div class="room-tag">
+                                Habitación {{ r.habitacionNumero || r.habitacionId }}
+                            </div>
 
-                              @if (modoAdmin) {
-                                <div class="client-line">
-                                  {{ r.usuario.nombre }} {{ r.usuario.apellido }}
-                                  ·
-                                  <span class="client-role">
-                                      {{ rolLabel(r.usuario.role) }}
-                                  </span>
-                                </div>
-                              }
-                          </div>
+                            @if (modoAdmin) {
+                            <div class="client-line">
+                                {{ r.usuario.nombre }} {{ r.usuario.apellido }}
+                                ·
+                                <span class="client-role">
+                                    {{ rolLabel(r.usuario.role) }}
+                                </span>
+                            </div>
+                            }
+                        </div>
 
-                          <span class="status-chip" [ngClass]="r.estado.toLowerCase()">
-                              {{ estadoLabel(r.estado) }}
-                          </span>
-                      </header>
+                        <span class="status-chip" [ngClass]="r.estado.toLowerCase()">
+                            {{ estadoLabel(r.estado) }}
+                        </span>
+                    </header>
 
-                      <div class="reservation-body">
-                          <div class="dates">
-                              <div>
-                                  <span class="label">Ingreso</span>
-                                  <span class="value">
-                                      {{ r.fechaIngreso | date:'dd/MM/yyyy' }}
-                                  </span>
-                              </div>
-                              <div>
-                                  <span class="label">Salida</span>
-                                  <span class="value">
-                                      {{ r.fechaSalida | date:'dd/MM/yyyy' }}
-                                  </span>
-                              </div>
-                          </div>
+                    <div class="reservation-body">
+                        <div class="dates">
+                            <div>
+                                <span class="label">Ingreso</span>
+                                <span class="value">
+                                    {{ r.fechaIngreso | date:'dd/MM/yyyy' }}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="label">Salida</span>
+                                <span class="value">
+                                    {{ r.fechaSalida | date:'dd/MM/yyyy' }}
+                                </span>
+                            </div>
+                        </div>
 
-                          <div class="extra">
-                              <span>{{ contarHuespedes(r) }} huésped(es)</span>
-                              <span>Reserva #{{ r.id }}</span>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+                        <div class="extra">
+                            <span>{{ contarHuespedes(r) }} huésped(es)</span>
+                            <span>Reserva #{{ r.id }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-              <footer class="reservation-footer">
-                  <button class="btn-gold" [routerLink]="['/reserva', r.id]">
-                      Ver detalle
-                  </button>
-                  @if (puedeCancelar(r)) {
-                    <button type="button" class="btn-danger-outline" (click)="onCancelarClick(r)">
-                      Cancelar reserva
-                    </button>
-                  }
-              </footer>
+            <footer class="reservation-footer">
+                <button class="btn-gold" [routerLink]="['/reserva', r.id]">
+                    Ver detalle
+                </button>
+                @if (puedeCancelar(r)) {
+                <button type="button" class="btn-danger-outline" (click)="onCancelarClick(r)">
+                    Cancelar reserva
+                </button>
+                }
+            </footer>
 
-          </article>
+        </article>
         }
-      </div>
+    </div>
     } @else if (!loading && !errorMsg) {
-      <div class="empty">
+    <div class="empty">
         No se encontraron reservas con los filtros actuales.
-      </div>
+    </div>
     }
 </section>

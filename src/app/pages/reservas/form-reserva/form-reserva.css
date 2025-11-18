@@ -226,3 +226,7 @@
 @media (min-width: 1100px) {
   .galeria__main { height: 340px; }
 }
+.row-errors .error {
+  display: block;      /* 👈 cada mensaje en su línea */
+  margin-top: 0.15rem;
+}

@@ -146,12 +146,37 @@ export class FormReserva implements OnInit {
   }
 
   nuevoHuesped(): FormGroup {
+    const NAME_PATTERN = /^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s'-]+$/;
+
     return this.fb.group({
-      nombre: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]],
-      apellido: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]],
-      dni: ['', [Validators.required, Validators.pattern('\\d{7,10}')]]
+      nombre: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(20),
+          Validators.pattern(NAME_PATTERN)
+        ]
+      ],
+      apellido: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(20),
+          Validators.pattern(NAME_PATTERN)
+        ]
+      ],
+      dni: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^\d{7,10}$/)
+        ]
+      ]
     });
   }
+
 
   addHuesped() {
     if (!this.canAddGuest) return;
@@ -209,7 +234,7 @@ export class FormReserva implements OnInit {
           text: `Tu reserva se creó correctamente. Código: #${res.id}`,
           confirmButtonText: 'Ver detalle'
         }).then(() => {
-          this.router.navigate(['/reserva', res.id]); // ruta que ya usabas
+          this.router.navigate(['/reserva', res.id], { replaceUrl: true });
         });
       },
       error: (err) => {
