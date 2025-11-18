@@ -49,6 +49,15 @@
 
 
       <div class="nav_actions">
+        <!-- BOTÓN TEMA -->
+        <button
+          type="button"
+          class="theme-toggle"
+          (click)="toggleTheme()"
+          [attr.aria-label]="isDarkTheme ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+          <fa-icon [icon]="isDarkTheme ? faSun : faMoon"></fa-icon>
+        </button>
+
         <div class="user-menu" #userMenu>
           @if (userInfo$ | async; as info) {
           <span class="user-greeting">

@@ -242,10 +242,9 @@ export class Home implements OnInit, OnDestroy {
 
 
   goToHabitaciones(event?: Event): void {
-    event?.preventDefault();
-    const section = document.getElementById('habitaciones-home');
-    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  event?.preventDefault();
+  this.router.navigate(['/listado_habitaciones']);
+}
 
   goToFavoritos(event?: Event): void {
     event?.preventDefault();
