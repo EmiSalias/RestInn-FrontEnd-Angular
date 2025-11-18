@@ -63,7 +63,7 @@ export class ListadoFacturas implements OnInit {
     private authService: AuthService,
     private fb: FormBuilder,
     private router: Router
-  )  {
+  ) {
     this.filtrosForm = this.fb.group({
       texto: [''],
       tipo: [''],
@@ -104,48 +104,57 @@ export class ListadoFacturas implements OnInit {
   }
 
   private aplicarFiltrosYOrden(
-    facturas: FacturaResponseDTO[],
-    filtros: any,
-    sort: SortState
-  ): FacturaResponseDTO[] {
+  facturas: FacturaResponseDTO[],
+  filtros: any,
+  sort: SortState
+): FacturaResponseDTO[] {
 
-    const texto  = (filtros.texto  || '').toLowerCase().trim();
-    const tipo   = filtros.tipo   || '';
-    const estado = filtros.estado || '';
-    const desde  = filtros.desde ? new Date(filtros.desde) : null;
-    const hasta  = filtros.hasta ? new Date(filtros.hasta) : null;
+  const texto  = (filtros.texto  || '').toLowerCase().trim();
+  const tipo   = filtros.tipo   || '';
+  const estado = filtros.estado || '';
 
-    let res = facturas.filter(f => {
-      if (texto) {
-        const hay = (
-          f.clienteNombre + ' ' +
-          f.habitacionNumero + ' ' +
-          f.reservaId + ' ' +
-          f.id
-        ).toLowerCase();
-        if (!hay.includes(texto)) return false;
-      }
+  let desde: Date | null = filtros.desde ? new Date(filtros.desde) : null;
+  let hasta: Date | null = filtros.hasta ? new Date(filtros.hasta) : null;
 
-      if (tipo && f.tipoFactura !== tipo) return false;
-      if (estado && f.estado !== estado) return false;
-
-      if (desde || hasta) {
-        const fe = new Date(f.fechaEmision);
-        if (desde && fe < desde) return false;
-
-        if (hasta) {
-          const h = new Date(hasta);
-          h.setHours(23, 59, 59, 999);
-          if (fe > h) return false;
-        }
-      }
-
-      return true;
-    });
-
-    res = this.ordenarFacturas(res, sort);
-    return res;
+  // 🛠 por las dudas: si hasta < desde, los invertimos
+  if (desde && hasta && hasta < desde) {
+    const tmp = desde;
+    desde = hasta;
+    hasta = tmp;
   }
+
+  let res = facturas.filter(f => {
+    if (texto) {
+      const hay = (
+        f.clienteNombre + ' ' +
+        f.habitacionNumero + ' ' +
+        f.reservaId + ' ' +
+        f.id
+      ).toLowerCase();
+      if (!hay.includes(texto)) return false;
+    }
+
+    if (tipo && f.tipoFactura !== tipo) return false;
+    if (estado && f.estado !== estado) return false;
+
+    if (desde || hasta) {
+      const fe = new Date(f.fechaEmision);
+
+      if (desde && fe < desde) return false;
+
+      if (hasta) {
+        const h = new Date(hasta);
+        h.setHours(23, 59, 59, 999);
+        if (fe > h) return false;
+      }
+    }
+
+    return true;
+  });
+
+  res = this.ordenarFacturas(res, sort);
+  return res;
+}
 
   private ordenarFacturas(arr: FacturaResponseDTO[], sort: SortState): FacturaResponseDTO[] {
     const dir = sort.dir === 'asc' ? 1 : -1;
@@ -181,10 +190,10 @@ export class ListadoFacturas implements OnInit {
 
       if (av == null && bv == null) return 0;
       if (av == null) return -1 * dir;
-      if (bv == null) return  1 * dir;
+      if (bv == null) return 1 * dir;
 
       if (av < bv) return -1 * dir;
-      if (av > bv) return  1 * dir;
+      if (av > bv) return 1 * dir;
       return 0;
     });
   }

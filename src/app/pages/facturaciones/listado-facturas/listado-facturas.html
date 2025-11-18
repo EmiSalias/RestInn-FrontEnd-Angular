@@ -1,164 +1,165 @@
 <div class="facturas-page">
 
-    <div class="header-row">
-        <h2>Facturas</h2>
-        @if (isAdminOrRecep) {
-          <span class="rol-badge">Vista administrador</span>
-        }
-    </div>
-
-    <form [formGroup]="filtrosForm" class="filtros">
-        <input type="text" placeholder="Buscar por cliente, reserva u habitación..." formControlName="texto">
-
-        <select formControlName="tipo">
-            <option value="">Todos los tipos</option>
-            <option value="RESERVA">Reserva</option>
-            <option value="CONSUMOS">Consumos</option>
-        </select>
-
-        <select formControlName="estado">
-            <option value="">Todos los estados</option>
-            <option value="EMITIDA">Emitida</option>
-            <option value="EN_PROCESO">En proceso</option>
-            <option value="ANULADA">Anulada</option>
-        </select>
-
-        <label>
-            Desde
-            <input type="date" formControlName="desde">
-        </label>
-
-        <label>
-            Hasta
-            <input type="date" formControlName="hasta">
-        </label>
-    </form>
-
-    @if (error) {
-      <div class="estado estado-error">
-        {{ error }}
-      </div>
+  <div class="header-row">
+    <h2>Facturas</h2>
+    @if (isAdminOrRecep) {
+    <span class="rol-badge">Vista administrador</span>
     }
+  </div>
 
-    @if (cargando) {
-      <div class="estado">
-        Cargando facturas...
-      </div>
-    }
+  <form [formGroup]="filtrosForm" class="filtros">
+    <input type="text" placeholder="Buscar por cliente, reserva u habitación..." formControlName="texto">
 
-    
-    @if (facturas$ | async; as facturas) {
-      <table class="tabla-facturas">
-        <thead>
-            <tr>
-                <th class="sortable" (click)="onSort('id')">
-                    #
-                    @if (sortState.field === 'id') {
-                      <span class="sort-indicator">
-                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                      </span>
-                    }
-                </th>
-                <th class="sortable" (click)="onSort('fechaEmision')">
-                    Fecha
-                    @if (sortState.field === 'fechaEmision') {
-                      <span class="sort-indicator">
-                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                      </span>
-                    }
-                </th>
-                <th class="sortable" (click)="onSort('clienteNombre')">
-                    Cliente
-                    @if (sortState.field === 'clienteNombre') {
-                      <span class="sort-indicator">
-                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                      </span>
-                    }
-                </th>
-                <th class="sortable" (click)="onSort('reservaId')">
-                    Reserva
-                    @if (sortState.field === 'reservaId') {
-                      <span class="sort-indicator">
-                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                      </span>
-                    }
-                </th>
-                <th class="sortable" (click)="onSort('habitacionNumero')">
-                    Hab.
-                    @if (sortState.field === 'habitacionNumero') {
-                      <span class="sort-indicator">
-                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                      </span>
-                    }
-                </th>
-                <th class="sortable" (click)="onSort('tipoFactura')">
-                    Tipo
-                    @if (sortState.field === 'tipoFactura') {
-                      <span class="sort-indicator">
-                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                      </span>
-                    }
-                </th>
-                <th class="sortable" (click)="onSort('estado')">
-                    Estado
-                    @if (sortState.field === 'estado') {
-                      <span class="sort-indicator">
-                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                      </span>
-                    }
-                </th>
-                <th class="sortable total-col" (click)="onSort('totalFinal')">
-                    Total
-                    @if (sortState.field === 'totalFinal') {
-                      <span class="sort-indicator">
-                        {{ sortState.dir === 'asc' ? '▲' : '▼' }}
-                      </span>
-                    }
-                </th>
-                <th class="pdf-col">
-                    PDF
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (f of facturas; track f.id) {
-              <tr>
-                <td>{{ f.id }}</td>
-                <td>{{ f.fechaEmision | date:'dd/MM/yyyy' }}</td>
-                <td>{{ f.clienteNombre }}</td>
+    <select formControlName="tipo">
+      <option value="">Todos los tipos</option>
+      <option value="RESERVA">Reserva</option>
+      <option value="CONSUMOS">Consumos</option>
+    </select>
 
-                <td class="reserva-link" (click)="irADetalleReserva(f)">
-                    #{{ f.reservaId }}
-                </td>
+    <select formControlName="estado">
+      <option value="">Todos los estados</option>
+      <option value="EMITIDA">Emitida</option>
+      <option value="EN_PROCESO">En proceso</option>
+      <option value="ANULADA">Anulada</option>
+    </select>
 
-                <td>{{ f.habitacionNumero }}</td>
-                <td>{{ f.tipoFactura }}</td>
-                <td>{{ f.estado }}</td>
-                <td class="total-col">
-                    {{ f.totalFinal | currency:'ARS':'symbol':'1.0-0' }}
-                </td>
-                <td class="pdf-col">
-                    <button class="btn-pdf" type="button" (click)="abrirPdf(f)">
-                        Ver PDF
-                    </button>
-                </td>
-              </tr>
-            }
-        </tbody>
-      </table>
-      
-      @if (facturas.length === 0 && !cargando && !error) {
-        <div class="estado">
-            No hay facturas que coincidan con los filtros.
-        </div>
+    <label>
+      Desde
+      <input type="date" formControlName="desde">
+    </label>
+
+    <label>
+      Hasta
+      <input type="date" formControlName="hasta" [attr.min]="filtrosForm.value.desde || null">
+    </label>
+  </form>
+
+
+  @if (error) {
+  <div class="estado estado-error">
+    {{ error }}
+  </div>
+  }
+
+  @if (cargando) {
+  <div class="estado">
+    Cargando facturas...
+  </div>
+  }
+
+
+  @if (facturas$ | async; as facturas) {
+  <table class="tabla-facturas">
+    <thead>
+      <tr>
+        <th class="sortable" (click)="onSort('id')">
+          #
+          @if (sortState.field === 'id') {
+          <span class="sort-indicator">
+            {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+          </span>
+          }
+        </th>
+        <th class="sortable" (click)="onSort('fechaEmision')">
+          Fecha
+          @if (sortState.field === 'fechaEmision') {
+          <span class="sort-indicator">
+            {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+          </span>
+          }
+        </th>
+        <th class="sortable" (click)="onSort('clienteNombre')">
+          Cliente
+          @if (sortState.field === 'clienteNombre') {
+          <span class="sort-indicator">
+            {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+          </span>
+          }
+        </th>
+        <th class="sortable" (click)="onSort('reservaId')">
+          Reserva
+          @if (sortState.field === 'reservaId') {
+          <span class="sort-indicator">
+            {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+          </span>
+          }
+        </th>
+        <th class="sortable" (click)="onSort('habitacionNumero')">
+          Hab.
+          @if (sortState.field === 'habitacionNumero') {
+          <span class="sort-indicator">
+            {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+          </span>
+          }
+        </th>
+        <th class="sortable" (click)="onSort('tipoFactura')">
+          Tipo
+          @if (sortState.field === 'tipoFactura') {
+          <span class="sort-indicator">
+            {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+          </span>
+          }
+        </th>
+        <th class="sortable" (click)="onSort('estado')">
+          Estado
+          @if (sortState.field === 'estado') {
+          <span class="sort-indicator">
+            {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+          </span>
+          }
+        </th>
+        <th class="sortable total-col" (click)="onSort('totalFinal')">
+          Total
+          @if (sortState.field === 'totalFinal') {
+          <span class="sort-indicator">
+            {{ sortState.dir === 'asc' ? '▲' : '▼' }}
+          </span>
+          }
+        </th>
+        <th class="pdf-col">
+          PDF
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (f of facturas; track f.id) {
+      <tr>
+        <td>{{ f.id }}</td>
+        <td>{{ f.fechaEmision | date:'dd/MM/yyyy' }}</td>
+        <td>{{ f.clienteNombre }}</td>
+
+        <td class="reserva-link" (click)="irADetalleReserva(f)">
+          #{{ f.reservaId }}
+        </td>
+
+        <td>{{ f.habitacionNumero }}</td>
+        <td>{{ f.tipoFactura }}</td>
+        <td>{{ f.estado }}</td>
+        <td class="total-col">
+          {{ f.totalFinal | currency:'ARS':'symbol':'1.0-0' }}
+        </td>
+        <td class="pdf-col">
+          <button class="btn-pdf" type="button" (click)="abrirPdf(f)">
+            Ver PDF
+          </button>
+        </td>
+      </tr>
       }
-      
-    } @else {
-      @if (!cargando && !error) {
-        <div class="estado">
-            No hay facturas para mostrar.
-        </div>
-      }
-    }
+    </tbody>
+  </table>
+
+  @if (facturas.length === 0 && !cargando && !error) {
+  <div class="estado">
+    No hay facturas que coincidan con los filtros.
+  </div>
+  }
+
+  } @else {
+  @if (!cargando && !error) {
+  <div class="estado">
+    No hay facturas para mostrar.
+  </div>
+  }
+  }
 
 </div>
