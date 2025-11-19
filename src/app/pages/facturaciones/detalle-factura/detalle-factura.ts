@@ -133,27 +133,8 @@ export class DetalleFactura implements OnInit {
     });
   }
 
-  volver(): void {
-    const returnTo = this.route.snapshot.queryParamMap.get('returnTo');
-
-    // 1) Si me pasaron explícitamente a dónde volver
-    if (returnTo) {
-      this.router.navigateByUrl(returnTo);
-      return;
-    }
-
-    // 2) Si conozco la reserva asociada, vuelvo a su detalle
-    if (this.factura?.reservaId) {
-      this.router.navigate(['/reserva', this.factura.reservaId]);
-      return;
-    }
-
-    // 3) Fallback según rol
-    if (this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) {
-      this.router.navigate(['/listado_facturas']);
-    } else {
-      this.router.navigate(['/']);
-    }
+  volver() {
+    this.location.back();
   }
 
   get ivaMonto(): number {

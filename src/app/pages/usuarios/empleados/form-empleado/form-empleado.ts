@@ -1,26 +1,27 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UserService } from '../../../../services/user-service';
-import { RolEmpleado } from '../../../../models/enums/E_Rol';
-import Swal from 'sweetalert2';
-import { ActivatedRoute } from '@angular/router';
+import { Component, inject, OnInit }                                from '@angular/core';
+import { CommonModule, Location  }                                  from '@angular/common';
+import { Router, RouterLink }                                                   from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule }  from '@angular/forms';
+import { UserService }                                              from '../../../../services/user-service';
+import { RolEmpleado }                                              from '../../../../models/enums/E_Rol';
+import   Swal                                                       from 'sweetalert2';
+import { ActivatedRoute }                                           from '@angular/router';
 
 @Component({
   selector: 'app-form-empleado',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './form-empleado.html',
   styleUrls: ['./form-empleado.css']
 })
 export class FormEmpleado implements OnInit {
   form: FormGroup;
-  roles = Object.values(RolEmpleado);
-  errorMsg: string | null = null;
-  showAdditionalFields = false;
+  roles                     = Object.values(RolEmpleado);
+  private location          = inject(Location);
+  errorMsg: string | null   = null;
+  showAdditionalFields      = false;
   employeeId: string | null = null;
-  isEditing = false;
+  isEditing                 = false;
 
   constructor(
     private fb: FormBuilder,
@@ -28,7 +29,6 @@ export class FormEmpleado implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    // Crear el formulario
     this.form = this.fb.group({
       rolEmpleado: ['', [Validators.required]],
       nombre: ['', [Validators.required]],
@@ -37,7 +37,7 @@ export class FormEmpleado implements OnInit {
       dni: ['', [Validators.required]],
       phoneNumber: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: [''],      // sin validators acá
+      password: [''], 
       activo: [true]
     });
 
@@ -56,8 +56,6 @@ export class FormEmpleado implements OnInit {
     }
   }
 
-
-  // Función para cargar los datos del empleado
   loadEmployeeData(id: string) {
     this.userSrv.getEmployeeById(id).subscribe({
       next: (employee) => {
@@ -86,7 +84,6 @@ export class FormEmpleado implements OnInit {
     });
   }
 
-  // Cuando seleccionamos un rol, muestra los campos adicionales
   onRoleChange() {
     this.showAdditionalFields = true;
   }
@@ -94,14 +91,13 @@ export class FormEmpleado implements OnInit {
   onSubmit(): void {
     if (this.form.valid) {
       if (this.isEditing) {
-        this.updateEmployee();  // Actualizando
+        this.updateEmployee();
       } else {
-        this.createEmployee();  // Creando
+        this.createEmployee();
       }
     }
   }
 
-  // Crear un nuevo empleado
   createEmployee() {
     this.userSrv.createEmployee(this.form.value).subscribe({
       next: (user) => {
@@ -120,21 +116,15 @@ export class FormEmpleado implements OnInit {
 
         let msg = 'No se pudo crear el empleado.';
 
-        // 🔹 Error de red
         if (err.status === 0) {
           msg = 'No se pudo contactar al servidor. Verificá tu conexión.';
         }
-        // 🔹 Errores que vienen del GlobalExceptionHandler
         else if (err.error) {
-
-          // Mensaje principal (ResponseStatusException, DataIntegrity, etc.)
           if (err.error.mensaje) {
             msg = err.error.mensaje;
           } else if (err.error.message) {
             msg = err.error.message;
           }
-
-          // Errores de validación con mapa de campos (MethodArgumentNotValidException)
           if (err.status === 400 && err.error.errores) {
             const detalles = Object.values(err.error.errores as { [k: string]: string })
               .join('\n');
@@ -155,8 +145,6 @@ export class FormEmpleado implements OnInit {
     });
   }
 
-
-  // Actualiza los datos de un empleado
   updateEmployee() {
     const employeeData: any = { ...this.form.value };
 
@@ -164,7 +152,6 @@ export class FormEmpleado implements OnInit {
       delete employeeData.password;
     }
 
-    // Enviar datos
     this.userSrv.updateEmployee(this.employeeId!, employeeData).subscribe({
       next: (user) => {
         Swal.fire({
@@ -190,7 +177,6 @@ export class FormEmpleado implements OnInit {
     });
   }
 
-  // Método para activar o desactivar al empleado
   toggleEmployeeStatus() {
     if (this.form.value.activo) {
       this.markAsInactive();
@@ -199,7 +185,6 @@ export class FormEmpleado implements OnInit {
     }
   }
 
-  // Marcar como inactivo
   markAsInactive() {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -238,7 +223,6 @@ export class FormEmpleado implements OnInit {
     });
   }
 
-  // Marcar como activo
   markAsActive() {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -277,10 +261,9 @@ export class FormEmpleado implements OnInit {
     });
   }
 
-  goBack(): void {
-    this.router.navigate(['/empleados']);
+  goBack() {
+    this.location.back();
   }
-
 
   resetPassword() {
     if (!this.employeeId) {

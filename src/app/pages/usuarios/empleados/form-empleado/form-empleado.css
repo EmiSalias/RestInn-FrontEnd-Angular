@@ -9,6 +9,36 @@
   color: var(--color-text);
 }
 
+h1 {
+  cursor: default;
+  display: inline-block;
+  padding-right: 10px;
+  margin: 32px 0 8px 0;
+  font-size: 26px;
+  color: var(--color-primary);
+}
+
+button {
+  color: var(--color-bg);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 1rem 0.5rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#first_h1_empleados {
+  margin-left: 40px;
+}
+
+.gest-empleados:hover{
+  cursor: pointer;
+  color: var(--color-primary)-secondary;
+}
+
 /* título */
 .form-creacion-empleado h1 {
   margin: 0 0 26px;
