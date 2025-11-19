@@ -1,8 +1,14 @@
 <section class="reserva-detail">
-
-  <button class="back-btn" type="button" (click)="volver()">
-    ← Volver
-  </button>
+  @if (puedeConfirmarReserva || puedeCheckIn || puedeCheckOut) {
+    <h1 class="gest-reservas" routerLink="/gestion_reservas">Gestión de reservas</h1>
+    <h1>></h1>
+    <h1 class="gest-reservas" routerLink="/listado_reservas">Historial de reservas</h1>
+    <h1>></h1>
+  } @else {
+    <button class="back-btn" type="button" (click)="volver()">
+      ← Volver
+    </button>
+  }
 
   @if (loading) {
   <div class="status">Cargando reserva...</div>

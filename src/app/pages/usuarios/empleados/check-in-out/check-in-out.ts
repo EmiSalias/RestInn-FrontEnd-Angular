@@ -1,11 +1,11 @@
-import { Component, OnInit, inject }              from '@angular/core';
-import { CommonModule }                           from '@angular/common';
-import { Router, RouterLink }                     from '@angular/router';
-import { ReservaResponse, ReservasService }       from '../../../../services/reservas-service';
-import { FacturasService }                        from '../../../../services/facturas-service';
-import { AuthService }                            from '../../../../services/auth-service';
-import   Swal                                     from 'sweetalert2';
-import   FacturaReservaInfoDTO                    from '../../../../models/FacturaReservaInfoDTO';
+import { Component, OnInit, inject }        from '@angular/core';
+import { CommonModule }                     from '@angular/common';
+import { Router, RouterLink }               from '@angular/router';
+import { ReservaResponse, ReservasService } from '../../../../services/reservas-service';
+import { FacturasService }                  from '../../../../services/facturas-service';
+import { AuthService }                      from '../../../../services/auth-service';
+import   Swal                               from 'sweetalert2';
+import   FacturaReservaInfoDTO              from '../../../../models/FacturaReservaInfoDTO';
 
 @Component({
   selector: 'app-check-in-out',
