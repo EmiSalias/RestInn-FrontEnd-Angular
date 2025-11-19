@@ -1,6 +1,9 @@
-<main class="page-habitacion">
+<h1 class="gest-habs" routerLink="/gestion_habitaciones">Gestión de habitaciones</h1>
+    <h1>></h1>
+    <h1>Crear habitación</h1>
+    <main class="page-habitacion">
   <section class="form-card">
-    <h2>{{ editMode ? 'Editar habitación' : 'Crear habitación' }}</h2>
+    <h2>{{ editMode ? 'Editar habitación' : 'Nueva habitación' }}</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
@@ -9,15 +12,18 @@
         <!-- CAMPO NUMERO -->
         <div class="field">
           <label for="numeroHab">Número</label>
-          <input id="numeroHab" type="number" formControlName="numero" min="1" max="9999" placeholder="Ej: 101" />
-          
+          @if (!isAdmin) {
+            <input type="number" formControlName="numero" readonly />
+          } @else {
+            <input id="numeroHab" type="number" formControlName="numero" min="1" max="999" placeholder="Ej: 101" />
+          }
           <!-- MENSAJE DE VERIFICACION -->
-          @if (form.get('numero')?.pending) {
+          @if (form.get('numero')?.pending && isAdmin) {
             <small class="hint">Verificando disponibilidad...</small>
           }
 
           <!-- MENSAJE EN CASO DE VALIDO -->
-          @if (form.get('numero')?.valid && (form.get('numero')?.touched || form.get('numero')?.dirty) && !form.get('numero')?.pending) {
+          @if (form.get('numero')?.valid && (form.get('numero')?.touched || form.get('numero')?.dirty) && !form.get('numero')?.pending && isAdmin) {
             <small class="success">✓ Número disponible</small>
           }
 
@@ -31,7 +37,7 @@
                 <small class="error">No puede ser negativo ni cero.</small>
               }
               @if (form.get('numero')?.hasError('max')) {
-                <small class="error">Máximo permitido: 9999.</small>
+                <small class="error">Máximo permitido: 999.</small>
               }
               @if (form.get('numero')?.hasError('numeroDuplicado')) {
                 <small class="error">Ya existe una habitación con este número.</small>
@@ -43,10 +49,14 @@
         <!-- CAMPO PISO -->
         <div class="field">
           <label for="pisoHab">Piso</label>
-          <input id="pisoHab" type="number" formControlName="piso" min="1" max="4" placeholder="1-4" />
-          
+          @if (!isAdmin) {
+            <input type="number" formControlName="piso" readonly />
+          } @else {
+            <input id="pisoHab" type="number" formControlName="piso" min="1" max="4" placeholder="1-4" />
+          }
+
           <!-- MENSAJE EN CASO DE VALIDO -->
-          @if (form.get('piso')?.valid && (form.get('piso')?.dirty || form.get('piso')?.touched)) {
+          @if (form.get('piso')?.valid && (form.get('piso')?.dirty || form.get('piso')?.touched) && isAdmin) {
             <small class="success">✓ Piso válido</small>
           }
 
@@ -69,10 +79,14 @@
         <!-- CAMPO CAPACIDAD -->
         <div class="field">
           <label>Capacidad</label>
-          <input id="capacHab" type="number" formControlName="capacidad" min="1" max="5" placeholder="1-5" />
+          @if (!isAdmin) {
+            <input type="number" formControlName="capacidad" readonly />
+          } @else {
+            <input id="capacHab" type="number" formControlName="capacidad" min="1" max="5" placeholder="1-5" />
+          }
 
           <!-- MENSAJE EN CASO DE VALIDO -->
-          @if (form.get('capacidad')?.valid && (form.get('capacidad')?.dirty || form.get('capacidad')?.touched)) {
+          @if (form.get('capacidad')?.valid && (form.get('capacidad')?.dirty || form.get('capacidad')?.touched) && isAdmin) {
             <small class="success">✓ Capacidad válida</small>
           }
 
@@ -95,10 +109,14 @@
         <!-- CAMPO CAMAS -->
         <div class="field">
           <label>Camas</label>
-          <input id="camasHab" type="number" formControlName="cantCamas" min="1" max="4" placeholder="1-4" />
+          @if (!isAdmin) {
+            <input type="number" formControlName="cantCamas" readonly />
+          } @else {
+            <input id="camasHab" type="number" formControlName="cantCamas" min="1" max="4" placeholder="1-4" />
+          }
 
           <!-- MENSAJE EN CASO DE VALIDO -->
-          @if (form.get('cantCamas')?.valid && (form.get('cantCamas')?.dirty || form.get('cantCamas')?.touched)) {
+          @if (form.get('cantCamas')?.valid && (form.get('cantCamas')?.dirty || form.get('cantCamas')?.touched) && isAdmin) {
             <small class="success">✓ Cantidad de camas válida</small>
           }
 
@@ -121,10 +139,14 @@
         <!-- CAMPO PRECIO -->
         <div class="field">
           <label>Precio por noche</label>
-          <input id="precioHab" type="number" formControlName="precioNoche" min="0.01" max="999999999.99" step="0.01" placeholder="$" />
+          @if (!isAdmin) {
+            <input type="number" formControlName="precioNoche" readonly />
+          } @else {
+            <input id="precioHab" type="number" formControlName="precioNoche" min="0.01" max="999999999.99" step="0.01" placeholder="$" />
+          }
 
           <!-- MENSAJE EN CASO DE VALIDO -->
-          @if (form.get('precioNoche')?.valid && (form.get('precioNoche')?.dirty || form.get('precioNoche')?.touched)) {
+          @if (form.get('precioNoche')?.valid && (form.get('precioNoche')?.dirty || form.get('precioNoche')?.touched) && isAdmin) {
             <small class="success">✓ Precio válido</small>
           }
 
@@ -155,21 +177,28 @@
             }
           </select>
         </div>
-
+        
         <!-- CAMPO TIPO -->
         <div class="field">
           <label>Tipo</label>
-          <select formControlName="tipo">
-            <option value="SIMPLE">Simple</option>
-            <option value="DOBLE">Doble</option>
-            <option value="TRIPLE">Triple</option>
-            <option value="CUADRUPLE">Cuádruple</option>
-            <option value="DELUXE">Deluxe</option>
-          </select>
+          @if (!isAdmin) {
+            <input type="text" formControlName="tipo" readonly />
+          } @else {
+            <select formControlName="tipo">
+              <option value="SIMPLE">Simple</option>
+              <option value="DOBLE">Doble</option>
+              <option value="TRIPLE">Triple</option>
+              <option value="CUADRUPLE">Cuádruple</option>
+              <option value="DELUXE">Deluxe</option>
+              <option value="INDIVIDUAL">Individual</option>
+              <option value="SUITE">Suite</option>
+              <option value="ESTUDIO">Estudio</option>
+            </select>
+        }
         </div>
 
         <!-- CAMPO ACTIVO -->
-        @if (editMode) {
+        @if (editMode && isAdmin) {
           <div class="field field-toggle">
             <label for="activo">Habitación Activa</label>
             <label class="switch">
@@ -183,70 +212,95 @@
 
       <!-- CAMPO COMENTARIO -->
       <div class="field">
+        @if (isAdmin) {
           <label>Comentario (Opcional)</label>
           <textarea rows="2" formControlName="comentario" placeholder="Detalles adicionales..."></textarea>
-
-          <!-- MENSAJES EN CASO DE ERROR -->
-          @if (form.get('comentario')?.hasError('maxlength') && (form.get('comentario')?.dirty || form.get('comentario')?.touched)) {
-            <small class="error">
-              El comentario es muy largo (máximo 255 caracteres). 
-              Estás usando {{ form.get('comentario')?.errors?.['maxlength'].actualLength }}.
-            </small>
+        } @else {
+          <label>Comentario</label>
+          @if (form.get('comentario')?.value) {
+            <textarea rows="2" formControlName="comentario" readonly></textarea>
+          } @else {
+            <label class="non_comment">Sin comentario</label>
           }
-        </div>
-
-      <!-- CAMPO IMAGENES -->
-      <div class="field">
-        <label>Imágenes <small class="hint">({{ imagenesPreview.length }} / 5)</small></label>
-        
-        <div 
-          class="upload-container"
-          [class.dragging]="isDragging"
-          (dragover)="onDragOver($event)"
-          (dragleave)="onDragLeave($event)"
-          (drop)="onDrop($event)">
-          
-          <input 
-            type="file" 
-            id="fileInput" 
-            multiple 
-            (change)="onFilesSelected($event)" 
-            accept="image/*" 
-            hidden 
-          />
-
-          <label for="fileInput" class="upload-btn">
-            <span class="icon">📁</span> Elegir archivos
-          </label>
-
-          <span class="upload-hint">
-            @if (isDragging) {
-              ¡Soltá los archivos acá!
-            } @else {
-              o arrastralos y soltalos aquí
-            }
-          </span>
-        </div>
-        
-        @if (imageError) {
-          <small class="error">{{ imageError }}</small>
+        }
+        <!-- MENSAJES EN CASO DE ERROR -->
+        @if (form.get('comentario')?.hasError('maxlength') && (form.get('comentario')?.dirty || form.get('comentario')?.touched)) {
+          <small class="error">
+            El comentario es muy largo (máximo 255 caracteres). 
+            Estás usando {{ form.get('comentario')?.errors?.['maxlength'].actualLength }}.
+          </small>
         }
       </div>
 
-      <!-- GESTION Y VISUALIZACION DE IMAGENES -->
-      @if (imagenesPreview.length > 0) {
-        <section class="galeria">
-          <div class="galeria__thumbs">
-            @for (img of imagenesPreview; let i = $index; track $index) {
-              <div class="thumb">
-                <img [src]="img.url" [alt]="'Imagen ' + (i + 1)" />
-                <button type="button" class="btn-remove" (click)="removeImage(i)" title="Eliminar imagen">✕</button>
-              </div>
-            }
+      <!-- CAMPO IMAGENES -->
+      @if (isAdmin) {
+        <div class="field">
+          <label>Imágenes <small class="hint">({{ imagenesPreview.length }} / 5)</small></label>
+          
+          <div 
+            class="upload-container"
+            [class.dragging]="isDragging"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)">
+            
+            <input 
+              type="file" 
+              id="fileInput" 
+              multiple 
+              (change)="onFilesSelected($event)" 
+              accept="image/*" 
+              hidden 
+            />
+
+            <label for="fileInput" class="upload-btn">
+              <span class="icon">📁</span> Elegir archivos
+            </label>
+
+            <span class="upload-hint">
+              @if (isDragging) {
+                ¡Soltá los archivos acá!
+              } @else {
+                o arrastralos y soltalos aquí
+              }
+            </span>
           </div>
-        </section>
+          
+          @if (imageError) {
+            <small class="error">{{ imageError }}</small>
+          }
+        </div>
+
+        <!-- GESTION Y VISUALIZACION DE IMAGENES -->
+        @if (imagenesPreview.length > 0) {
+          <section class="galeria">
+            <div class="galeria__thumbs">
+              @for (img of imagenesPreview; let i = $index; track $index) {
+                <div class="thumb">
+                  <img draggable="false" [src]="img.url" [alt]="'Imagen ' + (i + 1)" />
+                  <button type="button" class="btn-remove" (click)="removeImage(i)" title="Eliminar imagen">✕</button>
+                </div>
+              }
+            </div>
+          </section>
+        } @else {
+          <div class="galeria galeria--empty">Sin imágenes cargadas</div>
+        }
       } @else {
-        <div class="galeria galeria--empty">Sin imágenes cargadas</div>
+        <label>Imágenes <small class="hint">({{ imagenesPreview.length }} / 5)</small></label>
+        @if (imagenesPreview.length > 0) {
+          <section class="galeria">
+            <div class="galeria__thumbs">
+              @for (img of imagenesPreview; let i = $index; track $index) {
+                <div class="thumb">
+                  <img draggable="false" [src]="img.url" [alt]="'Imagen ' + (i + 1)" />
+                </div>
+              }
+            </div>
+          </section>
+        } @else {
+          <div class="galeria galeria--empty">Sin imágenes cargadas</div>
+        }
       }
 
       <!-- BOTONES -->

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HabitacionService } from '../../../services/habitacion-service';
 import { ImagenService } from '../../../services/imagen-service';
 import { ReservasService } from '../../../services/reservas-service';
@@ -21,7 +21,7 @@ interface ImagenPreview {
 @Component({
   selector: 'app-form-habitacion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './form-habitacion.html',
   styleUrls: ['./form-habitacion.css']
 })
@@ -31,6 +31,7 @@ export class FormHabitacion implements OnInit, OnDestroy {
   editMode = false;
   loading = false;
   habitacionId?: number;
+  isAdmin = false;
   
   imagenesPreview: ImagenPreview[] = [];
   imageError: string | null = null;
@@ -85,6 +86,12 @@ export class FormHabitacion implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    const s = this.auth.state$.subscribe(state => {
+      const roles = state.roles ?? [];
+      const logged = state.isLoggedIn;
+      this.isAdmin = logged && roles.includes('ADMINISTRADOR');
+    });
+
     this.form = this.fb.group({
       numero: [null, [Validators.required,Validators.min(1),Validators.max(9999)],[this.numeroUnicoValidator()]],
       piso: [null, [Validators.required, Validators.min(1), Validators.max(4)]],
