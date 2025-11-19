@@ -5,8 +5,7 @@ import { DetallesUsuario }      from './pages/usuarios/detalles-usuario/detalles
 import { FormUsuario }          from './pages/usuarios/form-usuario/form-usuario';
 import { ListadoEmpleados }     from './pages/usuarios/empleados/listado-empleados/listado-empleados';
 import { FormEmpleado }         from './pages/usuarios/empleados/form-empleado/form-empleado';
-import { FormCliente }          from './pages/usuarios/clientes/form-cliente/form-cliente';
-import { ListadoClientes }      from './pages/usuarios/clientes/listado-clientes/listado-clientes';
+import { ListadoClientes }      from './pages/usuarios/listado-clientes/listado-clientes';
 import { CheckInOut }           from './pages/usuarios/empleados/check-in-out/check-in-out';
 import { ListadoHabitaciones }  from './pages/habitaciones/listado-habitaciones/listado-habitaciones';
 import { DetallesHabitacion }   from './pages/habitaciones/detalles-habitacion/detalles-habitacion';
@@ -18,10 +17,8 @@ import { FormReserva }          from './pages/reservas/form-reserva/form-reserva
 import { CrearReservaBusqueda } from './pages/reservas/crear-reserva-busqueda/crear-reserva-busqueda';
 import { ListadoConsumos }      from './pages/consumos/listado-consumos/listado-consumos';
 import { FormConsumo }          from './pages/consumos/form-consumo/form-consumo';
-import { FacturaReserva }       from './pages/facturaciones/factura-reserva/factura-reserva';
 import { ListadoFacturas }      from './pages/facturaciones/listado-facturas/listado-facturas';
 import { DetalleFactura }       from './pages/facturaciones/detalle-factura/detalle-factura';
-import { CambiarEstadoFactura } from './pages/facturaciones/cambiar-estado-factura/cambiar-estado-factura';
 import { PrivacyPolicy }        from './pages/User-Policy/privacy-policy/privacy-policy';
 import { CancelPolicy }         from './pages/User-Policy/cancel-policy/cancel-policy';
 import { CookiesPolicy }        from './pages/User-Policy/cookies-policy/cookies-policy';
@@ -61,7 +58,7 @@ export const routes: Routes = [
     {
         path: 'listado_clientes',
         loadComponent: () =>
-            import('./pages/usuarios/clientes/listado-clientes/listado-clientes')
+            import('./pages/usuarios/listado-clientes/listado-clientes')
                 .then(m => m.ListadoClientes)
     },
     {
@@ -114,22 +111,6 @@ export const routes: Routes = [
     {
         path: 'listado_CLIENTEs',
         component: ListadoClientes,
-        canActivate: [AuthGuard],
-        data: {
-            roles: ['RECEPCIONISTA']
-        }
-    },
-    {
-        path: 'crear_CLIENTE/form',
-        component: FormCliente,
-        canActivate: [AuthGuard],
-        data: {
-            roles: ['RECEPCIONISTA']
-        }
-    },
-    {
-        path: 'editar_CLIENTE/:id',
-        component: FormCliente,
         canActivate: [AuthGuard],
         data: {
             roles: ['RECEPCIONISTA']
@@ -303,18 +284,6 @@ export const routes: Routes = [
 
     // #region Facturación
     {
-        path: 'facturas_reserva/:id',
-        component: FacturaReserva,
-        canActivate: [AuthGuard],
-        data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA',
-                'CLIENTE'
-            ]
-        }
-    },
-    {
         path: 'listado_facturas',
         component: ListadoFacturas,
         canActivate: [AuthGuard],
@@ -335,17 +304,6 @@ export const routes: Routes = [
                 'ADMINISTRADOR',
                 'RECEPCIONISTA',
                 'CLIENTE'
-            ]
-        }
-    },
-    {
-        path: 'cambiar_estado_factura/:id',
-        component: CambiarEstadoFactura,
-        canActivate: [AuthGuard],
-        data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA'
             ]
         }
     },

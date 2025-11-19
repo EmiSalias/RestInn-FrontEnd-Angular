@@ -29,13 +29,13 @@ export class FormUsuario implements OnInit {
   activeTab: 'datos' | 'seguridad' = 'datos';
 
   form: FormGroup = this.fb.group({
-    nombre:       ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]],
-    apellido:     ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]],
-    nombreLogin:  [''],
-    email:        [''],
-    dni:          [''],
-    phoneNumber:  ['', [Validators.pattern(/^[0-9\s+\-()]{6,20}$/)]],  // Solo números, espacios, guiones y paréntesis
-    cuit:         [''],
+    nombre:       ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25), Validators.pattern(/^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s'-]+$/)]],
+    apellido:     ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25), Validators.pattern(/^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s'-]+$/)]],
+    nombreLogin:  ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+    email:        ['', [Validators.required, Validators.email]],
+    dni:          ['', [Validators.pattern(/^\d{7,10}$/)]],
+    phoneNumber:  ['', [Validators.pattern(/^\+54\s?\d{2,4}[\s\-]?\d{6,8}$/)]],
+    cuit:         ['', [Validators.pattern(/^\d{11}$/)]],
     role:         [''],
 
     passGroup: this.fb.group(

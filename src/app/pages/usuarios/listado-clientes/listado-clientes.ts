@@ -1,8 +1,8 @@
 import { Component, OnInit, inject }  from '@angular/core';
 import { CommonModule }               from '@angular/common';
 import { RouterLink }                 from '@angular/router';
-import { UserService }                from '../../../../services/user-service';
-import   User                         from '../../../../models/User';
+import { UserService }                from '../../../services/user-service';
+import   User                         from '../../../models/User';
 
 @Component({
   selector: 'app-listado-clientes',
