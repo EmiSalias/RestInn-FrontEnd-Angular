@@ -5,7 +5,7 @@
   </p>
 
   <div class="cards">
-    <!-- Ver habitaciones -->
+    <!-- Ver habitaciones: admin y recepcionista -->
     <article class="card" [routerLink]="['/listado_habitaciones']">
       <div class="icon-wrapper">
         <fa-icon [icon]="faList"></fa-icon>
@@ -14,13 +14,15 @@
       <p>Accede a la lista de todas las habitaciones en el sistema.</p>
     </article>
 
-    <!-- Nueva habitación -->
-    <article class="card" [routerLink]="['/crear_habitacion/form']">
-      <div class="icon-wrapper">
-        <fa-icon [icon]="faPlus"></fa-icon>
-      </div>
-      <h2>Agregar nueva</h2>
-      <p>Crea una nueva habitación para agregar al sistema.</p>
-    </article>
+    <!-- Agregar nueva: SOLO admin -->
+    @if (canCreateRoom) {
+      <article class="card" [routerLink]="['/crear_habitacion/form']">
+        <div class="icon-wrapper">
+          <fa-icon [icon]="faPlus"></fa-icon>
+        </div>
+        <h2>Agregar nueva</h2>
+        <p>Crea una nueva habitación para agregar al sistema.</p>
+      </article>
+    }
   </div>
 </section>

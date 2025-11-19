@@ -1,3 +1,4 @@
+// src/app/components/menu/menu.config.ts
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faHome,
@@ -23,11 +24,12 @@ export interface MenuItem {
 export const MENU: MenuItem[] = [
   { label: 'Inicio', icon: faHome, link: '/', allowedRoles: 'PUBLIC' },
 
+  // ⬇ Ahora también la ve el RECEPCIONISTA
   {
     label: 'Gestion de usuarios',
     icon: faUser,
     link: '/gestion_usuarios',
-    allowedRoles: ['ADMINISTRADOR'],
+    allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA'],
   },
 
   {
@@ -89,6 +91,5 @@ export const MENU: MenuItem[] = [
     icon: faFileInvoice,
     link: '/listado_facturas',
     allowedRoles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE'],
-
   }
 ];
