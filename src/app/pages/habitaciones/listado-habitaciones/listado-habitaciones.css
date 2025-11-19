@@ -14,6 +14,24 @@
   margin-bottom: 0.5rem;
 }
 
+h1 {
+  cursor: default;
+  display: inline-block;
+  padding-right: 10px;
+  margin: 33px 0 20px 0;
+  font-size: 26px;
+  color: var(--color-primary);
+}
+
+.gest-habs {
+  margin-left: 40px;
+}
+
+.gest-habs:hover{
+  cursor: pointer;
+  color: var(--color-primary)-secondary;
+}
+
 /* --- Botonera Superior (Filtrar, Limpiar, Agregar) --- */
 .filtros-toggle {
   display: flex;
@@ -242,6 +260,7 @@
   line-height: 1.2;
   letter-spacing: 0.02em;
 }
+
 
 .habitacion-card__sub {
   font-size: 0.85rem;

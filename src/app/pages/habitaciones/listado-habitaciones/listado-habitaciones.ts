@@ -1,18 +1,18 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HabitacionService } from '../../../services/habitacion-service';
 import Habitacion from '../../../models/Habitacion';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth-service';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { H_Tipo } from '../../../models/enums/H_Tipo';
 
 @Component({
   selector: 'app-listado-habitaciones',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './listado-habitaciones.html',
   styleUrl: './listado-habitaciones.css'
 })
