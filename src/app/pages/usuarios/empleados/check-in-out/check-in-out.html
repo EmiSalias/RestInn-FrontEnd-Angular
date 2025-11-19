@@ -8,176 +8,190 @@
   </div>
 
   @if (sinPermisos) {
-    <div class="estado estado-error">
-      No tenés permisos para acceder a este panel.
-    </div>
+  <div class="estado estado-error">
+    No tenés permisos para acceder a este panel.
+  </div>
   }
 
   @if (!sinPermisos) {
 
-    @if (cargando) {
-      <div class="estado">Cargando tareas de check-in/out...</div>
-    }
+  @if (cargando) {
+  <div class="estado">Cargando tareas de check-in/out...</div>
+  }
 
-    @if (!cargando && errorMsg) {
-      <div class="estado estado-error">{{ errorMsg }}</div>
-    }
+  @if (!cargando && errorMsg) {
+  <div class="estado estado-error">{{ errorMsg }}</div>
+  }
 
-    @if (!cargando && !errorMsg) {
-      <section class="summary-cards">
-        <article class="summary-card">
-          <p class="summary-label">Tareas totales</p>
-          <p class="summary-value">{{ totalTareas }}</p>
-          <p class="summary-helper">
-            Check-in + Check-out pendientes
+  @if (!cargando && !errorMsg) {
+  <section class="summary-cards">
+    <article class="summary-card">
+      <p class="summary-label">Tareas totales</p>
+      <p class="summary-value">{{ totalTareas }}</p>
+      <p class="summary-helper">
+        Check-in + Check-out pendientes
+      </p>
+    </article>
+
+    <article class="summary-card">
+      <p class="summary-label">Pendientes de check-in</p>
+      <p class="summary-value">{{ pendientesCheckIn.length }}</p>
+      <p class="summary-helper">
+        Reservas CONFIRMADAS sin ingreso
+      </p>
+    </article>
+
+    <article class="summary-card">
+      <p class="summary-label">Pendientes de check-out</p>
+      <p class="summary-value">{{ pendientesCheckOut.length }}</p>
+      <p class="summary-helper">
+        Reservas EN_CURSO aún alojadas
+      </p>
+    </article>
+  </section>
+
+  <div class="check-layout">
+
+    <!-- PENDIENTES CHECK-IN -->
+    <section class="check-block">
+      <header class="check-block__header">
+        <div>
+          <h3>Pendientes de check-in</h3>
+          <p class="muted">
+            Reservas confirmadas a la espera de ingreso.
           </p>
-        </article>
+        </div>
+      </header>
 
-        <article class="summary-card">
-          <p class="summary-label">Pendientes de check-in</p>
-          <p class="summary-value">{{ pendientesCheckIn.length }}</p>
-          <p class="summary-helper">
-            Reservas CONFIRMADAS sin ingreso
-          </p>
-        </article>
+      @if (pendientesCheckIn.length === 0) {
+      <p class="estado">
+        No hay reservas pendientes de check-in.
+      </p>
+      } @else {
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Cliente</th>
+            <th>Hab.</th>
+            <th>Ingreso</th>
+            <th>Salida</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of pendientesCheckIn; track r.id) {
+          <tr [ngClass]="rowClassCheckIn(r)">
+            <td data-label="#">#{{ r.id }}</td>
 
-        <article class="summary-card">
-          <p class="summary-label">Pendientes de check-out</p>
-          <p class="summary-value">{{ pendientesCheckOut.length }}</p>
-          <p class="summary-helper">
-            Reservas EN_CURSO aún alojadas
-          </p>
-        </article>
-      </section>
+            <td data-label="Cliente">
+              {{ r.usuario?.nombre }} {{ r.usuario?.apellido }}
+            </td>
 
-      <div class="check-layout">
+            <td data-label="Hab.">
+              {{ r.habitacionNumero || r.habitacionId }}
+            </td>
 
-        <!-- PENDIENTES CHECK-IN -->
-        <section class="check-block">
-          <header class="check-block__header">
-            <div>
-              <h3>Pendientes de check-in</h3>
-              <p class="muted">
-                Reservas confirmadas a la espera de ingreso.
-              </p>
-            </div>
-          </header>
+            <td data-label="Ingreso">
+              {{ r.fechaIngreso | date:'dd/MM/yyyy' }}
+              <span *ngIf="esCheckInAtrasado(r)" class="badge badge-late">
+                Atrasado
+              </span>
+              <span *ngIf="esCheckInHoy(r) && !esCheckInAtrasado(r)" class="badge badge-today">
+                Hoy
+              </span>
+            </td>
 
-          @if (pendientesCheckIn.length === 0) {
-            <p class="estado">
-              No hay reservas pendientes de check-in.
-            </p>
-          } @else {
-            <table class="check-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Cliente</th>
-                  <th>Hab.</th>
-                  <th>Ingreso</th>
-                  <th>Salida</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (r of pendientesCheckIn; track r.id) {
-                  <tr [ngClass]="rowClassCheckIn(r)">
-                    <td>#{{ r.id }}</td>
-                    <td>{{ r.usuario?.nombre }} {{ r.usuario?.apellido }}</td>
-                    <td>{{ r.habitacionNumero || r.habitacionId }}</td>
-                    <td>
-                      {{ r.fechaIngreso | date:'dd/MM/yyyy' }}
-                      <span *ngIf="esCheckInAtrasado(r)" class="badge badge-late">
-                        Atrasado
-                      </span>
-                      <span *ngIf="esCheckInHoy(r) && !esCheckInAtrasado(r)" class="badge badge-today">
-                        Hoy
-                      </span>
-                    </td>
-                    <td>{{ r.fechaSalida  | date:'dd/MM/yyyy' }}</td>
-                    <td class="acciones">
-                      <button type="button"
-                              class="btn-link"
-                              (click)="irADetalleReserva(r)">
-                        Ver reserva
-                      </button>
-                      <button type="button"
-                              class="btn-accion btn-accion--checkin"
-                              (click)="hacerCheckIn(r)">
-                        Check-in
-                      </button>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
+            <td data-label="Salida">
+              {{ r.fechaSalida | date:'dd/MM/yyyy' }}
+            </td>
+
+            <td data-label="Acciones" class="acciones">
+              <button type="button" class="btn-link" (click)="irADetalleReserva(r)">
+                Ver reserva
+              </button>
+              <button type="button" class="btn-accion btn-accion--checkin" (click)="hacerCheckIn(r)">
+                Check-in
+              </button>
+            </td>
+          </tr>
           }
-        </section>
+        </tbody>
+      </table>
+      }
+    </section>
 
-        <!-- PENDIENTES CHECK-OUT -->
-        <section class="check-block">
-          <header class="check-block__header">
-            <div>
-              <h3>Pendientes de check-out</h3>
-              <p class="muted">
-                Reservas en curso listas para salida.
-              </p>
-            </div>
-          </header>
+    <!-- PENDIENTES CHECK-OUT -->
+    <section class="check-block">
+      <header class="check-block__header">
+        <div>
+          <h3>Pendientes de check-out</h3>
+          <p class="muted">
+            Reservas en curso listas para salida.
+          </p>
+        </div>
+      </header>
 
-          @if (pendientesCheckOut.length === 0) {
-            <p class="estado">
-              No hay reservas pendientes de check-out.
-            </p>
-          } @else {
-            <table class="check-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Cliente</th>
-                  <th>Hab.</th>
-                  <th>Ingreso</th>
-                  <th>Salida</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (r of pendientesCheckOut; track r.id) {
-                  <tr [ngClass]="rowClassCheckOut(r)">
-                    <td>#{{ r.id }}</td>
-                    <td>{{ r.usuario?.nombre }} {{ r.usuario?.apellido }}</td>
-                    <td>{{ r.habitacionNumero || r.habitacionId }}</td>
-                    <td>{{ r.fechaIngreso | date:'dd/MM/yyyy' }}</td>
-                    <td>
-                      {{ r.fechaSalida  | date:'dd/MM/yyyy' }}
-                      <span *ngIf="esCheckOutAtrasado(r)" class="badge badge-late">
-                        Atrasado
-                      </span>
-                      <span *ngIf="esCheckOutHoy(r) && !esCheckOutAtrasado(r)" class="badge badge-today">
-                        Hoy
-                      </span>
-                    </td>
-                    <td class="acciones">
-                      <button type="button"
-                              class="btn-link"
-                              (click)="irADetalleReserva(r)">
-                        Ver reserva
-                      </button>
-                      <button type="button"
-                              class="btn-accion btn-accion--checkout"
-                              (click)="hacerCheckOut(r)">
-                        Check-out
-                      </button>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
+      @if (pendientesCheckOut.length === 0) {
+      <p class="estado">
+        No hay reservas pendientes de check-out.
+      </p>
+      } @else {
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Cliente</th>
+            <th>Hab.</th>
+            <th>Ingreso</th>
+            <th>Salida</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of pendientesCheckOut; track r.id) {
+          <tr [ngClass]="rowClassCheckOut(r)">
+            <td data-label="#">#{{ r.id }}</td>
+
+            <td data-label="Cliente">
+              {{ r.usuario?.nombre }} {{ r.usuario?.apellido }}
+            </td>
+
+            <td data-label="Hab.">
+              {{ r.habitacionNumero || r.habitacionId }}
+            </td>
+
+            <td data-label="Ingreso">
+              {{ r.fechaIngreso | date:'dd/MM/yyyy' }}
+            </td>
+
+            <td data-label="Salida">
+              {{ r.fechaSalida | date:'dd/MM/yyyy' }}
+              <span *ngIf="esCheckOutAtrasado(r)" class="badge badge-late">
+                Atrasado
+              </span>
+              <span *ngIf="esCheckOutHoy(r) && !esCheckOutAtrasado(r)" class="badge badge-today">
+                Hoy
+              </span>
+            </td>
+
+            <td data-label="Acciones" class="acciones">
+              <button type="button" class="btn-link" (click)="irADetalleReserva(r)">
+                Ver reserva
+              </button>
+              <button type="button" class="btn-accion btn-accion--checkout" (click)="hacerCheckOut(r)">
+                Check-out
+              </button>
+            </td>
+          </tr>
           }
-        </section>
+        </tbody>
+      </table>
+      }
+    </section>
 
-      </div>
-    }
+  </div>
+  }
   }
 
 </section>

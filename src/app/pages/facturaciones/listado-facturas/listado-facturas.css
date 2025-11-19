@@ -379,3 +379,139 @@ th.sortable:hover {
     font-size: 0.8rem;
   }
 }
+/* MOBILE “CARD VIEW” PARA FACTURAS */
+@media (max-width: 960px) {
+
+  .facturas-page {
+    padding: 100px 16px 24px; /* espacio por el header fijo */
+  }
+
+  .header-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .header-row h2 {
+    font-size: 1.3rem;
+    margin: 0;
+  }
+
+  .rol-badge {
+    font-size: 0.7rem;
+  }
+
+  /* resumen en una columna */
+  .facturacion-resumen {
+    grid-template-columns: 1fr;
+  }
+
+  .facturacion-resumen__metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-main-metrics {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .admin-summary-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* filtros apilados */
+  .filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtros input[type="text"],
+  .filtros select,
+  .filtros input[type="date"] {
+    width: 100%;
+  }
+
+  .chip-activo {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* --- TABLA -> TARJETAS --- */
+
+  .tabla-facturas {
+    border: none;
+    background: transparent;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+
+  .tabla-facturas thead {
+    display: none; /* ocultamos encabezado */
+  }
+
+  .tabla-facturas,
+  .tabla-facturas tbody,
+  .tabla-facturas tr,
+  .tabla-facturas td {
+    display: block;
+    width: 100%;
+  }
+
+  .tabla-facturas tbody tr {
+    margin-bottom: 0.9rem;
+    background: var(--color-surface);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+  }
+
+  .tabla-facturas td {
+    border-bottom: 1px solid var(--color-border);
+    padding: 0.4rem 0.85rem;
+    white-space: normal;
+    text-align: left;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .tabla-facturas td:last-child {
+    border-bottom: none;
+  }
+
+  .tabla-facturas td::before {
+    content: attr(data-label);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    flex: 0 0 40%;
+    max-width: 45%;
+  }
+
+  .total-col,
+  .saldo-col,
+  .accion-col {
+    text-align: right;
+    width: auto;
+  }
+
+  .tabla-facturas td.reserva-link {
+    text-align: right;
+  }
+
+  .accion-col {
+    margin-top: 0.2rem;
+  }
+
+  .accion-col .btn-detalle {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

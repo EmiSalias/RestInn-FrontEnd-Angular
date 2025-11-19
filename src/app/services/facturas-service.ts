@@ -1,7 +1,7 @@
-import { Injectable }               from '@angular/core';
-import { HttpClient, HttpHeaders }  from '@angular/common/http';
-import { Observable }               from 'rxjs';
-import { environment }              from '../../environments/environment';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import FacturaResponseDTO from '../models/FacturaResponseDTO';
 import FacturaPagarRequestDTO from '../models/FacturaPagarRequestDTO';
 import ResumenFacturacionClienteDTO from '../models/ResumenFacturacionClienteDTO';
@@ -96,13 +96,19 @@ export class FacturasService {
       { headers: this.authHeaders() }
     );
   }
-  
+
   getInfoFacturaReserva(reservaId: number): Observable<FacturaReservaInfoDTO> {
     return this.http.get<FacturaReservaInfoDTO>(
       `${this.baseUrl}/reserva/${reservaId}/info`,
       { headers: this.authHeaders() }
     );
   }
-
+  
+  listarReservasFinalizadasImpagas(): Observable<FacturaReservaInfoDTO[]> {
+    return this.http.get<FacturaReservaInfoDTO[]>(
+      `${this.baseUrl}/reservas-finalizadas-impagas`,
+      { headers: this.authHeaders() }
+    );
+  }
 
 }

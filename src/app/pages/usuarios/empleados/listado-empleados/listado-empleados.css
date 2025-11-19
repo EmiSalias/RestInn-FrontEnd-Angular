@@ -124,3 +124,43 @@ h1 {
 .status.error {
   color: var(--color-error);
 }
+/* ==== ACCIONES ARRIBA DE LA TABLA ==== */
+.actions {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.actions .btn-filter {
+  margin-right: 0;
+}
+
+.btn-filter {
+  color: var(--color-bg);
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--color-primary);
+}
+
+/* ==== VERSIÓN MOBILE ==== */
+@media (max-width: 768px) {
+  .empleados-page {
+    padding: 10px 16px 32px;
+  }
+
+  .actions {
+    flex-direction: column;   /* uno debajo del otro */
+    align-items: stretch;
+  }
+
+  .actions .btn-filter {
+    width: 100%;              /* full-width */
+    text-align: center;
+  }
+}
