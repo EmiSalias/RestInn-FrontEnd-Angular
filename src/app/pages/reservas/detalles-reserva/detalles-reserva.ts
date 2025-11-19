@@ -1,10 +1,17 @@
+// src/app/pages/reservas/detalles-reserva/detalles-reserva.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReservasService, ReservaResponse } from '../../../services/reservas-service';
 import { HabitacionService } from '../../../services/habitacion-service';
 import Habitacion from '../../../models/Habitacion';
 import { AuthService } from '../../../services/auth-service';
+import {
+  FacturasService,
+  FacturaResponseDTO,
+  FacturaReservaInfoDTO
+} from '../../../services/facturas-service';
+
 import Swal from 'sweetalert2';
 
 @Component({
@@ -21,9 +28,11 @@ export class DetallesReserva implements OnInit {
   private reservasSrv = inject(ReservasService);
   private habSrv = inject(HabitacionService);
   private auth = inject(AuthService);
+  private facturasSrv = inject(FacturasService);
 
   reserva?: ReservaResponse;
   habitacion?: Habitacion;
+  facturaReserva?: FacturaResponseDTO | null;
 
   loading = false;
   errorMsg: string | null = null;
@@ -57,11 +66,24 @@ export class DetallesReserva implements OnInit {
             error: (err) => console.error('Error cargando habitación', err)
           });
         }
+
+        // cargar factura asociada a la reserva
+        this.cargarFacturaReserva(res.id);
       },
       error: (err) => {
         console.error('Error cargando reserva', err);
         this.errorMsg = err?.error?.message || 'No se pudo cargar la reserva.';
         this.loading = false;
+      }
+    });
+  }
+
+  private cargarFacturaReserva(reservaId: number): void {
+    this.facturasSrv.getFacturaPorReserva(reservaId).subscribe({
+      next: (f) => this.facturaReserva = f,
+      error: (err) => {
+        console.warn('No se pudo cargar la factura de la reserva', err);
+        this.facturaReserva = null;
       }
     });
   }
@@ -89,18 +111,37 @@ export class DetallesReserva implements OnInit {
     }
   }
 
+  estadoFacturaLabel(): string {
+    if (!this.facturaReserva) return 'Sin factura';
+    switch (this.facturaReserva.estado) {
+      case 'EMITIDA': return 'Emitida';
+      case 'EN_PROCESO': return 'En proceso';
+      case 'PAGADA': return 'Pagada';
+      case 'ANULADA': return 'Anulada';
+      default: return this.facturaReserva.estado;
+    }
+  }
+
+  get tieneFacturaReserva(): boolean {
+    return !!this.facturaReserva;
+  }
+
+  verFactura(): void {
+    if (!this.facturaReserva) return;
+    this.router.navigate(
+      ['/detalle_factura', this.facturaReserva.id],
+      { queryParams: { returnTo: `/detalle_reserva/${this.reserva?.id}` } }
+    );
+  }
+
   // ======================
   //  VOLVER
   // ======================
 
-  /** A dónde volver según rol */
   private rutaListado(): string {
-    // si es recepcionista/admin: listado de reservas
     if (this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) {
       return '/listado_reservas';
     }
-
-    // cliente: lista de habitaciones (o la ruta que uses para eso)
     return '/habitaciones';
   }
 
@@ -121,7 +162,6 @@ export class DetallesReserva implements OnInit {
   //  CONFIRMAR RESERVA
   // ======================
 
-  /** Solo ADMIN/RECEPCIONISTA y estado PENDIENTE */
   get puedeConfirmarReserva(): boolean {
     if (!this.reserva) return false;
     if (!this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) return false;
@@ -170,13 +210,11 @@ export class DetallesReserva implements OnInit {
   //  CHECK-IN
   // ======================
 
-  /** Solo ADMIN/RECEPCIONISTA y estado CONFIRMADA */
   get puedeCheckIn(): boolean {
     if (!this.reserva) return false;
     if (!this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) return false;
     return this.reserva.estado === 'CONFIRMADA';
   }
-  // Solo ADMIN/RECEPCIONISTA y estado PENDIENTE
 
   checkIn(): void {
     if (!this.reserva) return;
@@ -216,12 +254,10 @@ export class DetallesReserva implements OnInit {
     });
   }
 
-
   // ======================
-  //  CHECK-OUT
+  //  CHECK-OUT (con advertencias)
   // ======================
 
-  /** Solo ADMIN/RECEPCIONISTA y estado EN_CURSO */
   get puedeCheckOut(): boolean {
     if (!this.reserva) return false;
     if (!this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) return false;
@@ -230,41 +266,122 @@ export class DetallesReserva implements OnInit {
 
   checkOut(): void {
     if (!this.reserva) return;
-
     const r = this.reserva;
 
-    Swal.fire({
-      title: `Check-out reserva #${r.id}`,
-      text: '¿Seguro que quieres hacer el check-out de esta reserva?',
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, hacer check-out',
-      cancelButtonText: 'No, volver',
-      confirmButtonColor: '#FF9800'
-    }).then(result => {
-      if (!result.isConfirmed) return;
+    const hoy = new Date();
+    const salida = new Date(r.fechaSalida);
+    const hoyDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()).getTime();
+    const salidaDia = new Date(salida.getFullYear(), salida.getMonth(), salida.getDate()).getTime();
+    const checkoutAnticipado = hoyDia < salidaDia;
 
-      this.reservasSrv.checkOut(r.id).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Check-out realizado',
-            text: 'El check-out fue realizado correctamente.'
-          }).then(() => {
-            this.volver();
-          });
-        },
-        error: (err) => {
-          console.error('Error haciendo check-out', err);
-          Swal.fire({
-            icon: 'error',
-            title: 'No se pudo hacer check-out',
-            text: err?.error?.mensaje || 'No se pudo hacer check-out.'
-          });
-        }
-      });
+    // Consultamos info rápida de la factura de RESERVA (SP)
+    this.facturasSrv.getInfoFacturaReserva(r.id).subscribe({
+      next: (info: FacturaReservaInfoDTO) => {
+        this.mostrarConfirmacionCheckout(r, checkoutAnticipado, info);
+      },
+      error: (err) => {
+        console.warn('No se pudo obtener info de factura de reserva', err);
+        this.mostrarConfirmacionCheckout(r, checkoutAnticipado, null);
+      }
     });
   }
 
+  private mostrarConfirmacionCheckout(
+    r: ReservaResponse,
+    checkoutAnticipado: boolean,
+    info: FacturaReservaInfoDTO | null
+  ): void {
 
+    const tieneFacturaImpaga =
+      !!info &&
+      (info.estadoFactura === 'EMITIDA' || info.estadoFactura === 'EN_PROCESO');
+
+    const baseText =
+      `¿Confirmar check-out de la habitación ${r.habitacionNumero || r.habitacionId}?`;
+
+    const warnings: string[] = [];
+
+    if (tieneFacturaImpaga && info) {
+      warnings.push(
+        `La factura de <b>RESERVA</b> asociada a esta reserva está en estado <b>${info.estadoFactura}</b> (no pagada).<br>` +
+        `Si continuás, se registrará el check-out igualmente, dejando un saldo pendiente.`
+      );
+    }
+
+    if (checkoutAnticipado) {
+      const salidaFmt = new Date(r.fechaSalida).toLocaleDateString('es-AR');
+      warnings.push(
+        `Estás realizando el check-out antes de la fecha de salida registrada: <b>${salidaFmt}</b>.`
+      );
+    }
+
+    const html = [
+      `<p>${baseText}</p>`,
+      warnings.length
+        ? `<div style="margin-top:8px;color:#f57c00;font-weight:500;">${warnings.join('<br><br>')}</div>`
+        : ''
+    ].join('');
+
+    if (tieneFacturaImpaga && info) {
+      // Mismo UX que en CheckInOut: Ver factura / Continuar
+      Swal.fire({
+        title: `Check-out reserva #${r.id}`,
+        html,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ver factura',
+        cancelButtonText: 'Continuar con el check-out',
+        confirmButtonColor: '#1976D2',
+        cancelButtonColor: '#D32F2F',
+        reverseButtons: true
+      }).then(result => {
+        if (result.isConfirmed) {
+          // Desde acá queremos volver al detalle de ESTA reserva
+          this.router.navigate(
+            ['/detalle_factura', info.facturaId],
+            { queryParams: { returnTo: `/detalle_reserva/${r.id}` } }
+          );
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          this.ejecutarCheckOut(r);
+        }
+      });
+    } else {
+      // Sin factura impaga: confirm estándar
+      Swal.fire({
+        title: `Check-out reserva #${r.id}`,
+        html,
+        icon: checkoutAnticipado ? 'warning' : 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, hacer check-out',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#FF9800'
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.ejecutarCheckOut(r);
+        }
+      });
+    }
+  }
+
+  private ejecutarCheckOut(r: ReservaResponse): void {
+    this.reservasSrv.checkOut(r.id).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Check-out realizado',
+          text: 'El check-out fue realizado correctamente.'
+        }).then(() => {
+          this.volver();
+        });
+      },
+      error: (err) => {
+        console.error('Error haciendo check-out', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'No se pudo hacer check-out',
+          text: err?.error?.mensaje || 'No se pudo hacer check-out.'
+        });
+      }
+    });
+  }
 }

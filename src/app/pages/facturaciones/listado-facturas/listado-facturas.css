@@ -3,7 +3,7 @@
 /* ========================= */
 
 .facturas-page {
-  padding: 110px 40px 40px;      /* respeta header fijo */
+  padding: 10px 40px 40px;
   color: var(--color-text);
 }
 
@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 }
 
 .header-row h2 {
@@ -31,6 +31,191 @@
 }
 
 /* ========================= */
+/* RESUMEN CLIENTE / ADMIN   */
+/* ========================= */
+
+.facturacion-resumen {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 3fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.facturacion-resumen__status {
+  border-radius: 18px;
+  padding: 1.4rem 1.6rem;
+  background: radial-gradient(circle at top left,
+      rgba(255, 255, 255, 0.04),
+      rgba(0, 0, 0, 0.5));
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.facturacion-resumen__status.ok {
+  box-shadow: 0 18px 40px rgba(0, 180, 80, 0.25);
+}
+
+.facturacion-resumen__status.deuda {
+  box-shadow: 0 18px 40px rgba(230, 80, 80, 0.35);
+}
+
+.pill-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background-color: rgba(0, 0, 0, 0.45);
+  color: var(--color-text-secondary);
+}
+
+.facturacion-resumen__status.ok .pill-estado {
+  border: 1px solid var(--color-success);
+}
+
+.facturacion-resumen__status.deuda .pill-estado {
+  border: 1px solid var(--color-error);
+}
+
+.facturacion-resumen__status h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.saldo-label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 0.6rem;
+}
+
+.saldo-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.saldo-value--pendiente {
+  color: var(--color-warning);
+}
+
+.btn-pendientes {
+  margin-top: auto;
+  align-self: flex-start;
+  margin-top: 1.1rem;
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-primary);
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease,
+    transform 0.08s ease;
+}
+
+.btn-pendientes:hover {
+  background: var(--color-primary);
+  color: #000;
+  transform: translateY(-1px);
+}
+
+/* cards métricas */
+
+.facturacion-resumen__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.metric-card {
+  border-radius: 16px;
+  padding: 0.9rem 1.1rem;
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.metric-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.metric-helper {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* chip filtro pendientes */
+
+.chip-activo {
+  border-radius: 999px;
+  border: 1px dashed var(--color-warning);
+  background: rgba(214, 184, 90, 0.08);
+  color: var(--color-text-secondary);
+  padding: 0.25rem 0.8rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+/* ========================= */
+/* RESUMEN ADMIN EXTRA       */
+/* ========================= */
+
+.facturacion-resumen--admin .facturacion-resumen__status {
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+}
+
+.admin-main-metrics {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.8rem;
+}
+
+.admin-main-metrics > div {
+  min-width: 0;
+}
+
+.admin-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.2rem;
+}
+
+.btn-link {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-link:hover {
+  color: var(--color-primary);
+}
+
+/* ========================= */
 /* FILTROS                   */
 /* ========================= */
 
@@ -39,6 +224,7 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
+  align-items: center;
 }
 
 .filtros label {
@@ -64,7 +250,7 @@
 .filtros input:focus,
 .filtros select:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
 /* ========================= */
@@ -74,7 +260,7 @@
 .tabla-facturas {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   font-size: 0.9rem;
   background: var(--color-surface);
   border-radius: 12px;
@@ -115,9 +301,14 @@
   text-align: right;
 }
 
-.pdf-col {
+.saldo-col {
+  text-align: right;
+  width: 110px;
+}
+
+.accion-col {
   text-align: center;
-  width: 90px;
+  width: 115px;
 }
 
 /* columnas ordenables */
@@ -150,14 +341,14 @@ th.sortable:hover {
 }
 
 /* ========================= */
-/* BOTÓN PDF                 */
+/* BOTÓN DETALLE             */
 /* ========================= */
 
-.btn-pdf {
-  padding: 0.25rem 0.7rem;
+.btn-detalle {
+  padding: 0.25rem 0.8rem;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, #8b5cff, #c77dff); /* acento violeta */
+  background: linear-gradient(135deg, #8b5cff, #c77dff);
   color: #fff;
   font-size: 0.75rem;
   font-weight: 600;
@@ -168,13 +359,13 @@ th.sortable:hover {
     filter 0.08s ease;
 }
 
-.btn-pdf:hover {
+.btn-detalle:hover {
   transform: translateY(-1px);
   box-shadow: 0 0 10px rgba(199, 125, 255, 0.6);
   filter: brightness(1.05);
 }
 
-.btn-pdf:active {
+.btn-detalle:active {
   transform: translateY(0);
   box-shadow: none;
 }
@@ -191,4 +382,26 @@ th.sortable:hover {
 
 .estado-error {
   color: var(--color-error);
+}
+
+/* ========================= */
+/* RESPONSIVE                */
+/* ========================= */
+
+@media (max-width: 960px) {
+  .facturas-page {
+    padding: 100px 16px 24px;
+  }
+
+  .facturacion-resumen {
+    grid-template-columns: 1fr;
+  }
+
+  .facturacion-resumen__metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .tabla-facturas {
+    font-size: 0.8rem;
+  }
 }
