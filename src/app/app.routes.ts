@@ -177,7 +177,7 @@ export const routes: Routes = [
         component: GestionHabitaciones,
         canActivate: [AuthGuard],
         data: {
-            roles: ['ADMINISTRADOR']
+            roles: ['ADMINISTRADOR','RECEPCIONISTA']
         }
     },
     // endregion

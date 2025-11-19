@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { ListadoHabitaciones } from '../habitaciones/listado-habitaciones/listado-habitaciones';
+import { GestionReservas } from '../reservas/gestion-reservas/gestion-reservas';
 
 type HeroKey =
   | 'default'
@@ -39,7 +40,7 @@ interface HeroSection {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ListadoHabitaciones],
+  imports: [CommonModule, ListadoHabitaciones, GestionReservas],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -54,9 +55,16 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('heroStep')
   heroStepRefs?: QueryList<ElementRef<HTMLDivElement>>;
 
-  // si es ADMIN, mostramos el panel premium
-  get isAdminPanel(): boolean {
-    return this.auth.isLoggedIn() && this.auth.hasAnyRole(['ADMINISTRADOR']);
+  // PANEL INTERNO (ADMIN + RECEPCIONISTA)
+  get isStaffPanel(): boolean {
+    return this.auth.isLoggedIn() &&
+           this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA']);
+  }
+
+  // HOME ESPECIAL PARA LIMPIEZA y CONSERJE → listado de habitaciones
+  get isCleaningPanel(): boolean {
+    return this.auth.isLoggedIn() &&
+           this.auth.hasAnyRole(['LIMPIEZA', 'CONSERJE']);
   }
 
   // ===== BLOQUES DEL HERO PÚBLICO (SCROLL VERTICAL) =====
@@ -97,7 +105,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
 
   activeHeroIndex = 0;
 
-  // --- texto dinámico tipo "tip" (se usa en el hero público y en admin) ---
+  // --- texto dinámico tipo "tip" (se usa en el hero público y en panel interno) ---
   heroTextMap: Record<HeroKey, string> = {
     // ===== VISTA PÚBLICO / CLIENTE =====
     default:
@@ -113,7 +121,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
     facturacion:
       'Revisá facturas emitidas y descargá los comprobantes de pago en PDF.',
 
-    // ===== VISTA ADMIN =====
+    // ===== PANEL INTERNO (ADMIN / RECEPCIONISTA) =====
     adminUsuarios:
       'Gestioná altas, bajas y permisos de usuarios y clientes del hotel.',
     adminHabitaciones:
@@ -129,12 +137,13 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   private typingIntervalId: any = null;
 
   ngOnInit(): void {
-    // para que el panel admin tenga un tip inicial
-    this.startHeroTyping('default');
+    // Para limpieza no mostramos hero ni tip
+    if (!this.isCleaningPanel) {
+      this.startHeroTyping('default');
+    }
   }
 
   ngAfterViewInit(): void {
-    // inicializamos el estado según dónde está el scroll al entrar
     this.updateHeroScrollProgress();
   }
 
@@ -182,11 +191,10 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   // ---------------------------
   @HostListener('window:scroll', [])
   onWindowScroll(): void {
-    // 1) scroll del hero tipo Angular
     this.updateHeroScrollProgress();
 
-    // 2) lógica que ya tenías para los bloques de abajo
-    if (this.isAdminPanel) return;
+    // panel interno o limpieza no usan hero-scroll
+    if (this.isStaffPanel || this.isCleaningPanel) return;
 
     const steps = this.heroStepRefs;
     if (!steps || steps.length === 0) return;
@@ -260,7 +268,6 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   goToHistorial(event?: Event): void {
     event?.preventDefault();
 
-    // 1) Si no está logueado → login con returnUrl
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/sign_in'], {
         queryParams: { returnUrl: '/mis_reservas' }
@@ -268,20 +275,17 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // 2) Roles permitidos
     const allowed = ['CLIENTE', 'ADMINISTRADOR', 'RECEPCIONISTA'];
     if (!this.auth.hasAnyRole(allowed)) {
       this.router.navigate(['/unauthorized']);
       return;
     }
 
-    // 3) Cliente → /mis_reservas | Admin/Recep → /reservas/listado
     const esCliente = this.auth.hasAnyRole(['CLIENTE']);
     const target = esCliente ? '/mis_reservas' : '/reservas/listado';
 
     this.router.navigate([target]);
   }
-
 
   goToHabitaciones(event?: Event): void {
     event?.preventDefault();
@@ -313,12 +317,13 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // ---------------------------
-  // NAVEGACIÓN ADMIN DASHBOARD
+  // NAVEGACIÓN PANEL INTERNO
   // ---------------------------
   goToGestionUsuarios(event?: Event): void {
     event?.preventDefault();
 
-    if (!this.auth.hasAnyRole(['ADMINISTRADOR'])) {
+    const allowed = ['ADMINISTRADOR', 'RECEPCIONISTA'];
+    if (!this.auth.hasAnyRole(allowed)) {
       this.router.navigate(['/unauthorized']);
       return;
     }
@@ -329,7 +334,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   goToAdminHabitaciones(event?: Event): void {
     event?.preventDefault();
 
-    if (!this.auth.hasAnyRole(['ADMINISTRADOR'])) {
+    if (!this.auth.hasAnyRole(['ADMINISTRADOR','RECEPCIONISTA'])) {
       this.router.navigate(['/unauthorized']);
       return;
     }
@@ -356,12 +361,9 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
     const rect = el.getBoundingClientRect();
     const windowHeight = window.innerHeight || document.documentElement.clientHeight;
 
-    // raw = 1 cuando la sección está centrada, 0 cuando se fue arriba o todavía está abajo
     const raw = 1 - Math.abs(rect.top) / windowHeight;
     const clamped = Math.max(0, Math.min(1, raw));
 
     el.style.setProperty('--scroll-progress', clamped.toString());
   }
-
-
 }

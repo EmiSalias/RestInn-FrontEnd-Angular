@@ -49,15 +49,9 @@ export class UserService {
 
   // src/app/services/user-service.ts
   updatePassword(data: { oldPassword: string; newPassword: string }): Observable<void> {
-    return this.getCurrentUser().pipe(
-      switchMap((current) =>
-        this.http.put<void>(`${this.baseUrl}/update-password`, {
-          oldPassword: data.oldPassword,
-          newPassword: data.newPassword
-        })
-      )
-    );
+    return this.http.put<void>(`${this.baseUrl}/update-password`, data);
   }
+
 
   createEmployee(data: any): Observable<User> {
     return this.http.post<User>(`${this.adminBaseUrl}/empleados`, data);
