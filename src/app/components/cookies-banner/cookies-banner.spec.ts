@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CookiesBanner } from './cookies-banner';
+import { ComponentFixture, TestBed }  from '@angular/core/testing';
+import { CookiesBanner }              from './cookies-banner';
 
 describe('CookiesBanner', () => {
   let component: CookiesBanner;

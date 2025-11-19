@@ -1,8 +1,14 @@
 <section class="reserva-detail">
-
-  <button class="back-btn" type="button" (click)="volver()">
-    ← Volver
-  </button>
+  @if (puedeConfirmarReserva || puedeCheckIn || puedeCheckOut) {
+    <h1 class="gest-reservas" routerLink="/gestion_reservas">Gestión de reservas</h1>
+    <h1>></h1>
+    <h1 class="gest-reservas" routerLink="/listado_reservas">Historial de reservas</h1>
+    <h1>></h1>
+  } @else {
+    <button class="back-btn" type="button" (click)="volver()">
+      ← Volver
+    </button>
+  }
 
   @if (loading) {
   <div class="status">Cargando reserva...</div>
@@ -28,7 +34,6 @@
   </header>
 
   <div class="detail-layout">
-    <!-- Columna principal -->
     <div class="detail-main">
       <section class="detail-block">
         <h2>Estadía</h2>
@@ -86,7 +91,6 @@
       </section>
     </div>
 
-    <!-- Columna lateral -->
     <aside class="detail-sidebar">
       <div class="room-card">
         <div class="room-img-wrapper">
@@ -101,7 +105,6 @@
             Estado: {{ estadoLabel(r.estado) }}
           </div>
 
-          <!-- Botones debajo de la foto -->
           <div class="detail-header-actions">
             @if (puedeConfirmarReserva) {
             <button class="btn" (click)="confirmarReserva()">
@@ -122,7 +125,6 @@
         </div>
       </div>
 
-      <!-- NUEVA SECCIÓN: FACTURACIÓN -->
       <section class="detail-block factura-panel">
         <h2>Facturación</h2>
 
@@ -144,7 +146,6 @@
         </p>
         }
       </section>
-      <!-- FIN FACTURACIÓN -->
 
     </aside>
   </div>

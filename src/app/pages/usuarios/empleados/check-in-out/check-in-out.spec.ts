@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CheckInOut } from './check-in-out';
+import { ComponentFixture, TestBed }  from '@angular/core/testing';
+import { CheckInOut }                 from './check-in-out';
 
 describe('CheckInOut', () => {
   let component: CheckInOut;

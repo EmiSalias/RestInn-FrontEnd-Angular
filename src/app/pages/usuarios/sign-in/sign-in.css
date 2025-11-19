@@ -77,7 +77,7 @@ button:disabled {
   margin-top: 1.5rem;
 }
 
-/* fila con los links "Crear cuenta" y "¿Olvidaste...?" */
+/* fila con los links "Crear cuenta" y "¿Olvidaste la contraseña?" */
 .links-row {
   margin-top: 0.75rem;
   display: flex;
@@ -86,7 +86,7 @@ button:disabled {
   gap: 12px;
 }
 
-/* botones tipo link (no ocupan todo el ancho) */
+/* botones tipo link */
 .link-btn {
   background: transparent;
   color: var(--color-primary);

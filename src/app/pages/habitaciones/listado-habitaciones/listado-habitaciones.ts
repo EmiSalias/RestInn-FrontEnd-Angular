@@ -1,23 +1,25 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { HabitacionService } from '../../../services/habitacion-service';
-import Habitacion from '../../../models/Habitacion';
-import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../services/auth-service';
-import { Subscription, Observable } from 'rxjs';
-import Swal from 'sweetalert2';
-import { H_Tipo } from '../../../models/enums/H_Tipo';
+import { Router, RouterLink }                   from '@angular/router';
+import { FormsModule }                          from '@angular/forms';
+import { HabitacionService }                    from '../../../services/habitacion-service';
+import   Habitacion                             from '../../../models/Habitacion';
+import { CommonModule }                         from '@angular/common';
+import { AuthService }                          from '../../../services/auth-service';
+import { Subscription }                         from 'rxjs';
+import   Swal                                   from 'sweetalert2';
+import { H_Tipo }                               from '../../../models/enums/H_Tipo';
+import { EmpleadoService } from '../../../services/empleado-service';
 
 @Component({
   selector: 'app-listado-habitaciones',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './listado-habitaciones.html',
   styleUrl: './listado-habitaciones.css'
 })
 export class ListadoHabitaciones implements OnInit, OnDestroy {
   private habService = inject(HabitacionService);
+  private empleadoService = inject(EmpleadoService);
   private router = inject(Router);
   private auth = inject(AuthService);
 
@@ -31,19 +33,17 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
   loading = false;
   errorMsg = '';
 
-  // Variables de error por campo
   numeroError: string | null = null;
   pisoError: string | null = null;
   capacidadError: string | null = null;
   precioError: string | null = null;
   
-  // Flags de permisos
   isCliente = false;
   isAdmin = false;
   isRecepcionista = false;
   isConserje = false;
   isLimpieza = false;
-  puedeGestionarHabitaciones = false; // Admin + Empleados
+  puedeGestionarHabitaciones = false;
 
   tiposHabitacion = Object.values(H_Tipo);
 
@@ -78,7 +78,7 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
         ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA'].includes(r)
       );
 
-      // SOLO el Admin puede ver 'todas' (inactivas)
+      // SOLO el Admin puede ver todas (inactivas)
       if (this.isAdmin) {
         this.filtros.filtroActivo = 'todas';
       } else {
@@ -137,8 +137,7 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
     this.loading = true;
     this.errorMsg = '';
 
-    // Solo ADMIN llama a 'listarTodasIncluidasInactivas'.
-    // Otros: Trae solo ACTIVAS (el backend filtra el borrado lógico)
+    // Solo ADMIN llama a listarTodasIncluidasInactivas.
     const endpoint$ = this.isAdmin
       ? this.habService.listarTodasIncluidasInactivas() 
       : this.habService.getHabitaciones();
@@ -146,13 +145,10 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
     endpoint$.subscribe({
       next: (data) => {
         if (!this.puedeGestionarHabitaciones) {
-           // CLIENTE o PÚBLICO:
-           // NO pueden ver: MANTENIMIENTO (ni inactivas, que ya las filtró el backend)
            this.habitaciones = data.filter(h => 
              ['DISPONIBLE', 'OCUPADA', 'LIMPIEZA'].includes(h.estado)
            );
         } else {
-           // ADMIN y EMPLEADOS: Ven todo lo que trajo el endpoint
            this.habitaciones = data;
         }
         this.aplicarFiltros();
@@ -172,7 +168,6 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
 
   // Valida y actualiza los mensajes de error
   validarFiltros(): boolean {
-    // Reiniciar todos los errores individuales
     this.numeroError = null;
     this.pisoError = null;
     this.capacidadError = null;
@@ -249,26 +244,20 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
       return; 
     }
 
-    // Si NO hay fechas, filtramos en memoria lo que ya tenemos
+    // Si NO hay fechas, filtra en memoria lo que ya tenemos
     const f = this.filtros;
     
     this.habitacionesFiltradas = this.habitaciones.filter(h => {
-      // Filtro Activo/Inactivo
       if (f.filtroActivo === 'activas' && !h.activo) return false;
       if (f.filtroActivo === 'inactivas' && h.activo) return false;
-      
-      // Atributos exactos
       if (f.estado && h.estado !== f.estado) return false;
       if (f.numero != null && h.numero !== f.numero) return false;
       if (f.piso != null && h.piso !== f.piso) return false;
       if (f.tipo && h.tipo !== f.tipo) return false;
-
-      // Rangos numéricos
       if (f.capacidadMin !== null && h.capacidad < f.capacidadMin) return false;
       if (f.capacidadMax !== null && h.capacidad > f.capacidadMax) return false;
       if (f.precioMin !== null && h.precioNoche < f.precioMin) return false;
       if (f.precioMax !== null && h.precioNoche > f.precioMax) return false;
-      
       return true;
     });
 
@@ -381,5 +370,65 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
 
   detailHabitacion(hab: Habitacion) {
     this.router.navigate(['/habitacion', hab.id]);
+  }
+
+
+  isToggleChecked(hab: Habitacion): boolean {
+    return hab.estado !== 'DISPONIBLE';
+  }
+
+  isToggleDisabled(hab: Habitacion): boolean {
+    if (this.isLimpieza) {
+      return hab.estado === 'OCUPADA' || hab.estado === 'MANTENIMIENTO';
+    }
+    if (this.isConserje) {
+      return hab.estado === 'OCUPADA' || hab.estado === 'LIMPIEZA';
+    }
+    return false;
+  }
+
+  onToggleChange(hab: Habitacion, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    if (checked) {
+      if (this.isLimpieza) {
+        this.empleadoService.cambiarEstadoLimpieza(hab.id).subscribe({
+          next: (res) => {
+            hab.estado = res.estado;
+            Swal.fire('Estado actualizado','La habitación ahora está en LIMPIEZA.', 'success');},
+          error: (err) => {
+            Swal.fire('Error', err.message || 'No se pudo cambiar a LIMPIEZA.', 'error'); }
+        });
+      } else if (this.isConserje) {
+        this.empleadoService.cambiarEstadoMantenimiento(hab.id).subscribe({
+          next: (res) => {
+            hab.estado = res.estado;
+            Swal.fire('Estado actualizado','La habitación ahora está en MANTENIMIENTO.', 'success');},
+          error: (err) => { Swal.fire('Error', err.message || 'No se pudo cambiar a MANTENIMIENTO.', 'error'); }
+        });
+      }
+    } else {
+      if (this.isLimpieza) {
+        this.empleadoService.restaurarEstado(hab.id).subscribe({
+          next: (res) => {
+            hab.estado = res.estado;
+            Swal.fire('Estado actualizado', 'La habitación volvió a su estado anterior.', 'success');
+          },
+          error: (err) => {
+            Swal.fire('Error', err.message || 'No se pudo restaurar el estado.', 'error');
+          }
+        });
+      } else if (this.isConserje) {
+        this.empleadoService.ponerDisponible(hab.id).subscribe({
+          next: (res) => {
+            hab.estado = res.estado;
+            Swal.fire('Estado actualizado', 'La habitación ahora está DISPONIBLE.', 'success');
+          },
+          error: (err) => {
+            Swal.fire('Error', err.message || 'No se pudo poner en DISPONIBLE.', 'error');
+          }
+        });
+      }
+    }
   }
 }

@@ -1,12 +1,11 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
-
-import Habitacion from '../../../models/Habitacion';
-import { HabitacionService } from '../../../services/habitacion-service';
-import { ReservasService } from '../../../services/reservas-service';
+import { Component, inject }  from '@angular/core';
+import { CommonModule }       from '@angular/common';
+import { FormsModule }        from '@angular/forms';
+import { Router }             from '@angular/router';
+import { forkJoin }           from 'rxjs';
+import   Habitacion           from '../../../models/Habitacion';
+import { HabitacionService }  from '../../../services/habitacion-service';
+import { ReservasService }    from '../../../services/reservas-service';
 
 @Component({
   selector: 'app-crear-reserva-busqueda',
@@ -21,14 +20,14 @@ export class CrearReservaBusqueda {
   private reservasSrv = inject(ReservasService);
   private router = inject(Router);
 
-  todayStr = this.getTodayLocal();   // 👈 usar esto
+  todayStr = this.getTodayLocal();
 
   private getTodayLocal(): string {
     const today = new Date();
     const y = today.getFullYear();
     const m = String(today.getMonth() + 1).padStart(2, '0');
     const d = String(today.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;         // yyyy-MM-dd en horario local
+    return `${y}-${m}-${d}`; // yyyy-mm-dd
   }
 
   fechaIngreso = '';
@@ -40,28 +39,22 @@ export class CrearReservaBusqueda {
 
   habitacionesDisponibles: Habitacion[] = [];
 
-  // placeholder para cuando falle la imagen
   defaultRoomImg = 'assets/images/habitaciones/placeholder-room.jpg';
 
   openPicker(input: HTMLInputElement | null, ev?: MouseEvent): void {
     if (!input) return;
 
-    // Evito que algún click raro burbujee
     if (ev) {
       ev.stopPropagation();
       ev.preventDefault();
     }
 
-    // Siempre enfoco para que se pueda escribir al menos (Firefox)
     input.focus();
 
     const anyInput = input as any;
-    // Navegadores que soportan showPicker (Chrome/Edge modernos)
     if (typeof anyInput.showPicker === 'function') {
       anyInput.showPicker();
     } else {
-      // Fallback: disparo un click programático por si el navegador
-      // abre algo con eso; en Firefox será sólo para escribir.
       input.click();
     }
   }

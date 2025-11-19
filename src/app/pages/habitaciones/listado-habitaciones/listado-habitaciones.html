@@ -1,7 +1,12 @@
-<section class="habitaciones-list">
-  <h3 class="section-title">Habitaciones</h3>
+  @if (!isAdmin) {
+    <h3 class="section-title">Habitaciones</h3>
+  } @else {
+    <h1 class="gest-habs" routerLink="/gestion_habitaciones">Gestión de habitaciones</h1>
+    <h1>></h1>
+    <h1>Listado de habitaciones</h1>
+  }
 
-  <!-- BOTONES REACTIVOS -->
+<section class="habitaciones-list">
   <div class="filtros-toggle">
     <button type="button" (click)="abrirFiltros()">
       {{ filtrosVisibles ? 'Cerrar filtros' : 'Filtrar' }}
@@ -178,67 +183,87 @@
   } @else if (errorMsg) {
   <p class="error">{{ errorMsg }}</p>
   } @else {
-  <div class="habitaciones-grid">
+    <div class="habitaciones-grid">
 
-    <!-- CARTAS DE HABITACIONES -->
-    @for (hab of habitacionesFiltradas; track hab.id) {
-    <div class="habitacion-card" [class.inactiva]="!hab.activo">
+      <!-- CARTAS DE HABITACIONES -->
+      @for (hab of habitacionesFiltradas; track hab.id) {
+        <div class="habitacion-card" [class.inactiva]="!hab.activo">
 
-      <!-- INFO HABITACION -->
-      <div class="habitacion-card__image-wrapper">
-        @if (getMainImageDataUrl(hab)) {
-        <img [src]="getMainImageDataUrl(hab)" [alt]="'Habitación ' + hab.numero" class="habitacion-card__image" />
-        } @else {
-        <div class="habitacion-card__image habitacion-card__image--placeholder">
-          <p>No posee imágenes</p>
+          <!-- INFO HABITACION -->
+          <div class="habitacion-card__image-wrapper">
+            @if (getMainImageDataUrl(hab)) {
+              <img [src]="getMainImageDataUrl(hab)" [alt]="'Habitación ' + hab.numero" class="habitacion-card__image" />
+            } @else {
+              <div class="habitacion-card__image habitacion-card__image--placeholder">
+                <p>No posee imágenes</p>
+              </div>
+            }
+            @if (puedeGestionarHabitaciones) {
+              <span class="habitacion-card__badge" [ngClass]="hab.estado.toLowerCase()">{{ hab.estado }}</span>
+            }
+
+            @if (isAdmin && !hab.activo) {
+            <span class="habitacion-card__badge badge-inactiva">INACTIVA</span>
+            }
+          </div>
+
+          <div class="habitacion-card__body">
+            <div class="habitacion-card__title">Hab. {{ hab.numero }} · {{ hab.tipo }}</div>
+            <div class="habitacion-card__sub">Piso {{ hab.piso }}</div>
+            <div class="habitacion-card__details">
+              <p>Capacidad: {{ hab.capacidad }}</p>
+              <p>Camas: {{ hab.cantCamas }}</p>
+              <p class="price">Precio/noche: ${{ hab.precioNoche }}</p>
+            </div>
+            @if (hab.comentario) {
+              <div class="detail-row">
+                <span class="label">Nota:</span>
+                <span class="value">{{ hab.comentario }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- BOTONES REACTIVOS -->
+          <div class="buttons">
+            @if (!isConserje && !isLimpieza) {
+              <button (click)="reservarHabitacion(hab)">Reservar</button>
+            }
+
+            <button (click)="detailHabitacion(hab)">Detalle</button>
+
+            @if (puedeGestionarHabitaciones) {
+              @if (isAdmin || isRecepcionista) {
+                <button class="btn-edit" (click)="editHabitacion(hab)">Editar</button>
+              }
+              @if (isAdmin) {
+                @if (hab.activo) {
+                  <button class="btn-delete" (click)="inhabilitarHabitacion(hab)">Inhabilitar</button>
+                } @else {
+                  <button class="btn-reactivate" (click)="reactivarHabitacion(hab)">Reactivar</button>
+                }
+              } @else if(!isRecepcionista) {
+                <div class="field-toggle">
+                  @if (isConserje) {
+                    <label class="toggle-text">Modo Mantenimiento</label>
+                  } @else if (isLimpieza) {
+                    <label class="toggle-text">Modo Limpieza</label>
+                  }
+                  <label class="switch">
+                    <input 
+                      type="checkbox" 
+                      id="estado-{{ hab.id }}" 
+                      [checked]="isToggleChecked(hab)"
+                      [disabled]="isToggleDisabled(hab)" 
+                      (change)="onToggleChange(hab, $event)"
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              }
+            }
+          </div>
         </div>
-        }
-        @if (puedeGestionarHabitaciones) {
-        <span class="habitacion-card__badge" [ngClass]="hab.estado.toLowerCase()">{{ hab.estado }}</span>
-        }
-
-        @if (isAdmin && !hab.activo) {
-        <span class="habitacion-card__badge badge-inactiva">INACTIVA</span>
-        }
-      </div>
-
-      <div class="habitacion-card__body">
-        <div class="habitacion-card__title">Hab. {{ hab.numero }} · {{ hab.tipo }}</div>
-        <div class="habitacion-card__sub">Piso {{ hab.piso }}</div>
-        <div class="habitacion-card__details">
-          <p>Capacidad: {{ hab.capacidad }}</p>
-          <p>Camas: {{ hab.cantCamas }}</p>
-          <p class="price">Precio/noche: ${{ hab.precioNoche }}</p>
-        </div>
-        @if (hab.comentario) {
-        <div class="detail-row">
-          <span class="label">Nota:</span>
-          <span class="value">{{ hab.comentario }}</span>
-        </div>
-        }
-      </div>
-
-      <!-- BOTONES REACTIVOS -->
-      <div class="buttons">
-        @if (!isConserje && !isLimpieza) {
-        <button (click)="reservarHabitacion(hab)">Reservar</button>
-        }
-
-        <button (click)="detailHabitacion(hab)">Detalle</button>
-
-        @if (puedeGestionarHabitaciones) {
-        <button class="btn-edit" (click)="editHabitacion(hab)">Editar</button>
-        @if (isAdmin) {
-        @if (hab.activo) {
-        <button class="btn-delete" (click)="inhabilitarHabitacion(hab)">Inhabilitar</button>
-        } @else {
-        <button class="btn-reactivate" (click)="reactivarHabitacion(hab)">Reactivar</button>
-        }
-        }
-        }
-      </div>
+      }
     </div>
-    }
-  </div>
   }
 </section>

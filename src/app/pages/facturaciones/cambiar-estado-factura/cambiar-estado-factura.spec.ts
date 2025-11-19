@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CambiarEstadoFactura } from './cambiar-estado-factura';
+import { ComponentFixture, TestBed }  from '@angular/core/testing';
+import { CambiarEstadoFactura }       from './cambiar-estado-factura';
 
 describe('CambiarEstadoFactura', () => {
   let component: CambiarEstadoFactura;

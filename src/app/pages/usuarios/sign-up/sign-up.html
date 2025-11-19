@@ -2,177 +2,175 @@
   <div class="auth-card" [ngSwitch]="step">
 
     @switch (step) {
+      <!-- PASO 1: FORMULARIO -->
+      @case ('form') {
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <h1>Crear cuenta</h1>
+        <p class="subtitle">Registrate para gestionar tus reservas en RestInn.</p>
 
-    <!-- PASO 1: FORMULARIO -->
-    @case ('form') {
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <h1>Crear cuenta</h1>
-      <p class="subtitle">Registrate para gestionar tus reservas en RestInn.</p>
-
-      <div class="form-grid">
-        <div class="field">
-          <label for="nombre">Nombre</label>
-          <input id="nombre" type="text" formControlName="nombre" />
-          @if (f['nombre'].touched && f['nombre'].invalid) {
-          <div class="field-error">
-            Ingresá tu nombre.
+        <div class="form-grid">
+          <div class="field">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" formControlName="nombre" />
+            @if (f['nombre'].touched && f['nombre'].invalid) {
+            <div class="field-error">
+              Ingresá tu nombre.
+            </div>
+            }
           </div>
-          }
-        </div>
 
-        <div class="field">
-          <label for="apellido">Apellido</label>
-          <input id="apellido" type="text" formControlName="apellido" />
-          @if (f['apellido'].touched && f['apellido'].invalid) {
-          <div class="field-error">
-            Ingresá tu apellido.
+          <div class="field">
+            <label for="apellido">Apellido</label>
+            <input id="apellido" type="text" formControlName="apellido" />
+            @if (f['apellido'].touched && f['apellido'].invalid) {
+            <div class="field-error">
+              Ingresá tu apellido.
+            </div>
+            }
           </div>
-          }
-        </div>
 
-        <div class="field full">
-          <label for="email">Correo electrónico</label>
-          <input id="email" type="email" formControlName="email" />
-          @if (f['email'].touched && f['email'].invalid) {
-          <div class="field-error">
-            Ingresá un correo válido.
+          <div class="field full">
+            <label for="email">Correo electrónico</label>
+            <input id="email" type="email" formControlName="email" />
+            @if (f['email'].touched && f['email'].invalid) {
+            <div class="field-error">
+              Ingresá un correo válido.
+            </div>
+            }
           </div>
-          }
-        </div>
 
-        <div class="field">
-          <label for="nombreLogin">Usuario</label>
-          <input id="nombreLogin" type="text" formControlName="nombreLogin" />
-          @if (f['nombreLogin'].touched && f['nombreLogin'].invalid) {
-          <div class="field-error">
-            Elegí un usuario (3 a 30 caracteres).
+          <div class="field">
+            <label for="nombreLogin">Usuario</label>
+            <input id="nombreLogin" type="text" formControlName="nombreLogin" />
+            @if (f['nombreLogin'].touched && f['nombreLogin'].invalid) {
+            <div class="field-error">
+              Elegí un usuario (3 a 30 caracteres).
+            </div>
+            }
           </div>
-          }
-        </div>
 
-        <div class="field">
-          <label for="dni">DNI (opcional)</label>
-          <input id="dni" type="text" formControlName="dni" />
-        </div>
-
-        <div class="field">
-          <label for="phoneNumber">Teléfono (opcional)</label>
-          <input id="phoneNumber" type="text" formControlName="phoneNumber" />
-        </div>
-
-        <div class="field">
-          <label for="cuit">CUIT (opcional)</label>
-          <input id="cuit" type="text" formControlName="cuit" />
-        </div>
-      </div>
-
-      <div formGroupName="passGroup" class="pass-group">
-        <div class="field">
-          <label for="password">Contraseña</label>
-          <input id="password" type="password" formControlName="password" />
-          @if (pass['password'].touched && pass['password'].invalid) {
-          <div class="field-error">
-            Mínimo 8 caracteres.
+          <div class="field">
+            <label for="dni">DNI (opcional)</label>
+            <input id="dni" type="text" formControlName="dni" />
           </div>
-          }
-        </div>
 
-        <div class="field">
-          <label for="confirm">Confirmar contraseña</label>
-          <input id="confirm" type="password" formControlName="confirm" />
-          @if (form.get('passGroup')?.touched && form.get('passGroup')?.hasError('mismatch')) {
-          <div class="field-error">
-            Las contraseñas no coinciden.
+          <div class="field">
+            <label for="phoneNumber">Teléfono (opcional)</label>
+            <input id="phoneNumber" type="text" formControlName="phoneNumber" />
           </div>
-          }
+
+          <div class="field">
+            <label for="cuit">CUIT (opcional)</label>
+            <input id="cuit" type="text" formControlName="cuit" />
+          </div>
         </div>
-      </div>
 
-      <div class="auth-actions">
-        <button class="btn-gold" type="submit" [disabled]="loading">
-          Crear cuenta
-        </button>
+        <div formGroupName="passGroup" class="pass-group">
+          <div class="field">
+            <label for="password">Contraseña</label>
+            <input id="password" type="password" formControlName="password" />
+            @if (pass['password'].touched && pass['password'].invalid) {
+            <div class="field-error">
+              Mínimo 8 caracteres.
+            </div>
+            }
+          </div>
 
-        <button class="btn-ghost" type="button" (click)="goToSignIn()">
-          ¿Ya tenés cuenta? Iniciar sesión
-        </button>
-      </div>
+          <div class="field">
+            <label for="confirm">Confirmar contraseña</label>
+            <input id="confirm" type="password" formControlName="confirm" />
+            @if (form.get('passGroup')?.touched && form.get('passGroup')?.hasError('mismatch')) {
+            <div class="field-error">
+              Las contraseñas no coinciden.
+            </div>
+            }
+          </div>
+        </div>
 
-      @if (errorMsg) {
-      <p class="auth-error">{{ errorMsg }}</p>
+        <div class="auth-actions">
+          <button class="btn-gold" type="submit" [disabled]="loading">
+            Crear cuenta
+          </button>
+
+          <button class="btn-gold" type="button" (click)="goToSignIn()">
+            ¿Ya tenés cuenta? Iniciar sesión
+          </button>
+        </div>
+
+        @if (errorMsg) {
+        <p class="auth-error">{{ errorMsg }}</p>
+        }
+        @if (infoMsg) {
+        <p class="auth-info">{{ infoMsg }}</p>
+        }
+        @if (loading) {
+        <p class="auth-loading">Procesando...</p>
+        }
+      </form>
       }
-      @if (infoMsg) {
-      <p class="auth-info">{{ infoMsg }}</p>
+
+      <!-- PASO 2: VERIFICAR CÓDIGO -->
+      @case ('verify') {
+      <div [formGroup]="codeForm">
+        <h1>Confirmá tu correo</h1>
+        <p class="auth-subtitle">
+          Ingresá el código de 6 dígitos.
+        </p>
+
+        <div class="code-inputs">
+          <input #txt1 class="code-box" maxlength="1" inputmode="numeric" formControlName="d1"
+            (input)="focusNext(txt1, txt2)" (keydown.backspace)="focusPrev(txt1, null)" />
+
+          <input #txt2 class="code-box" maxlength="1" inputmode="numeric" formControlName="d2"
+            (input)="focusNext(txt2, txt3)" (keydown.backspace)="focusPrev(txt2, txt1)" />
+
+          <input #txt3 class="code-box" maxlength="1" inputmode="numeric" formControlName="d3"
+            (input)="focusNext(txt3, txt4)" (keydown.backspace)="focusPrev(txt3, txt2)" />
+
+          <input #txt4 class="code-box" maxlength="1" inputmode="numeric" formControlName="d4"
+            (input)="focusNext(txt4, txt5)" (keydown.backspace)="focusPrev(txt4, txt3)" />
+
+          <input #txt5 class="code-box" maxlength="1" inputmode="numeric" formControlName="d5"
+            (input)="focusNext(txt5, txt6)" (keydown.backspace)="focusPrev(txt5, txt4)" />
+
+          <input #txt6 class="code-box" maxlength="1" inputmode="numeric" formControlName="d6"
+            (input)="focusNext(txt6, null)" (keydown.backspace)="focusPrev(txt6, txt5)" />
+        </div>
+
+        <div class="auth-actions">
+          <button type="button" class="btn-gold" (click)="onVerify()" [disabled]="loading">
+            Verificar cuenta
+          </button>
+          <button type="button" class="btn-gold" (click)="backToForm()" [disabled]="loading">
+            Volver al formulario
+          </button>
+        </div>
+
+        @if (infoMsg) {
+        <p class="auth-helper">{{ infoMsg }}</p>
+        }
+        @if (errorMsg) {
+        <p class="auth-error">{{ errorMsg }}</p>
+        }
+        @if (loading) {
+        <p class="auth-loading">Verificando...</p>
+        }
+      </div>
       }
-      @if (loading) {
-      <p class="auth-loading">Procesando...</p>
+
+      <!-- PASO 3: SUCCESS -->
+      @case ('success') {
+        <div>
+          <h1>Cuenta creada</h1>
+          <p class="subtitle">
+            Tu cuenta fue confirmada correctamente. Ya podés iniciar sesión.
+          </p>
+
+          <button class="btn-gold" type="button" (click)="goToSignIn()">
+            Ir al inicio de sesión
+          </button>
+        </div>
       }
-    </form>
     }
-
-    <!-- PASO 2: VERIFICAR CÓDIGO -->
-    @case ('verify') {
-    <div [formGroup]="codeForm">
-      <h1>Confirmá tu correo</h1>
-      <p class="auth-subtitle">
-        Ingresá el código de 6 dígitos.
-      </p>
-
-      <div class="code-inputs">
-        <input #txt1 class="code-box" maxlength="1" inputmode="numeric" formControlName="d1"
-          (input)="focusNext(txt1, txt2)" (keydown.backspace)="focusPrev(txt1, null)" />
-
-        <input #txt2 class="code-box" maxlength="1" inputmode="numeric" formControlName="d2"
-          (input)="focusNext(txt2, txt3)" (keydown.backspace)="focusPrev(txt2, txt1)" />
-
-        <input #txt3 class="code-box" maxlength="1" inputmode="numeric" formControlName="d3"
-          (input)="focusNext(txt3, txt4)" (keydown.backspace)="focusPrev(txt3, txt2)" />
-
-        <input #txt4 class="code-box" maxlength="1" inputmode="numeric" formControlName="d4"
-          (input)="focusNext(txt4, txt5)" (keydown.backspace)="focusPrev(txt4, txt3)" />
-
-        <input #txt5 class="code-box" maxlength="1" inputmode="numeric" formControlName="d5"
-          (input)="focusNext(txt5, txt6)" (keydown.backspace)="focusPrev(txt5, txt4)" />
-
-        <input #txt6 class="code-box" maxlength="1" inputmode="numeric" formControlName="d6"
-          (input)="focusNext(txt6, null)" (keydown.backspace)="focusPrev(txt6, txt5)" />
-      </div>
-
-      <div class="auth-actions">
-        <button type="button" class="btn-gold" (click)="onVerify()" [disabled]="loading">
-          Verificar cuenta
-        </button>
-        <button type="button" class="btn-ghost" (click)="backToForm()" [disabled]="loading">
-          Volver al formulario
-        </button>
-      </div>
-
-      @if (infoMsg) {
-      <p class="auth-helper">{{ infoMsg }}</p>
-      }
-      @if (errorMsg) {
-      <p class="auth-error">{{ errorMsg }}</p>
-      }
-      @if (loading) {
-      <p class="auth-loading">Verificando...</p>
-      }
-    </div>
-    }
-
-    <!-- PASO 3: SUCCESS -->
-    @case ('success') {
-    <div>
-      <h1>Cuenta creada</h1>
-      <p class="subtitle">
-        Tu cuenta fue confirmada correctamente. Ya podés iniciar sesión.
-      </p>
-
-      <button class="btn-gold" type="button" (click)="goToSignIn()">
-        Ir al inicio de sesión
-      </button>
-    </div>
-    }
-    }
-
   </div>
 </section>

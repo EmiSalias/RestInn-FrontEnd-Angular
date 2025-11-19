@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { MenuConfig } from './menu.config';
 
 describe('MenuConfig', () => {

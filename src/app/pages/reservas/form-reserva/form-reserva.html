@@ -117,10 +117,10 @@
       <div class="actions">
         <button type="submit" [disabled]="loading">Confirmar reserva</button>
         @if (loading) {
-        <span>Guardando...</span>
+          <span>Guardando...</span>
         }
         @if (!loading && errorMsg) {
-        <span class="error">{{ errorMsg }}</span>
+          <span class="error">{{ errorMsg }}</span>
         }
       </div>
     </form>

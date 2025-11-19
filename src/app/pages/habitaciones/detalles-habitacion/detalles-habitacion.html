@@ -1,76 +1,98 @@
 @if (selectedHab) {
-  <div class="detalle-wrapper">
-    <div class="habitacion-card" [class.inactiva]="!selectedHab.activo">
+<div class="detalle-wrapper">
+  <div class="habitacion-card" [class.inactiva]="!selectedHab.activo">
 
-      @if (selectedHab.imagenes && selectedHab.imagenes.length > 0) {
-        <div class="carousel-wrapper">
-          <img
-            [src]="'data:' + selectedHab.imagenes[imagenActualIndex].tipo + ';base64,' + selectedHab.imagenes[imagenActualIndex].datosBase64"
-            [alt]="'Imagen ' + (imagenActualIndex + 1)" class="carousel-image" />
+    @if (selectedHab.imagenes && selectedHab.imagenes.length > 0) {
+    <div class="carousel-wrapper">
+      <img
+        [src]="'data:' + selectedHab.imagenes[imagenActualIndex].tipo + ';base64,' + selectedHab.imagenes[imagenActualIndex].datosBase64"
+        [alt]="'Imagen ' + (imagenActualIndex + 1)" class="carousel-image" />
 
-          <button class="carousel-btn prev" (click)="anteriorImagen()">&#10094;</button>
-          <button class="carousel-btn next" (click)="siguienteImagen()">&#10095;</button>
+      <button class="carousel-btn prev" (click)="anteriorImagen()">&#10094;</button>
+      <button class="carousel-btn next" (click)="siguienteImagen()">&#10095;</button>
 
-          <div class="carousel-indicators">
-            @for (img of selectedHab.imagenes; let i = $index; track i) {
-              <span [class.active]="i === imagenActualIndex" (click)="irAImagen(i)">
-              </span>
-            }
-          </div>
-        </div>
-      } @else {
-        <div class="carousel-wrapper habitacion-card__image--placeholder">
-          <p>No posee imágenes</p>
-        </div>
-      }
+      <div class="carousel-indicators">
+        @for (img of selectedHab.imagenes; let i = $index; track i) {
+        <span [class.active]="i === imagenActualIndex" (click)="irAImagen(i)">
+        </span>
+        }
+      </div>
 
-      <div class="habitacion-card__body">
+      <span class="habitacion-card__badge" [ngClass]="selectedHab.estado.toLowerCase()">
+        {{ selectedHab.estado }}
+      </span>
+    </div>
+    } @else {
+    <div class="habitacion-card__image--placeholder">
+      <p>No posee imágenes</p>
+    </div>
+    }
+
+    <div class="habitacion-card__body">
+      
+      <div class="card-header">
         <div class="habitacion-card__title">
-          Hab. {{ selectedHab.numero }} · {{ selectedHab.tipo }}
-          @if (puedeGestionarHabitaciones && !selectedHab.activo) {
+          Hab. {{ selectedHab.numero }} <span class="separator">·</span> {{ selectedHab.tipo }}
+          @if (isAdmin && !selectedHab.activo) {
             <span class="badge-inactiva">(INACTIVA)</span>
           }
         </div>
         <div class="habitacion-card__sub">Piso {{ selectedHab.piso }}</div>
-
-        <div class="habitacion-card__details">
-          <p>Capacidad: {{ selectedHab.capacidad }}</p>
-          <p>Camas: {{ selectedHab.cantCamas }}</p>
-          <p class="price">Precio/noche: ${{ selectedHab.precioNoche }}</p>
-        </div>
-
-        @if (selectedHab.comentario) {
-          <div class="detail-row">
-            <span class="label">Nota:</span>
-            <span class="value">{{ selectedHab.comentario }}</span>
-          </div>
-        }
       </div>
 
-      <div class="buttons">
-        @if (selectedHab.activo) {
-          <button class="btn-primary" (click)="reservarHabitacion(selectedHab)">Reservar</button>
-        } @else {
-          <button class="btn-primary" [disabled]="true" title="Esta habitación no está activa">Reservar</button>
-        }
+      <div class="habitacion-card__specs">
+        <div class="spec-item">
+          <span class="spec-label">Capacidad</span>
+          <span class="spec-value">{{ selectedHab.capacidad }} personas</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Camas</span>
+          <span class="spec-value">{{ selectedHab.cantCamas }}</span>
+        </div>
+      </div>
 
-        @if (puedeGestionarHabitaciones) {
-          <button class="btn-secondary" (click)="editHabitacion(selectedHab)">Editar</button>
-          
+      <div class="price-section">
+        <span class="price-label">Precio por noche</span>
+        <span class="price-value">${{ selectedHab.precioNoche }}</span>
+      </div>
+
+      @if (selectedHab.comentario) {
+      <div class="detail-row">
+        <span class="label">Nota importante:</span>
+        <span class="value">{{ selectedHab.comentario }}</span>
+      </div>
+      }
+    </div>
+
+    <div class="buttons">
+      
+      @if (!isConserje && !isLimpieza) {
+        @if (selectedHab.activo) {
+           <button class="btn-reserva" (click)="reservarHabitacion(selectedHab)">Reservar</button>
+        } @else {
+           <button class="btn-reserva-block" [disabled]="true" title="Habitación inactiva">Reservar</button>
+        }
+      }
+
+      @if (puedeGestionarHabitaciones) {
+        <button class="btn-edit" (click)="editHabitacion(selectedHab)">Editar</button>
+        
+        @if (isAdmin) {
           @if (selectedHab.activo) {
             <button class="btn-danger" (click)="inhabilitarHabitacion(selectedHab)">Inhabilitar</button>
           } @else {
             <button class="btn-reactivate" (click)="reactivarHabitacion(selectedHab)">Reactivar</button>
           }
         }
+      }
 
-        <button class="btn-back" (click)="volver()">Volver</button>
-      </div>
-
+      <button class="btn-back" (click)="volver()">Volver</button>
     </div>
+
   </div>
+</div>
 } @else {
-  <div class="detalle-wrapper">
-    <p class="loading">Cargando detalles de la habitación...</p>
-  </div>
+<div class="detalle-wrapper">
+  <p class="loading">Cargando detalles de la habitación...</p>
+</div>
 }

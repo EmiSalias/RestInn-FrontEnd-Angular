@@ -1,11 +1,10 @@
-// src/app/pages/usuario/editar-perfil-usuario.ts
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
-import { UserService } from '../../../services/user-service';
-import User from '../../../models/User';
+import { Component, OnInit, inject }                                from '@angular/core';
+import { CommonModule }                                             from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule }  from '@angular/forms';
+import { Router }                                                   from '@angular/router';
+import { switchMap }                                                from 'rxjs/operators';
+import { UserService }                                              from '../../../services/user-service';
+import   User                                                       from '../../../models/User';
 
 @Component({
   selector: 'app-editar-perfil-usuario',
@@ -29,11 +28,13 @@ export class EditarPerfilUsuario implements OnInit {
     cuit:         ['', [Validators.pattern(/^\d{11}$/)]]
   });
 
-  loading = false;
+  loading                 = false;
   errorMsg: string | null = null;
-  user: User | null = null;
+  user: User | null       = null;
 
-  get f() { return this.form.controls as any; }
+  get f() {
+    return this.form.controls as any;
+  }
 
   ngOnInit(): void {
     this.userService.getCurrentUser().subscribe({
@@ -48,10 +49,9 @@ export class EditarPerfilUsuario implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading  = true;
     this.errorMsg = null;
-
-    const dto = this.form.value;
+    const dto     = this.form.value;
 
     this.userService.getCurrentUser().pipe(
       switchMap((current) => this.userService.updateCurrentUser({ ...dto, id: current.id }))

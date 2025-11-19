@@ -1,4 +1,4 @@
-// src/app/pages/home/home.ts
+import { CommonModule }         from '@angular/common';
 import {
   Component,
   OnInit,
@@ -10,32 +10,12 @@ import {
   ElementRef,
   QueryList,
   inject
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth-service';
-import { ListadoHabitaciones } from '../habitaciones/listado-habitaciones/listado-habitaciones';
-import { GestionReservas } from '../reservas/gestion-reservas/gestion-reservas';
-
-type HeroKey =
-  | 'default'
-  | 'reservas'
-  | 'habitaciones'
-  | 'historial'
-  | 'favoritos'
-  | 'facturacion'
-  | 'adminUsuarios'
-  | 'adminHabitaciones'
-  | 'adminReservas'
-  | 'adminFacturacion';
-
-interface HeroSection {
-  key: HeroKey;
-  tag: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-}
+}                               from '@angular/core';
+import { Router }               from '@angular/router';
+import { AuthService }          from '../../services/auth-service';
+import { ListadoHabitaciones }  from '../habitaciones/listado-habitaciones/listado-habitaciones';
+import { GestionReservas }      from '../reservas/gestion-reservas/gestion-reservas';
+import HeroSection, { HeroKey } from '../../models/HeroSection';
 
 @Component({
   selector: 'app-home',

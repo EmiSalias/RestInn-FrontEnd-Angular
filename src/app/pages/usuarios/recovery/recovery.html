@@ -2,141 +2,142 @@
   <div class="auth-card">
 
     @switch (step) {
+      <!-- PASO 1: EMAIL -->
+      @case ('email') {
+      <form>
+        <h1>Recuperar contraseña</h1>
+        <p class="subtitle">
+          Ingresá el correo con el que te registraste.
+        </p>
 
-    <!-- PASO 1: EMAIL -->
-    @case ('email') {
-    <form>
-      <h1>Recuperar contraseña</h1>
-      <p class="subtitle">
-        Ingresá el correo con el que te registraste.
-      </p>
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input id="email" type="email" [formControl]="emailCtrl" />
+          @if (emailCtrl.touched && emailCtrl.invalid) {
+          <div class="field-error">
+            Ingresá un correo válido.
+          </div>
+          }
+        </div>
 
-      <div class="field">
-        <label for="email">Correo electrónico</label>
-        <input id="email" type="email" [formControl]="emailCtrl" />
-        @if (emailCtrl.touched && emailCtrl.invalid) {
+        <button class="btn-gold" type="button" (click)="onStart()" [disabled]="loading">
+          Enviar código
+        </button>
+
+        <button class="link-under" type="button" (click)="goToSignIn()">
+          Volver al inicio de sesión
+        </button>
+
+        <p class="helper">
+          Si el mail existe recibirá un código de recuperación.
+        </p>
+      </form>
+      }
+
+      <!-- PASO 2: CÓDIGO (igual que en SignUp) -->
+      @case ('code') {
+      <div [formGroup]="codeForm">
+        <h1>Ingresá el código</h1>
+        <p class="subtitle">
+          Te enviamos un código de 6 dígitos a <strong>{{ emailCtrl.value }}</strong>.
+        </p>
+
+        <div class="code-inputs">
+          <input #txt1 class="code-box" maxlength="1" inputmode="numeric" formControlName="d1"
+            (input)="focusNext(txt1, txt2)" (keydown.backspace)="focusPrev(txt1, null)" />
+
+          <input #txt2 class="code-box" maxlength="1" inputmode="numeric" formControlName="d2"
+            (input)="focusNext(txt2, txt3)" (keydown.backspace)="focusPrev(txt2, txt1)" />
+
+          <input #txt3 class="code-box" maxlength="1" inputmode="numeric" formControlName="d3"
+            (input)="focusNext(txt3, txt4)" (keydown.backspace)="focusPrev(txt3, txt2)" />
+
+          <input #txt4 class="code-box" maxlength="1" inputmode="numeric" formControlName="d4"
+            (input)="focusNext(txt4, txt5)" (keydown.backspace)="focusPrev(txt4, txt3)" />
+
+          <input #txt5 class="code-box" maxlength="1" inputmode="numeric" formControlName="d5"
+            (input)="focusNext(txt5, txt6)" (keydown.backspace)="focusPrev(txt5, txt4)" />
+
+          <input #txt6 class="code-box" maxlength="1" inputmode="numeric" formControlName="d6"
+            (input)="focusNext(txt6, null)" (keydown.backspace)="focusPrev(txt6, txt5)" />
+        </div>
+
+        @if (codeForm.touched && codeForm.invalid) {
         <div class="field-error">
-          Ingresá un correo válido.
+          Ingresá los 6 dígitos del código.
         </div>
         }
-      </div>
 
-      <button class="btn-gold" type="button" (click)="onStart()" [disabled]="loading">
-        Enviar código
-      </button>
+        <button class="btn-gold" type="button" (click)="onVerifyCode()" [disabled]="loading">
+          Continuar
+        </button>
 
-      <button class="link-under" type="button" (click)="goToSignIn()">
-        Volver al inicio de sesión
-      </button>
+        <button class="link-under" type="button" (click)="backToEmail()">
+          Volver a ingresar correo
+        </button>
 
-      <p class="helper">
-        Si el mail existe recibirá un código de recuperación.
-      </p>
-    </form>
-    }
-
-    <!-- PASO 2: CÓDIGO (igual que en SignUp) -->
-    @case ('code') {
-    <div [formGroup]="codeForm">
-      <h1>Ingresá el código</h1>
-      <p class="subtitle">
-        Te enviamos un código de 6 dígitos a <strong>{{ emailCtrl.value }}</strong>.
-      </p>
-
-      <div class="code-inputs">
-        <input #txt1 class="code-box" maxlength="1" inputmode="numeric" formControlName="d1"
-          (input)="focusNext(txt1, txt2)" (keydown.backspace)="focusPrev(txt1, null)" />
-
-        <input #txt2 class="code-box" maxlength="1" inputmode="numeric" formControlName="d2"
-          (input)="focusNext(txt2, txt3)" (keydown.backspace)="focusPrev(txt2, txt1)" />
-
-        <input #txt3 class="code-box" maxlength="1" inputmode="numeric" formControlName="d3"
-          (input)="focusNext(txt3, txt4)" (keydown.backspace)="focusPrev(txt3, txt2)" />
-
-        <input #txt4 class="code-box" maxlength="1" inputmode="numeric" formControlName="d4"
-          (input)="focusNext(txt4, txt5)" (keydown.backspace)="focusPrev(txt4, txt3)" />
-
-        <input #txt5 class="code-box" maxlength="1" inputmode="numeric" formControlName="d5"
-          (input)="focusNext(txt5, txt6)" (keydown.backspace)="focusPrev(txt5, txt4)" />
-
-        <input #txt6 class="code-box" maxlength="1" inputmode="numeric" formControlName="d6"
-          (input)="focusNext(txt6, null)" (keydown.backspace)="focusPrev(txt6, txt5)" />
-      </div>
-
-      @if (codeForm.touched && codeForm.invalid) {
-      <div class="field-error">
-        Ingresá los 6 dígitos del código.
       </div>
       }
 
-      <button class="btn-gold" type="button" (click)="onVerifyCode()" [disabled]="loading">
-        Continuar
-      </button>
+      <!-- PASO 3: NUEVA CONTRASEÑA -->
+      @case ('reset') {
+      <form [formGroup]="passForm" (ngSubmit)="onReset()">
+        <h1>Nueva contraseña</h1>
+        <p class="subtitle">
+          Definí tu nueva contraseña para <strong>{{ username }}</strong>.
+        </p>
 
-      <button class="link-under" type="button" (click)="backToEmail()">
-        Volver a ingresar correo
-      </button>
-
-    </div>
-    }
-
-    <!-- PASO 3: NUEVA CONTRASEÑA -->
-    @case ('reset') {
-    <form [formGroup]="passForm" (ngSubmit)="onReset()">
-      <h1>Nueva contraseña</h1>
-      <p class="subtitle">
-        Definí tu nueva contraseña para <strong>{{ username }}</strong>.
-      </p>
-
-      <div class="field">
-        <label for="password">Contraseña</label>
-        <input id="password" type="password" formControlName="password" />
-        @if (passForm.get('password')?.touched && passForm.get('password')?.invalid) {
-        <div class="field-error">
-          Mínimo 8 caracteres.
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input id="password" type="password" formControlName="password" />
+          @if (passForm.get('password')?.touched && passForm.get('password')?.invalid) {
+          <div class="field-error">
+            Mínimo 8 caracteres.
+          </div>
+          }
         </div>
-        }
-      </div>
 
-      <div class="field">
-        <label for="confirm">Confirmar contraseña</label>
-        <input id="confirm" type="password" formControlName="confirm" />
-        @if (passForm.hasError('mismatch') && passForm.touched) {
-        <div class="field-error">
-          Las contraseñas no coinciden.
+        <div class="field">
+          <label for="confirm">Confirmar contraseña</label>
+          <input id="confirm" type="password" formControlName="confirm" />
+          @if (passForm.hasError('mismatch') && passForm.touched) {
+          <div class="field-error">
+            Las contraseñas no coinciden.
+          </div>
+          }
         </div>
-        }
+
+        <button class="btn-gold" type="submit" [disabled]="loading">
+          Guardar contraseña
+        </button>
+      </form>
+      }
+
+      <!-- PASO 4: DONE -->
+      @case ('done') {
+      <div>
+        <h1>Contraseña actualizada</h1>
+        <p class="subtitle">
+          Tu contraseña se actualizó correctamente.
+        </p>
+
+        <button class="btn-gold" type="button" (click)="goToSignIn()">
+          Ir al inicio de sesión
+        </button>
       </div>
-
-      <button class="btn-gold" type="submit" [disabled]="loading">
-        Guardar contraseña
-      </button>
-    </form>
-    }
-
-    <!-- PASO 4: DONE -->
-    @case ('done') {
-    <div>
-      <h1>Contraseña actualizada</h1>
-      <p class="subtitle">
-        Tu contraseña se actualizó correctamente.
-      </p>
-
-      <button class="btn-gold" type="button" (click)="goToSignIn()">
-        Ir al inicio de sesión
-      </button>
-    </div>
-    }
+      }
     }
 
     @if (infoMsg && step !== 'email') {
-    <p class="info-msg">{{ infoMsg }}</p>
+      <p class="info-msg">{{ infoMsg }}</p>
     }
+    
     @if (errorMsg) {
-    <p class="error-msg">{{ errorMsg }}</p>
+      <p class="error-msg">{{ errorMsg }}</p>
     }
+
     @if (loading) {
-    <div class="loading-msg">Procesando...</div>
+      <div class="loading-msg">Procesando...</div>
     }
   </div>
 </section>

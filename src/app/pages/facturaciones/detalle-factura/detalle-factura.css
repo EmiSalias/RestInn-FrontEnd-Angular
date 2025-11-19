@@ -1,15 +1,9 @@
-/* === Contenedor general === */
 .factura-wrapper {
-  padding: 10px 40px 40px;        /* espacio por el header fijo */
+  padding: 10px 40px 40px;
   max-width: 1100px;
   margin: 0 auto;
   color: var(--color-text);
 }
-
-/* Link volver */
-/* src/app/pages/facturas/detalle-factura/detalle-factura.css */
-
-/* ...dejá todo lo que ya tenés... y al final agregá/ajustá esto: */
 
 .back-link {
   display: inline-flex;
@@ -19,9 +13,9 @@
   padding: 0.55rem 1.4rem;
   border-radius: 9999px;
 
-  background: transparent;                  /* NO fondo oscuro */
-  border: 1px solid var(--color-primary);   /* borde dorado */
-  color: var(--color-primary);              /* texto dorado */
+  background: transparent;            
+  border: 1px solid var(--color-primary);  
+  color: var(--color-primary);            
 
   font-size: 0.85rem;
   font-weight: 500;
@@ -37,14 +31,14 @@
 }
 
 .back-link:hover {
-  background-color: rgba(203, 178, 106, 0.12);  /* dorado suave */
-  color: var(--color-text);                     /* texto claro */
+  background-color: rgba(203, 178, 106, 0.12);
+  color: var(--color-text);                   
   box-shadow: 0 0 0 1px rgba(203, 178, 106, 0.3);
   transform: translateY(-1px);
 }
 
 
-/* === Header === */
+/* Header */
 .factura-header {
   display: flex;
   justify-content: space-between;
@@ -79,7 +73,6 @@
   border: 1px solid var(--color-border);
 }
 
-/* Colores por estado (usa [ngClass]="f.estado") */
 .badge.EMITIDA {
   background: rgba(214, 184, 90, 0.15);
   border-color: var(--color-warning);
@@ -104,7 +97,7 @@
   color: var(--color-error);
 }
 
-/* === Layout principal === */
+/* Layout principal */
 .factura-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
@@ -218,7 +211,7 @@
   text-align: right;
 }
 
-/* === Acciones === */
+/* Acciones */
 .factura-actions {
   margin-top: 16px;
   display: flex;
@@ -258,7 +251,7 @@
   background-color: rgba(0, 0, 0, 0.25);
 }
 
-/* === Estados de carga / error === */
+/* Estados de carga/error */
 .factura-loading,
 .factura-error {
   padding: 110px 40px;
@@ -266,7 +259,7 @@
   color: var(--color-text-muted);
 }
 
-/* === Responsive === */
+/* Responsive */
 @media (max-width: 900px) {
   .factura-wrapper {
     padding: 100px 16px 24px;

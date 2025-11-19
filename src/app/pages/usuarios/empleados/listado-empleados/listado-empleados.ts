@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { UserService } from '../../../../services/user-service';
-import User from '../../../../models/User';
+import { Component, OnInit, inject }  from '@angular/core';
+import { CommonModule }               from '@angular/common';
+import { RouterLink }                 from '@angular/router';
+import { UserService }                from '../../../../services/user-service';
+import   User                         from '../../../../models/User';
 
 @Component({
   selector: 'app-listado-empleados',
@@ -14,14 +14,12 @@ import User from '../../../../models/User';
 export class ListadoEmpleados implements OnInit {
   private userSrv = inject(UserService);
 
-  empleados: User[] = [];
-  empleadosActivos: User[] = [];
-  empleadosInactivos: User[] = [];
-  loading = false;
-  errorMsg: string | null = null;
-
-  // Estado de orden
-  sortField: keyof User = 'nombre'; // Usar keyof User para que el campo esté limitado a las claves de User
+  empleados:          User[]    = [];
+  empleadosActivos:   User[]    = [];
+  empleadosInactivos: User[]    = [];
+  loading                       = false;
+  errorMsg: string | null       = null;
+  sortField:    keyof User      = 'nombre'; // keyof User para que el campo esté limitado a las claves de User
   sortDirection: 'asc' | 'desc' = 'asc';
 
   ngOnInit(): void {
@@ -35,8 +33,8 @@ export class ListadoEmpleados implements OnInit {
     this.userSrv.getAllEmpleados().subscribe({
       next: (users) => {
         this.empleados = users;
-        this.empleadosActivos = this.empleados.filter(u => u.activo); // Filtrando empleados activos
-        this.empleadosInactivos = this.empleados.filter(u => !u.activo); // Filtrando empleados inactivos
+        this.empleadosActivos = this.empleados.filter(u => u.activo);
+        this.empleadosInactivos = this.empleados.filter(u => !u.activo);
         this.loading = false;
       },
       error: (err) => {
@@ -50,19 +48,17 @@ export class ListadoEmpleados implements OnInit {
   // Filtrar empleados según su estado (activo/inactivo)
   filtrarEmpleados(estado: boolean): void {
     if (estado) {
-      this.empleados = this.empleadosActivos; // Mostrar empleados activos
+      this.empleados = this.empleadosActivos;
     } else {
-      this.empleados = this.empleadosInactivos; // Mostrar empleados inactivos
+      this.empleados = this.empleadosInactivos;
     }
   }
 
   // Método de ordenamiento
-  onSort(field: keyof User): void { // Aquí cambiamos el tipo de field a keyof User
+  onSort(field: keyof User): void { // keyof User
     if (this.sortField === field) {
-      // Si ya estamos ordenando por este campo, cambiamos la dirección
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
-      // Si cambiamos de campo, el orden será ascendente por defecto
       this.sortField = field;
       this.sortDirection = 'asc';
     }

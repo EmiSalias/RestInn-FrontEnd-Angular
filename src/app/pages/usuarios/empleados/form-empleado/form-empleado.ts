@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UserService } from '../../../../services/user-service';
-import { RolEmpleado } from '../../../../models/enums/E_Rol';
-import Swal from 'sweetalert2';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit }                                        from '@angular/core';
+import { CommonModule }                                             from '@angular/common';
+import { Router }                                                   from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule }  from '@angular/forms';
+import { UserService }                                              from '../../../../services/user-service';
+import { RolEmpleado }                                              from '../../../../models/enums/E_Rol';
+import   Swal                                                       from 'sweetalert2';
+import { ActivatedRoute }                                           from '@angular/router';
 
 @Component({
   selector: 'app-form-empleado',
@@ -16,11 +16,11 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class FormEmpleado implements OnInit {
   form: FormGroup;
-  roles = Object.values(RolEmpleado);  // Cargar los roles disponibles
-  errorMsg: string | null = null;
-  showAdditionalFields = false;
-  employeeId: string | null = null;  // Almacenar el ID del empleado
-  isEditing = false;  // Determinar si estamos en modo edición
+  roles                     = Object.values(RolEmpleado);
+  errorMsg: string | null   = null;
+  showAdditionalFields      = false;
+  employeeId: string | null = null;
+  isEditing                 = false;
 
   constructor(
     private fb: FormBuilder,
@@ -38,8 +38,8 @@ export class FormEmpleado implements OnInit {
       phoneNumber: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', []],  // Contraseña nueva
-      oldPassword: ['', []],  // Contraseña actual, solo si se quiere cambiar
-      activo: [true]  // Activado por defecto
+      oldPassword: ['', []],  // Contraseña actual, si se quiere cambiar
+      activo: [true]  // Por defecto
     });
   }
 
@@ -48,7 +48,7 @@ export class FormEmpleado implements OnInit {
     this.employeeId = this.route.snapshot.paramMap.get('id');
     if (this.employeeId) {
       this.isEditing = true;
-      this.loadEmployeeData(this.employeeId);  // Cargar datos si estamos editando
+      this.loadEmployeeData(this.employeeId);
     }
   }
 
@@ -56,7 +56,6 @@ export class FormEmpleado implements OnInit {
   loadEmployeeData(id: string) {
     this.userSrv.getEmployeeById(id).subscribe({
       next: (employee) => {
-        // Rellenar los datos en el formulario
         this.form.patchValue({
           rolEmpleado: employee.role,
           nombre: employee.nombre,
@@ -65,9 +64,9 @@ export class FormEmpleado implements OnInit {
           dni: employee.dni,
           phoneNumber: employee.phoneNumber,
           email: employee.email,
-          activo: employee.activo,  // Seteamos el estado de actividad
-          password: '',  // No queremos mostrar la contraseña
-          oldPassword: '' // No queremos mostrar la contraseña actual
+          activo: employee.activo,
+          password: '',
+          oldPassword: ''
         });
       },
       error: (err) => {
@@ -83,7 +82,7 @@ export class FormEmpleado implements OnInit {
     });
   }
 
-  // Cuando seleccionamos un rol, mostramos los campos adicionales (esto puede modificarse si es necesario)
+  // Cuando seleccionamos un rol, muestra los campos adicionales
   onRoleChange() {
     this.showAdditionalFields = true;
   }
@@ -91,9 +90,9 @@ export class FormEmpleado implements OnInit {
   onSubmit(): void {
     if (this.form.valid) {
       if (this.isEditing) {
-        this.updateEmployee();  // Si estamos editando, actualizamos
+        this.updateEmployee();  // Actualizando
       } else {
-        this.createEmployee();  // Si estamos creando, creamos el empleado
+        this.createEmployee();  // Creando
       }
     }
   }
@@ -109,7 +108,7 @@ export class FormEmpleado implements OnInit {
           confirmButtonText: 'Aceptar',
           confirmButtonColor: '#f1c36f'
         }).then(() => {
-          this.router.navigate(['/empleados']);  // Redirigir al listado de empleados
+          this.router.navigate(['/empleados']);  // Redirige al listado de empleados
         });
       },
       error: (err) => {
@@ -125,21 +124,21 @@ export class FormEmpleado implements OnInit {
     });
   }
 
-  // Actualizar los datos de un empleado
+  // Actualiza los datos de un empleado
   updateEmployee() {
     const employeeData = { ...this.form.value };
 
-    // Si la contraseña actual está vacía, no la enviamos al backend
+    // Si está vacía, no se envía al backend
     if (!employeeData.oldPassword) {
       delete employeeData.oldPassword;
     }
 
-    // Si la nueva contraseña está vacía, no la enviamos al backend
+    // Si está vacía, no se envía al backend
     if (!employeeData.password) {
       delete employeeData.password;
     }
 
-    // Ahora enviamos los datos (incluyendo la contraseña si fue proporcionada)
+    // Enviar datos
     this.userSrv.updateEmployee(this.employeeId!, employeeData).subscribe({
       next: (user) => {
         Swal.fire({
@@ -220,7 +219,7 @@ export class FormEmpleado implements OnInit {
       text: "Este empleado será activado nuevamente.",
       icon: 'info',
       showCancelButton: true,
-      confirmButtonColor: '#4CAF50', // Color verde para activar
+      confirmButtonColor: '#4CAF50',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Sí, activarlo'
     }).then((result) => {

@@ -1,13 +1,20 @@
-/* Contenedor general */
 .admin-reservations-page {
   padding: 10px 40px 40px;
   color: var(--color-text);
 }
 
-.admin-reservations-page h1 {
+h1 {
+  cursor: default;
+  display: inline-block;
+  padding-right: 10px;
+  margin-bottom: 20px;
   font-size: 26px;
-  margin-bottom: 8px;
   color: var(--color-primary);
+}
+
+.gest-reservas:hover{
+  cursor: pointer;
+  color: var(--color-primary)-secondary;
 }
 
 .admin-reservations-page .subtitle {

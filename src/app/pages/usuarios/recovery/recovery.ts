@@ -1,15 +1,8 @@
-// src/app/pages/usuarios/recovery/recovery.ts
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  Validators,
-  ReactiveFormsModule,
-  AbstractControl,
-  FormGroup
-} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../../../services/auth-service';
+import { Component, OnInit, inject }                                                from '@angular/core';
+import { CommonModule }                                                             from '@angular/common';
+import { FormBuilder, Validators, ReactiveFormsModule, AbstractControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router }                                                   from '@angular/router';
+import { AuthService }                                                              from '../../../services/auth-service';
 
 function samePassword(group: AbstractControl) {
   const p = group.get('password')?.value;
@@ -20,7 +13,6 @@ function samePassword(group: AbstractControl) {
 @Component({
   selector: 'app-recovery',
   standalone: true,
-  // 👈 sacamos OtpInputComponent, usamos solo ReactiveFormsModule
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './recovery.html',
   styleUrl: './recovery.css'
@@ -32,9 +24,9 @@ export class Recovery implements OnInit {
   private router = inject(Router);
 
   step: 'email' | 'code' | 'reset' | 'done' = 'email';
-  loading = false;
+  loading                 = false;
   errorMsg: string | null = null;
-  infoMsg: string | null = null;
+  infoMsg: string | null  = null;
   username: string | null = null;
 
   // Paso 1: email
@@ -57,7 +49,6 @@ export class Recovery implements OnInit {
   }, { validators: samePassword });
 
   ngOnInit(): void {
-    // si viene ?code=XXXXXX desde el mail, precargamos
     const code = this.route.snapshot.queryParamMap.get('code');
     if (code) {
       this.step = 'code';
@@ -65,15 +56,15 @@ export class Recovery implements OnInit {
     }
   }
 
-  get cf() { return this.codeForm.controls as any; }
+  get cf() {
+    return this.codeForm.controls as any;
+  }
 
-  // arma el código a partir del codeForm
   private getCodeFromForm(): string {
     const v = this.codeForm.value as any;
     return `${v.d1 ?? ''}${v.d2 ?? ''}${v.d3 ?? ''}${v.d4 ?? ''}${v.d5 ?? ''}${v.d6 ?? ''}`;
   }
 
-  // precarga desde ?code=XXXXXX
   private setCodeFromString(code: string): void {
     const clean = (code || '').replace(/\D/g, '').slice(0, 6);
     const arr = clean.split('');
@@ -87,7 +78,7 @@ export class Recovery implements OnInit {
     }, { emitEvent: false });
   }
 
-  // ========= Paso 1: enviar mail =========
+  // #region Paso 1: enviar mail
   onStart(): void {
     if (this.emailCtrl.invalid) {
       this.emailCtrl.markAsTouched();
@@ -103,15 +94,12 @@ export class Recovery implements OnInit {
         console.log('[Recovery] startRecovery OK', res);
         this.loading = false;
         this.infoMsg = res.message;
-        this.step = 'code';           // pasamos al paso de código
-        this.codeForm.reset();        // limpiamos el form de código por las dudas
+        this.step = 'code';
+        this.codeForm.reset();
       },
       error: (err) => {
         console.error('[Recovery] startRecovery ERROR', err);
         this.loading = false;
-
-        // 👇 Si es un error 5xx, asumimos que igual pudo mandar el mail
-        // y dejamos seguir al usuario al paso de código.
         if (err.status >= 500) {
           this.infoMsg = 'Si el mail existe recibirá un código de recuperación.';
           this.errorMsg = null;
@@ -123,8 +111,9 @@ export class Recovery implements OnInit {
       }
     });
   }
+  // #endregion 
 
-  // ========= Paso 2: verificar código =========
+  // #region Paso 2: verificar código
   onVerifyCode(): void {
     const code = this.getCodeFromForm();
 
@@ -150,15 +139,16 @@ export class Recovery implements OnInit {
       }
     });
   }
+  // #endregion 
 
-  // ========= Paso 3: resetear contraseña =========
+  // #region Paso 3: resetear contraseña
   onReset(): void {
     if (this.passForm.invalid) {
       this.passForm.markAllAsTouched();
       return;
     }
 
-    const code = this.getCodeFromForm(); // usamos el mismo código ya cargado
+    const code = this.getCodeFromForm();
 
     this.loading = true;
     this.errorMsg = null;
@@ -180,19 +170,18 @@ export class Recovery implements OnInit {
     });
   }
 
-  // Mueve el foco al siguiente input si se escribió algo
   focusNext(current: HTMLInputElement, next: HTMLInputElement | null): void {
     if (current.value.length > 0 && next) {
       next.focus();
     }
   }
 
-  // Mueve el foco al anterior si se borra en un campo vacío
   focusPrev(current: HTMLInputElement, prev: HTMLInputElement | null): void {
     if (current.value.length === 0 && prev) {
       prev.focus();
     }
   }
+  // #endregion 
 
   goToSignIn(): void {
     this.router.navigate(['/sign_in']);

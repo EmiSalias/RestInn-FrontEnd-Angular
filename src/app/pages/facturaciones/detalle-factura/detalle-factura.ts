@@ -1,14 +1,11 @@
-// src/app/pages/facturas/detalle-factura/detalle-factura.ts
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {
-  FacturasService,
-  FacturaResponseDTO
-} from '../../../services/facturas-service';
-import { AuthService } from '../../../services/auth-service';
-import Swal from 'sweetalert2';
-import { Location } from '@angular/common';
+import { Component, OnInit, inject }            from '@angular/core';
+import { CommonModule }                         from '@angular/common';
+import { ActivatedRoute, Router, RouterLink }   from '@angular/router';
+import { FacturasService }                      from '../../../services/facturas-service';
+import { AuthService }                          from '../../../services/auth-service';
+import { Location }                             from '@angular/common';
+import   Swal                                   from 'sweetalert2';
+import   FacturaResponseDTO                     from '../../../models/FacturaResponseDTO';
 
 @Component({
   selector: 'app-detalle-factura',
@@ -155,7 +152,7 @@ export class DetalleFactura implements OnInit {
     if (this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) {
       this.router.navigate(['/listado_facturas']);
     } else {
-      this.router.navigate(['/']);  // o la ruta que uses como home
+      this.router.navigate(['/']);
     }
   }
 

@@ -1,4 +1,3 @@
-/* --- Contenedor General --- */
 .habitaciones-list {
   display: flex;
   flex-direction: column;
@@ -14,7 +13,24 @@
   margin-bottom: 0.5rem;
 }
 
-/* --- Botonera Superior (Filtrar, Limpiar, Agregar) --- */
+h1 {
+  cursor: default;
+  display: inline-block;
+  padding-right: 10px;
+  margin: 32px 0 20px 0;
+  font-size: 26px;
+  color: var(--color-primary);
+}
+
+.gest-habs {
+  margin-left: 40px;
+}
+
+.gest-habs:hover{
+  cursor: pointer;
+  color: var(--color-primary)-secondary;
+}
+
 .filtros-toggle {
   display: flex;
   justify-content: center;
@@ -37,7 +53,7 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
 }
 
-/* --- Panel de Filtros (Contenedor) --- */
+/* Panel de Filtros (Contenedor) */
 .filtros {
   max-height: 0;
   opacity: 0;
@@ -50,7 +66,7 @@
 }
 
 .filtros.activo {
-  max-height: 600px;
+  max-height: 2000px;
   opacity: 1;
   padding: 1.5rem;
 }
@@ -122,10 +138,11 @@
 .filtros-bottom button {
   border: none;
   border-radius: 6px;
-  padding: 0.4rem 1rem;
+  padding: 0.7rem 2rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 120px;
 }
 
 .filtros-bottom button:hover {
@@ -139,7 +156,81 @@
   box-shadow: none;
 }
 
-/* --- Mensajes de Estado (Cargando, Error, Warning) --- */
+@media (max-width: 480px) {
+  .filtros-bottom {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filtros-bottom button {
+    width: 100%;
+  }
+}
+
+/* Toggle de Mantenimiento y Limpieza */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #555;
+  transition: .4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--color-success);
+}
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+
+input:disabled + .slider {
+  background-color: #333; 
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+input:disabled + .slider:before {
+  background-color: #aaa; 
+}
+.toggle-text{
+  display: block;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+
+/* Mensajes de Estado (Cargando, Error, Warning) */
 .loading {
   text-align: center;
   color: var(--color-warning);
@@ -177,7 +268,7 @@
   margin-top: 1rem;
 }
 
-/* --- Grilla de Tarjetas de Habitación --- */
+/* Grilla de Tarjetas de Habitación */
 .habitaciones-grid {
   display: grid;
   gap: 1.5rem;
@@ -205,7 +296,7 @@
 .habitacion-card__image-wrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3; /* Proporción fija 4:3 */
+  aspect-ratio: 4 / 3;
   background-color: var(--color-h-f);
   overflow: hidden;
 }
@@ -238,10 +329,11 @@
 .habitacion-card__title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--color-primary); /* Color dorado */
+  color: var(--color-primary);
   line-height: 1.2;
   letter-spacing: 0.02em;
 }
+
 
 .habitacion-card__sub {
   font-size: 0.85rem;
@@ -252,10 +344,10 @@
 
 .habitacion-card__details {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Dos columnas para Capacidad y Camas */
+  grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
   padding-top: 0.75rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Línea separadora sutil */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .habitacion-card__details p {
@@ -278,12 +370,12 @@
 }
 
 .detail-row {
-  margin-top: auto; /* Empuja la nota hacia abajo si sobra espacio */
+  margin-top: auto;
   background-color: rgba(255, 255, 255, 0.05);
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   font-size: 0.8rem;
-  border-left: 3px solid var(--color-warning); /* Borde amarillo para destacar */
+  border-left: 3px solid var(--color-warning);
   display: flex;
   flex-direction: column;
 }
@@ -318,8 +410,7 @@
   border: none;
 }
 
-/* --- COLORES POR ESTADO --- */
-/* Disponible: Verde */
+/* COLORES POR ESTADO */
 .habitacion-card__badge.disponible {
   background-color: var(--color-success); 
 }
@@ -330,12 +421,12 @@
   background-color: var(--color-error); 
 }
 
-/* Limpieza: Amarillo (usamos texto oscuro para que se lea bien) */
+/* Limpieza: Amarillo */
 .habitacion-card__badge.limpieza {
   background-color: var(--color-warning);
 }
 
-/* Badge especial de INACTIVA (ya lo tenías, aseguramos que combine) */
+/* Badge especial de INACTIVA */
 .habitacion-card__badge.badge-inactiva {
   top: 3.2rem;
   left: 0.75rem;
@@ -352,7 +443,7 @@
   opacity: 1;
 }
 
-/* --- Botonera inferior de cada tarjeta --- */
+/* Botonera inferior de cada tarjeta */
 .buttons {
   display: flex;
   justify-content: space-around;
