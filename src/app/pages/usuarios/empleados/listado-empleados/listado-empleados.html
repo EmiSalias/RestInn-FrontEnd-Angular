@@ -1,5 +1,5 @@
 <section class="empleados-page">
-  <h1>Gestión de empleados</h1>
+    <h1 class="gest-usuarios" routerLink="/gestion_usuarios">Gestión de usuarios</h1><h1>></h1> <h1>Listado de empleados</h1>
 
   @if (loading) {
     <div class="status">Cargando empleados...</div>
@@ -9,7 +9,7 @@
   }
 
   <div class="actions">
-    <button routerLink="/form_empleado" class="btn-create">Crear nuevo empleado</button>
+    <button routerLink="/form_empleado" class="btn-filter">Crear nuevo empleado</button>
 
     <button class="btn-filter" (click)="filtrarEmpleados(true)">Mostrar empleados activos</button>
     <button class="btn-filter" (click)="filtrarEmpleados(false)">Mostrar empleados inactivos</button>
