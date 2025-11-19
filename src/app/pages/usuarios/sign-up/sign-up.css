@@ -88,6 +88,18 @@ button[disabled] {
   margin: 24px 0 20px;
 }
 
+.btn-gold {
+  color: var(--color-bg);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
 /* Cada cajita de código */
 .code-inputs .code-box {
   width: 56px;

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject }        from '@angular/core';
 import { CommonModule }                     from '@angular/common';
-import { ActivatedRoute, Router }           from '@angular/router';
+import { ActivatedRoute, Router, RouterLink }           from '@angular/router';
 import { ReservasService, ReservaResponse } from '../../../services/reservas-service';
 import { HabitacionService }                from '../../../services/habitacion-service';
 import { AuthService }                      from '../../../services/auth-service';
@@ -13,7 +13,7 @@ import   FacturaReservaInfoDTO              from '../../../models/FacturaReserva
 @Component({
   selector: 'app-detalle-reserva',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './detalles-reserva.html',
   styleUrls: ['./detalles-reserva.css']
 })

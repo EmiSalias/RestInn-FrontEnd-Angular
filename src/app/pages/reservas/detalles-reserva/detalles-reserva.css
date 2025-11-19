@@ -13,6 +13,20 @@
   cursor: pointer;
 }
 
+h1 {
+  cursor: default;
+  display: inline-block;
+  padding-right: 10px;
+  margin-bottom: 20px;
+  font-size: 26px;
+  color: var(--color-primary);
+}
+
+.gest-reservas:hover{
+  cursor: pointer;
+  color: var(--color-primary)-secondary;
+}
+
 .detail-header {
   display: flex;
   justify-content: space-between;
