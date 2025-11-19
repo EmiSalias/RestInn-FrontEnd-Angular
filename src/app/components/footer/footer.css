@@ -7,24 +7,15 @@ footer {
   z-index: 100;
   border-top: 1px solid var(--color-border);
 
-  /* Degradé que se fusiona con el fondo global */
   background:
-    /* sombreado suave arriba, tipo “borde difuminado” */
-    radial-gradient(
-      ellipse at top,
-      rgba(0, 0, 0, 0.35),
-      transparent 65%
-    ),
-    /* banda central del footer que se funde con el fondo */
     linear-gradient(
       to bottom,
-      var(--color-bg) 0%,
+      var(--color-h-f) 0%,
       var(--color-h-f) 25%,
       var(--color-h-f) 75%,
       var(--color-bg) 100%
     );
 }
-
 
 .footer-brand {
   text-align: center;

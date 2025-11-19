@@ -1,7 +1,7 @@
 /* src/app/pages/usuarios/gestion-usuarios/gestion-usuarios.css */
 
 .user-hub {
-  padding: 110px 40px 40px; /* espacio por el header fijo */
+  padding: 110px 40px 40px;
   color: var(--color-text);
 }
 
@@ -19,6 +19,7 @@
 
 /* layout de las dos cards */
 .cards {
+  margin: 50px 20px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
