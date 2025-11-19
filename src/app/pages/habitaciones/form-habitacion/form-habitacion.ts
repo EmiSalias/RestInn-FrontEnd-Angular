@@ -262,7 +262,7 @@ export class FormHabitacion implements OnInit, OnDestroy {
     const totalEstimado = this.imagenesPreview.length + newFiles.length;
     
     if (totalEstimado > 5) {
-      this.imageError = `Máximo 30 imágenes. Intentaste agregar ${newFiles.length} y ya tenías ${this.imagenesPreview.length}.`;
+      this.imageError = `Máximo 5 imágenes. Intentaste agregar ${newFiles.length} y ya tenías ${this.imagenesPreview.length}.`;
       return;
     }
 
