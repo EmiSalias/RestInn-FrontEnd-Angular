@@ -1,5 +1,5 @@
-import { Component, OnInit, inject }        from '@angular/core';
-import { CommonModule }                     from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   FormArray,
   FormBuilder,
@@ -8,22 +8,28 @@ import {
   Validators,
   AbstractControl,
   ValidatorFn
-}                                           from '@angular/forms';
-import { ActivatedRoute, Router }           from '@angular/router';
-import { ReservasService }  from '../../../services/reservas-service';
-import   Habitacion                         from '../../../models/Habitacion';
-import { HabitacionService }                from '../../../services/habitacion-service';
-import { ImagenService }                    from '../../../services/imagen-service';
-import   Swal                               from 'sweetalert2';
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ReservasService, RangoOcupacion } from '../../../services/reservas-service';
+import Habitacion from '../../../models/Habitacion';
+import { HabitacionService } from '../../../services/habitacion-service';
+import { ImagenService } from '../../../services/imagen-service';
+import Swal from 'sweetalert2';
 import { AuthService } from '../../../services/auth-service';
 import ReservaRequest from '../../../models/ReservaRequest';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
 
 function rangoFechasValidator(group: AbstractControl) {
-  const fi = group.get('fechaIngreso')?.value as string | null;
-  const fs = group.get('fechaSalida')?.value as string | null;
+  const fi = group.get('fechaIngreso')?.value as Date | null;
+  const fs = group.get('fechaSalida')?.value as Date | null;
   if (!fi || !fs) return null;
   return fs > fi ? null : { rangoInvalido: true };
 }
+
 
 function arrayMaxLength(maxProvider: () => number): ValidatorFn {
   return (control: AbstractControl) => {
@@ -38,33 +44,48 @@ function arrayMaxLength(maxProvider: () => number): ValidatorFn {
 @Component({
   selector: 'app-form-reserva',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule
+  ],
   templateUrl: './form-reserva.html',
-  styleUrl: './form-reserva.css'
+  styleUrl: './form-reserva.css',
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'es-AR' }
+  ]
 })
 export class FormReserva implements OnInit {
-  private fb          = inject(FormBuilder);
-  private route       = inject(ActivatedRoute);
-  private router      = inject(Router);
+  private fb = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private reservasSrv = inject(ReservasService);
-  private habSrv      = inject(HabitacionService);
-  private imgSrv      = inject(ImagenService);
-  private auth        = inject(AuthService);
+  private habSrv = inject(HabitacionService);
+  private imgSrv = inject(ImagenService);
+  private auth = inject(AuthService);
 
   form: FormGroup = this.fb.group({
     habitacionId: [null, Validators.required],
-    fechaIngreso: ['', Validators.required],
-    fechaSalida: ['', Validators.required],
-    huespedes: this.fb.array([this.nuevoHuesped()], { validators: Validators.minLength(1) })
+    fechaIngreso: [null, Validators.required],  // <== Date
+    fechaSalida: [null, Validators.required],   // <== Date
+    huespedes: this.fb.array(
+      [this.nuevoHuesped()],
+      { validators: Validators.minLength(1) }
+    )
   }, { validators: rangoFechasValidator });
 
-  loading                 = false;
+
+  loading = false;
   errorMsg: string | null = null;
-  todayStr                = new Date().toISOString().slice(0, 10);
-  hab: Habitacion | null  = null;
-  imgUrls: string[]       = [];
-  selectedIdx             = 0;
-  capacidadMax            = Number.MAX_SAFE_INTEGER;
+  todayStr = new Date().toISOString().slice(0, 10);
+  rangosOcupados: RangoOcupacion[] = [];
+  hab: Habitacion | null = null;
+  imgUrls: string[] = [];
+  selectedIdx = 0;
+  capacidadMax = Number.MAX_SAFE_INTEGER;
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(qp => {
@@ -77,9 +98,13 @@ export class FormReserva implements OnInit {
       // Prefill form
       const patch: any = {};
       if (habitacionIdStr) patch.habitacionId = +habitacionIdStr;
-      if (isISO(fi)) patch.fechaIngreso = fi!;
-      if (isISO(fs)) patch.fechaSalida = fs!;
-      if (Object.keys(patch).length) this.form.patchValue(patch, { emitEvent: false });
+      if (isISO(fi)) patch.fechaIngreso = new Date(fi!);
+      if (isISO(fs)) patch.fechaSalida = new Date(fs!);
+
+      if (Object.keys(patch).length) {
+        this.form.patchValue(patch, { emitEvent: false });
+      }
+
 
       // Setea capacidad al toque si viene por query
       if (capStr && !Number.isNaN(+capStr)) {
@@ -95,6 +120,7 @@ export class FormReserva implements OnInit {
       if (habitacionId) {
         this.cargarHabitacion(habitacionId);
         this.cargarImagenes(habitacionId);
+        this.cargarRangosOcupados(habitacionId);
       }
     });
 
@@ -104,6 +130,7 @@ export class FormReserva implements OnInit {
       if (id) {
         this.cargarHabitacion(id);
         this.cargarImagenes(id);
+        this.cargarRangosOcupados(id);
       }
     });
 
@@ -216,8 +243,8 @@ export class FormReserva implements OnInit {
 
     const raw = this.form.value;
     const dto: ReservaRequest = {
-      fechaIngreso: raw.fechaIngreso,
-      fechaSalida: raw.fechaSalida,
+      fechaIngreso: this.toISODate(raw.fechaIngreso as Date),
+      fechaSalida: this.toISODate(raw.fechaSalida as Date),
       habitacionId: Number(raw.habitacionId),
       huespedes: raw.huespedes
     };
@@ -266,5 +293,64 @@ export class FormReserva implements OnInit {
       error: (e) => { console.error('No se pudieron cargar imágenes', e); this.imgUrls = []; }
     });
   }
+
+  private cargarRangosOcupados(habitacionId: number) {
+    this.reservasSrv.getRangosOcupadosHabitacion(habitacionId, this.todayStr)
+      .subscribe({
+        next: (rangos) => {
+          this.rangosOcupados = rangos ?? [];
+        },
+        error: (e) => {
+          console.error('No se pudieron cargar rangos ocupados', e);
+          this.rangosOcupados = [];
+        }
+      });
+  }
+
+  private toISODate(d: Date): string {
+    const y = d.getFullYear();
+    const m = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  private esFechaOcupada(iso: string): boolean {
+    return this.rangosOcupados.some(r =>
+      iso >= r.fechaIngreso && iso < r.fechaSalida   // [ingreso, salida)
+    );
+  }
+
+  // deshabilita fechas pasadas + ocupadas
+  fechaIngresoFilter = (d: Date | null): boolean => {
+    if (!d) return false;
+    const iso = this.toISODate(d);
+
+    if (iso < this.todayStr) return false;      // nada antes de hoy
+    if (this.esFechaOcupada(iso)) return false; // días ocupados
+
+    return true;
+  };
+
+  private rangoCruzaReserva(fiIso: string, fsIso: string): boolean {
+    return this.rangosOcupados.some(r =>
+      fiIso < r.fechaSalida && fsIso > r.fechaIngreso
+    );
+  }
+
+  // idem, pero además exige > fechaIngreso
+  fechaSalidaFilter = (d: Date | null): boolean => {
+    if (!d) return false;
+    const iso = this.toISODate(d);
+    const fi: Date | null = this.form.get('fechaIngreso')?.value ?? null;
+    const isoFi = fi ? this.toISODate(fi) : null;
+
+    if (iso < this.todayStr) return false;
+    if (isoFi && iso <= isoFi) return false;           // salida posterior a ingreso
+    if (this.esFechaOcupada(iso)) return false;        // día puntual ocupado
+    if (isoFi && this.rangoCruzaReserva(isoFi, iso)) return false; // rango que pisa reservas
+
+    return true;
+  };
+
 
 }

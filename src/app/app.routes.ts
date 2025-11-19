@@ -29,6 +29,7 @@ import { Routes }               from '@angular/router';
 import { AuthGuard }            from './guards/auth-guard';
 import { Unauthorized }         from './pages/usuarios/unauthorized/unauthorized';
 import { GestionReservas }      from './pages/reservas/gestion-reservas/gestion-reservas';
+import { ReservasFinalizadasImpagas } from './pages/reservas/reservas-finalizadas-impagas/reservas-finalizadas-impagas';
 
 export const routes: Routes = [
     // #region Acceso público
@@ -292,6 +293,17 @@ export const routes: Routes = [
                 'ADMINISTRADOR',
                 'RECEPCIONISTA',
                 'CLIENTE'
+            ]
+        }
+    },
+    {
+        path: 'reservas_finalizadas_impagas',
+        component: ReservasFinalizadasImpagas ,
+        canActivate: [AuthGuard],
+        data: {
+            roles: [
+                'ADMINISTRADOR',
+                'RECEPCIONISTA',
             ]
         }
     },

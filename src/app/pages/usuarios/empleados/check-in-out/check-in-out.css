@@ -19,9 +19,9 @@
   color: var(--color-primary);
 }
 
-.header-row .gest-reservas:hover{
+.header-row .gest-reservas:hover {
   cursor: pointer;
-  color: var(--color-primary)-secondary;
+  color: var(--color-secondary);
 }
 
 .rol-badge {
@@ -238,7 +238,22 @@
 /* RESPONSIVE */
 @media (max-width: 960px) {
   .check-page {
-    padding: 100px 16px 24px;
+    padding: 100px 16px 24px; /* espacio por el header fijo */
+  }
+
+  .header-row {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .header-row h1 {
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+
+  .rol-badge {
+    margin-left: auto;
+    font-size: 0.7rem;
   }
 
   .summary-cards {
@@ -247,9 +262,109 @@
 
   .check-layout {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
+  .check-block {
+    padding: 0.9rem 0.9rem 0.8rem;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+  }
+
+  .check-block__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .check-block h3 {
+    font-size: 1rem;
+  }
+
+  .muted {
+    font-size: 0.75rem;
+  }
+
+  /* --- MODO "CARD" PARA TABLA EN MOBILE --- */
+
   .check-table {
+    border: none;
     font-size: 0.8rem;
+  }
+
+  .check-table thead {
+    display: none; /* ocultamos encabezados */
+  }
+
+  .check-table,
+  .check-table tbody,
+  .check-table tr,
+  .check-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .check-table tbody tr {
+    margin-bottom: 0.9rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: 12px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--color-border);
+  }
+
+  /* aseguramos que los estilos de prioridad sigan funcionando */
+  .check-table tbody tr.row-critical {
+    background-color: rgba(211, 47, 47, 0.25);
+  }
+
+  .check-table tbody tr.row-warning {
+    background-color: rgba(255, 152, 0, 0.2);
+  }
+
+  .check-table td {
+    border: none;
+    padding: 0.22rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .check-table td::before {
+    content: attr(data-label);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    flex: 0 0 40%;
+    max-width: 45%;
+  }
+
+  .check-table td span.badge {
+    margin-left: 0.35rem;
+  }
+
+  .acciones {
+    margin-top: 0.35rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: flex-start;
+  }
+
+  .btn-link,
+  .btn-accion {
+    font-size: 0.75rem;
+  }
+
+  .btn-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .acciones .btn-link,
+  .acciones .btn-accion {
+    flex: 1 1 calc(50% - 0.4rem);
+    text-align: center;
   }
 }

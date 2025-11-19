@@ -1,0 +1,204 @@
+/* CONTENEDOR GENERAL */
+.res-impagas-page {
+  padding: 10px 40px 40px;
+  color: var(--color-text);
+}
+
+/* HEADER (mismo estilo que facturas) */
+.res-impagas-page .header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.res-impagas-page h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.res-impagas-page .subtitle {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+/* BOTÓN VOLVER */
+.btn-volver {
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  backdrop-filter: blur(8px);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.08s ease,
+    box-shadow 0.12s ease;
+}
+
+.btn-volver:hover {
+  background: var(--color-h-f);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
+}
+
+/* MENSAJES DE ESTADO (reusamos estilo de facturas) */
+.estado {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.estado-error {
+  color: var(--color-error);
+}
+
+/* TABLA PRINCIPAL */
+.tabla-reservas-impagas {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  background: var(--color-surface);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.tabla-reservas-impagas thead {
+  background: var(--color-h-f);
+}
+
+.tabla-reservas-impagas th,
+.tabla-reservas-impagas td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.tabla-reservas-impagas th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+}
+
+/* zebra + hover */
+.tabla-reservas-impagas tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.tabla-reservas-impagas tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.07);
+}
+
+/* LINK A RESERVA */
+.tabla-reservas-impagas td.link {
+  color: var(--color-primary);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.tabla-reservas-impagas td.link:hover {
+  color: var(--color-secondary);
+}
+
+/* COLUMNA CLIENTE (DNI + MAIL BAJO EL NOMBRE) */
+.tabla-reservas-impagas td span.dni,
+.tabla-reservas-impagas td span.mail {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.tabla-reservas-impagas td span.mail {
+  font-style: italic;
+}
+
+/* TOTAL A LA DERECHA */
+.tabla-reservas-impagas td:nth-child(9) {
+  text-align: right;
+}
+
+/* COLUMNA ACCIONES */
+.tabla-reservas-impagas .accion-col {
+  text-align: center;
+  width: 150px;
+}
+
+/* BOTÓN DETALLE (mismo que facturas) */
+.btn-detalle {
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #8b5cff, #c77dff);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    filter 0.08s ease;
+}
+
+.btn-detalle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(199, 125, 255, 0.6);
+  filter: brightness(1.05);
+}
+
+.btn-detalle:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* BOTÓN LINK (reutilizable) */
+.btn-link {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.3rem;
+}
+
+.btn-link:hover {
+  color: var(--color-primary);
+}
+
+/* RESPONSIVE */
+@media (max-width: 960px) {
+  .res-impagas-page {
+    padding: 100px 16px 24px;
+  }
+
+  .res-impagas-page .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tabla-reservas-impagas {
+    font-size: 0.8rem;
+  }
+}

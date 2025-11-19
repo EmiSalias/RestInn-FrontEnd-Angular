@@ -34,21 +34,29 @@
       <div class="grid-2">
         <div class="field">
           <label>Fecha de ingreso</label>
-          <input type="date" formControlName="fechaIngreso" [attr.min]="todayStr" />
+          <mat-form-field appearance="fill" class="date-field">
+            <input matInput [matDatepicker]="pickerIngreso" formControlName="fechaIngreso"
+              [matDatepickerFilter]="fechaIngresoFilter" />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerIngreso"></mat-datepicker-toggle>
+            <mat-datepicker #pickerIngreso></mat-datepicker>
+          </mat-form-field>
+
           @if (form.get('fechaIngreso')?.touched && form.get('fechaIngreso')?.invalid) {
-          <small class="error">
-            Obligatorio
-          </small>
+          <small class="error">Obligatorio</small>
           }
         </div>
 
         <div class="field">
           <label>Fecha de salida</label>
-          <input type="date" formControlName="fechaSalida" [attr.min]="form.value.fechaIngreso || todayStr" />
+          <mat-form-field appearance="fill" class="date-field">
+            <input matInput [matDatepicker]="pickerSalida" formControlName="fechaSalida"
+              [matDatepickerFilter]="fechaSalidaFilter" />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerSalida"></mat-datepicker-toggle>
+            <mat-datepicker #pickerSalida></mat-datepicker>
+          </mat-form-field>
+
           @if (form.get('fechaSalida')?.touched && form.get('fechaSalida')?.invalid) {
-          <small class="error">
-            Obligatorio
-          </small>
+          <small class="error">Obligatorio</small>
           }
           @if (form.errors?.['rangoInvalido']) {
           <small class="error">
@@ -117,10 +125,10 @@
       <div class="actions">
         <button type="submit" [disabled]="loading">Confirmar reserva</button>
         @if (loading) {
-          <span>Guardando...</span>
+        <span>Guardando...</span>
         }
         @if (!loading && errorMsg) {
-          <span class="error">{{ errorMsg }}</span>
+        <span class="error">{{ errorMsg }}</span>
         }
       </div>
     </form>

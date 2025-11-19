@@ -1,0 +1,84 @@
+<div class="res-impagas-page">
+
+  <div class="header-row">
+    <div>
+      <h2>Reservas finalizadas impagas</h2>
+      <p class="subtitle">
+        Auditoría de reservas con estado <strong>FINALIZADA</strong> cuya factura de
+        <strong>RESERVA</strong> está EMITIDA o EN_PROCESO.
+      </p>
+    </div>
+
+    <button type="button" class="btn-volver" (click)="volverAFacturas()">
+      ← Volver a facturas
+    </button>
+  </div>
+
+  @if (error) {
+    <div class="estado estado-error">
+      {{ error }}
+    </div>
+  }
+
+  @if (cargando) {
+    <div class="estado">
+      Cargando reservas...
+    </div>
+  }
+
+  @if (!cargando && !error && reservas.length === 0) {
+    <div class="estado">
+      No hay reservas finalizadas con facturas impagas 🎉
+    </div>
+  }
+
+  @if (!cargando && !error && reservas.length > 0) {
+    <table class="tabla-reservas-impagas">
+      <thead>
+        <tr>
+          <th># Reserva</th>
+          <th>Cliente</th>
+          <th>Ingreso</th>
+          <th>Salida</th>
+          <th>Estado reserva</th>
+          <th># Factura</th>
+          <th>Estado factura</th>
+          <th>Tipo</th>
+          <th>Total</th>
+          <th class="accion-col">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (r of reservas; track r.reservaId) {
+          <tr>
+            <td class="link" (click)="verReserva(r)">#{{ r.reservaId }}</td>
+            <td>
+              {{ r.clienteNombre }} {{ r.clienteApellido }}
+              <span class="dni">DNI {{ r.clienteDni }}</span>
+              <span class="mail">{{ r.clienteEmail }}</span>
+            </td>
+            <td>{{ r.fechaIngreso | date:'dd/MM/yyyy' }}</td>
+            <td>{{ r.fechaSalida | date:'dd/MM/yyyy' }}</td>
+            <td>{{ r.estadoReserva }}</td>
+            <td>#{{ r.facturaId }}</td>
+            <td>{{ r.estadoFactura }}</td>
+            <td>{{ r.tipoFactura }}</td>
+            <td>
+              {{ r.totalFinal | currency:'ARS':'symbol':'1.0-0' }}
+            </td>
+            <td class="accion-col">
+              <button type="button" class="btn-detalle" (click)="verFactura(r)">
+                Ver factura
+              </button>
+              <button type="button" class="btn-link" (click)="verReserva(r)">
+                Ir a reserva
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+</div>

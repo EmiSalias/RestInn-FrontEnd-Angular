@@ -1,9 +1,15 @@
-import { Injectable }                           from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams }  from '@angular/common/http';
-import { Observable }                           from 'rxjs';
-import { environment }                          from '../../environments/environment';
-import   ReservaRequest from '../models/ReservaRequest';
-import   Huesped from '../models/Huesped';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import ReservaRequest from '../models/ReservaRequest';
+import Huesped from '../models/Huesped';
+
+
+export interface RangoOcupacion {
+  fechaIngreso: string;  // 'YYYY-MM-DD'
+  fechaSalida: string;   // 'YYYY-MM-DD'
+}
 
 export interface UsuarioReservaDTO {
   id: number;
@@ -73,6 +79,21 @@ export class ReservasService {
   // #endregion
 
   // #region CONSULTAS
+  getRangosOcupadosHabitacion(
+    habitacionId: number,
+    desde: string
+  ): Observable<RangoOcupacion[]> {
+    const params = new HttpParams()
+      .set('habitacionId', habitacionId.toString())
+      .set('desde', desde);
+
+    return this.http.get<RangoOcupacion[]>(
+      `${this.baseUrl}/ocupacion-rangos`,
+      { params, headers: this.authHeaders() }
+    );
+  }
+
+
 
   // GET /api/reservas/ocupadas?ingreso=YYYY-MM-DD&salida=YYYY-MM-DD
   getHabitacionesOcupadas(ingreso: string, salida: string): Observable<number[]> {

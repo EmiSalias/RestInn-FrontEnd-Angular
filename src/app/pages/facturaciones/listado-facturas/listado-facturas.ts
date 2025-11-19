@@ -322,8 +322,7 @@ export class ListadoFacturas implements OnInit {
 
   // botón “Reservas finalizadas impagas”
   verReservasImpagas(): void {
-    this.router.navigate(['/listado_reservas'], {
-      queryParams: { filtro: 'finalizadas_impagas' }
+    this.router.navigate(['/reservas_finalizadas_impagas'], {
     });
   }
 }
