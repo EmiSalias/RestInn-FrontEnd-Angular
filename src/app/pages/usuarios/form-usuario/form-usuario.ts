@@ -1,17 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  AbstractControl
-} from '@angular/forms';
-import { switchMap } from 'rxjs/operators';
-import { AuthService } from '../../../services/auth-service';
-import { UserService } from '../../../services/user-service';
-import User from '../../../models/User';
-import Swal from 'sweetalert2';
+import { Component, OnInit, inject }                                                from '@angular/core';
+import { CommonModule }                                                             from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { AuthService }                                                              from '../../../services/auth-service';
+import { UserService }                                                              from '../../../services/user-service';
+import   User                                                                       from '../../../models/User';
+import   Swal                                                                       from 'sweetalert2';
 
 function samePassword(group: AbstractControl) {
   const newPass = group.get('newPassword')?.value;
@@ -28,22 +21,22 @@ function samePassword(group: AbstractControl) {
 })
 export class FormUsuario implements OnInit {
 
-  private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
+  private fb          = inject(FormBuilder);
+  private auth        = inject(AuthService);
   private userService = inject(UserService);
 
-  // pestaña activa: 'datos' | 'seguridad'
+  // Pestaña activa: 'datos' | 'seguridad'
   activeTab: 'datos' | 'seguridad' = 'datos';
 
   form: FormGroup = this.fb.group({
-    nombre: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]], // Ahora es obligatorio
-    apellido: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]], // Ahora es obligatorio
-    nombreLogin: [''],
-    email: [''],
-    dni: [''],
-    phoneNumber: ['', [Validators.pattern(/^[0-9\s+\-()]{6,20}$/)]],  // Solo números, espacios, guiones y paréntesis
-    cuit: [''],
-    role: [''],
+    nombre:       ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]],
+    apellido:     ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]],
+    nombreLogin:  [''],
+    email:        [''],
+    dni:          [''],
+    phoneNumber:  ['', [Validators.pattern(/^[0-9\s+\-()]{6,20}$/)]],  // Solo números, espacios, guiones y paréntesis
+    cuit:         [''],
+    role:         [''],
 
     passGroup: this.fb.group(
       {
@@ -55,21 +48,23 @@ export class FormUsuario implements OnInit {
     ),
   });
 
-
-  user: User | null = null;
+  user: User | null   = null;
   role: string | null = null;
-
-  isAdmin = false;
-  isCliente = false;
-  isEmpleado = false;
-  canEditProfileData = false;
-
-  loading = false;
+  isAdmin             = false;
+  isCliente           = false;
+  isEmpleado          = false;
+  canEditProfileData  = false;
+  loading             = false;
   errorMsg: string | null = null;
-  infoMsg: string | null = null;
+  infoMsg: string | null  = null;
 
-  get f() { return this.form.controls as any; }
-  get pg() { return (this.form.get('passGroup') as FormGroup).controls as any; }
+  get f() {
+    return this.form.controls as any;
+  }
+
+  get pg() {
+    return (this.form.get('passGroup') as FormGroup).controls as any;
+  }
 
   ngOnInit(): void {
     this.loading = true;
@@ -78,14 +73,10 @@ export class FormUsuario implements OnInit {
         this.loading = false;
         this.user = u;
         this.role = u.role;
-
         this.isAdmin = u.role === 'ADMINISTRADOR';
         this.isCliente = u.role === 'CLIENTE';
         this.isEmpleado = !this.isAdmin && !this.isCliente;
-
         this.canEditProfileData = this.isAdmin || this.isCliente;
-
-        // si es empleado, que entre directo en "Seguridad"
         this.activeTab = this.isEmpleado ? 'seguridad' : 'datos';
 
         this.form.patchValue({
@@ -109,14 +100,12 @@ export class FormUsuario implements OnInit {
   }
 
   private applyRolePermissions(): void {
-    // Estos campos nunca se editan desde acá
     this.form.get('nombreLogin')?.disable();
     this.form.get('email')?.disable();
     this.form.get('dni')?.disable();
     this.form.get('cuit')?.disable();
     this.form.get('role')?.disable();
 
-    // Empleados: tampoco editan nombre / apellido / teléfono
     if (!this.canEditProfileData) {
       this.form.get('nombre')?.disable();
       this.form.get('apellido')?.disable();
@@ -138,7 +127,6 @@ export class FormUsuario implements OnInit {
     const passValue = passGroup.value;
     const wantsPasswordChange = !!(passValue.oldPassword || passValue.newPassword || passValue.confirm);
 
-    // Validación: si no hay cambios, muestra un error.
     if (!wantsPasswordChange && !this.form.dirty) {
       this.errorMsg = 'No se han realizado cambios.';
       Swal.fire({
@@ -150,7 +138,7 @@ export class FormUsuario implements OnInit {
       return;
     }
 
-    // Validación de campos: nombre, apellido, teléfono
+    // Validación de nombre, apellido, teléfono
     if (this.form.get('nombre')?.invalid || this.form.get('apellido')?.invalid) {
       Swal.fire({
         icon: 'error',
@@ -207,7 +195,6 @@ export class FormUsuario implements OnInit {
         return;
       }
 
-      // Si todo está bien, actualiza la contraseña
       const passwordUpdateData = {
         oldPassword: passValue.oldPassword,
         newPassword: passValue.newPassword,
@@ -264,11 +251,9 @@ export class FormUsuario implements OnInit {
   }
 
   get canShowSaveButton(): boolean {
-    // En la pestaña de seguridad siempre puede guardar (cambiar contraseña)
     if (this.activeTab === 'seguridad') {
       return true;
     }
-    // En la pestaña de datos solo admin/cliente pueden editar
     return this.canEditProfileData;
   }
 

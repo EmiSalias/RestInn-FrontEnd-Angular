@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { UserService } from '../../../../services/user-service';
-import User from '../../../../models/User';
+import { Component, OnInit, inject }  from '@angular/core';
+import { CommonModule }               from '@angular/common';
+import { RouterLink }                 from '@angular/router';
+import { UserService }                from '../../../../services/user-service';
+import   User                         from '../../../../models/User';
 
 @Component({
   selector: 'app-listado-clientes',
@@ -14,8 +14,8 @@ import User from '../../../../models/User';
 export class ListadoClientes implements OnInit {
   private userSrv = inject(UserService);
 
-  clientes: User[] = [];
-  loading = false;
+  clientes: User[]        = [];
+  loading                 = false;
   errorMsg: string | null = null;
 
   ngOnInit(): void {

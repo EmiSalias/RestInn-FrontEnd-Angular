@@ -1,9 +1,12 @@
 <section class="empleados-page">
-    <h1 class="gest-usuarios" routerLink="/gestion_usuarios">Gestión de usuarios</h1><h1>></h1> <h1>Listado de empleados</h1>
+    <h1 class="gest-usuarios" routerLink="/gestion_usuarios">Gestión de usuarios</h1>
+    <h1>></h1>
+    <h1>Listado de empleados</h1>
 
   @if (loading) {
     <div class="status">Cargando empleados...</div>
   }
+  
   @if (!loading && errorMsg) {
     <div class="status error">{{ errorMsg }}</div>
   }

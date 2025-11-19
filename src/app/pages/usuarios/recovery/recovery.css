@@ -1,5 +1,3 @@
-/* src/app/pages/auth/recovery/recovery.css */
-
 .auth-card {
   max-width: 720px;
   margin: 96px auto 40px;
@@ -70,11 +68,11 @@
   cursor: pointer;
 }
 
-/* === CÓDIGO DE 6 DÍGITOS (MISMA ESTÉTICA QUE SIGN-UP) === */
+/* CÓDIGO DE 6 DÍGITOS */
 .code-inputs {
   display: flex;
   gap: 12px;
-  justify-content: flex-start; /* o center si lo querés centrado */
+  justify-content: flex-start;
   margin: 24px 0 16px;
 }
 

@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { PerfilUsuario } from './perfil-usuario';
+import { ComponentFixture, TestBed }  from '@angular/core/testing';
+import { PerfilUsuario }              from './perfil-usuario';
 
 describe('PerfilUsuario', () => {
   let component: PerfilUsuario;

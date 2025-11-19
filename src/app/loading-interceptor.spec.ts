@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpInterceptorFn } from '@angular/common/http';
-import { loadingInterceptor } from './loading-interceptor';
+import { TestBed }              from '@angular/core/testing';
+import { HttpInterceptorFn }    from '@angular/common/http';
+import { loadingInterceptor }   from './loading-interceptor';
 
 describe('loadingInterceptor', () => {
   const interceptor: HttpInterceptorFn = (req, next) => 

@@ -1,7 +1,3 @@
-/* ========================= */
-/* CHECK-IN / CHECK-OUT      */
-/* ========================= */
-
 .check-page {
   padding: 10px 40px 40px;
   color: var(--color-text);
@@ -11,14 +7,21 @@
 .header-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
   margin-bottom: 1.2rem;
 }
 
-.header-row h2 {
-  font-size: 1.8rem;
-  font-weight: 600;
+.header-row h1 {
+  cursor: default;
+  display: inline-block;
+  padding-right: 10px;
+  margin-bottom: 20px;
+  font-size: 26px;
   color: var(--color-primary);
+}
+
+.header-row .gest-reservas:hover{
+  cursor: pointer;
+  color: var(--color-primary)-secondary;
 }
 
 .rol-badge {
@@ -29,10 +32,6 @@
   font-size: 0.75rem;
   color: var(--color-text-muted);
 }
-
-/* ========================= */
-/* RESUMEN SUPERIOR          */
-/* ========================= */
 
 .summary-cards {
   display: grid;
@@ -68,10 +67,6 @@
   color: var(--color-text-muted);
 }
 
-/* ========================= */
-/* LAYOUT COLUMNAS           */
-/* ========================= */
-
 .check-layout {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -103,10 +98,8 @@
   color: var(--color-text-muted);
 }
 
-/* ========================= */
-/* TABLA                     */
-/* ========================= */
 
+/* TABLA */
 .check-table {
   width: 100%;
   border-collapse: collapse;
@@ -140,10 +133,7 @@
   gap: 0.4rem;
 }
 
-/* ========================= */
-/* BOTONES                   */
-/* ========================= */
-
+/* BOTONES */
 .btn-link {
   border: none;
   background: transparent;
@@ -192,10 +182,7 @@
   box-shadow: none;
 }
 
-/* ========================= */
-/* ESTADOS / MENSAJES        */
-/* ========================= */
-
+/* ESTADOS / MENSAJES */
 .estado {
   margin-top: 1rem;
   font-size: 0.9rem;
@@ -206,10 +193,7 @@
   color: var(--color-error);
 }
 
-/* ========================= */
-/* FILAS PRIORITARIAS        */
-/* ========================= */
-
+/* FILAS PRIORITARIAS */
 .check-table tbody tr.row-critical {
   background-color: rgba(211, 47, 47, 0.2);
 }
@@ -251,10 +235,7 @@
   color: #ffd180;
 }
 
-/* ========================= */
-/* RESPONSIVE                */
-/* ========================= */
-
+/* RESPONSIVE */
 @media (max-width: 960px) {
   .check-page {
     padding: 100px 16px 24px;

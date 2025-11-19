@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { Recovery } from './recovery';
+import { ComponentFixture, TestBed }  from '@angular/core/testing';
+import { Recovery }                   from './recovery';
 
 describe('Recovery', () => {
   let component: Recovery;

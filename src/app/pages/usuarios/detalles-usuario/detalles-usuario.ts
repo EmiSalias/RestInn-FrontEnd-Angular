@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../../../services/auth-service';
-import { UserService } from '../../../services/user-service';
-import User from '../../../models/User';
-import Swal from 'sweetalert2';
+import { CommonModule }               from '@angular/common';
+import { Component, OnInit, inject }  from '@angular/core';
+import { ActivatedRoute, Router }     from '@angular/router';
+import { AuthService }                from '../../../services/auth-service';
+import { UserService }                from '../../../services/user-service';
+import   User                         from '../../../models/User';
 
 @Component({
   selector: 'app-detalles-usuario',
@@ -14,12 +13,13 @@ import Swal from 'sweetalert2';
   styleUrls: ['./detalles-usuario.css'],
 })
 export class DetallesUsuario implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private auth = inject(AuthService);
+  private route       = inject(ActivatedRoute);
+  private router      = inject(Router);
+  private auth        = inject(AuthService);
   private userService = inject(UserService);
+
   user?: User;
-  loading = false;
+  loading                 = false;
   errorMsg: string | null = null;
 
   constructor() {}
@@ -49,6 +49,6 @@ export class DetallesUsuario implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/listado_clientes']); // Aquí pones la ruta donde quieras redirigir
+    this.router.navigate(['/listado_clientes']);
   }
 }

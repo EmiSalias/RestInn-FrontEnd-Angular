@@ -2,7 +2,6 @@
   padding: 96px 16px 32px;
 }
 
-/* Card principal */
 .buscar-card {
   max-width: 960px;
   margin: 0 auto 24px;
@@ -24,7 +23,6 @@
   opacity: 0.9;
 }
 
-/* Selectores de fecha como tiles */
 .date-selectors {
   margin-top: 18px;
   display: grid;
@@ -75,16 +73,14 @@
   color: var(--color-text);
 }
 
-/* Input de fecha invisible sobre el tile */
 .date-tile input[type="date"] {
   position: absolute;
   inset: 0;
-  opacity: 0;          /* no se ve */
-  pointer-events: none;/* los clicks van al .date-tile */
+  opacity: 0;   
+  pointer-events: none;
   cursor: pointer;
 }
 
-/* Resultados */
 .result-section {
   max-width: 1200px;
   margin: 0 auto;
@@ -115,7 +111,6 @@
   color: var(--color-text-muted);
 }
 
-/* Grid de habitaciones disponibles */
 .grid-habs {
   margin-top: 16px;
   display: grid;

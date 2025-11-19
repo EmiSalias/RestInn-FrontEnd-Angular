@@ -1,15 +1,9 @@
-// src/app/pages/auth/sign-up/sign-up.ts
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  AbstractControl,
-} from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { AuthService, UsuarioRequest } from '../../../services/auth-service';
+import { Component, OnInit, inject }                                                  from '@angular/core';
+import { CommonModule }                                                               from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, }  from '@angular/forms';
+import { Router, ActivatedRoute }                                                     from '@angular/router';
+import { AuthService }                                                                from '../../../services/auth-service';
+import   UsuarioRequest                                                               from '../../../models/UsuarioRequest';
 
 function samePassword(group: AbstractControl) {
   const p = group.get('password')?.value;
@@ -25,19 +19,18 @@ function samePassword(group: AbstractControl) {
   styleUrl: './sign-up.css',
 })
 export class SignUp implements OnInit {
-  private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private fb      = inject(FormBuilder);
+  private auth    = inject(AuthService);
+  private router  = inject(Router);
+  private route   = inject(ActivatedRoute);
 
   step: 'form' | 'verify' | 'success' = 'form';
-  loading = false;
+  loading                 = false;
   errorMsg: string | null = null;
-  infoMsg: string | null = null;
+  infoMsg: string | null  = null;
+  preservedParams: any    = {};
 
-  preservedParams: any = {};
-
-  // ---------- FORM PRINCIPAL ----------
+  // #region FORM PRINCIPAL
   form: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(2)]],
     apellido: ['', [Validators.required, Validators.minLength(2)]],
@@ -58,8 +51,9 @@ export class SignUp implements OnInit {
       { validators: samePassword }
     ),
   });
+  // #endregion 
 
-  // ---------- FORM DEL CÓDIGO (6 dígitos, 6 inputs) ----------
+  // #region FORM DEL CÓDIGO (6 dígitos, 6 inputs)
   codeForm: FormGroup = this.fb.group({
     d1: ['', [Validators.required, Validators.pattern(/^\d$/)]],
     d2: ['', [Validators.required, Validators.pattern(/^\d$/)]],
@@ -84,7 +78,7 @@ export class SignUp implements OnInit {
       if (v) this.preservedParams[k] = v;
     });
 
-    // si viene ?code=XXXXXX desde el mail, lo metemos en el codeForm
+    // si viene ?code=XXXXXX desde el mail, se mete en el codeForm
     const codeParam = qp.get('code');
     if (codeParam) {
       this.step = 'verify';
@@ -92,11 +86,20 @@ export class SignUp implements OnInit {
     }
   }
 
-  get f() { return this.form.controls as any; }
-  get pass() { return (this.form.get('passGroup') as any).controls; }
-  get c() { return this.codeForm.controls as any; }
+  get f() {
+    return this.form.controls as any;
+  }
 
-  // ---------- Paso 1: envío del formulario ----------
+  get pass() {
+    return (this.form.get('passGroup') as any).controls;
+  }
+
+  get c() {
+    return this.codeForm.controls as any;
+  }
+  // #endregion 
+  
+  // #region Paso 1: envío del formulario
   submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -124,7 +127,7 @@ export class SignUp implements OnInit {
         this.loading = false;
         this.step = 'verify';
         this.infoMsg = 'Te enviamos un código de verificación a tu correo.';
-        this.codeForm.reset(); // limpiamos por las dudas
+        this.codeForm.reset(); // limpio por las dudas
       },
       error: (err) => {
         this.loading = false;
@@ -136,14 +139,14 @@ export class SignUp implements OnInit {
       },
     });
   }
-
-  // arma el código a partir del codeForm
+  
+  // Arma el código a partir del codeForm
   private getCodeFromForm(): string {
     const v = this.codeForm.value as any;
     return `${v.d1 ?? ''}${v.d2 ?? ''}${v.d3 ?? ''}${v.d4 ?? ''}${v.d5 ?? ''}${v.d6 ?? ''}`;
   }
 
-  // precarga desde ?code=XXXXXX
+  // Precarga desde ?code=XXXXXX
   private setCodeFromString(code: string): void {
     const clean = (code || '').replace(/\D/g, '').slice(0, 6);
     const arr = clean.split('');
@@ -156,8 +159,9 @@ export class SignUp implements OnInit {
       d6: arr[5] ?? '',
     }, { emitEvent: false });
   }
+  // #endregion
 
-  // ---------- Paso 2: verificar código ----------
+  // #region Paso 2: verificar código
   onVerify(): void {
     const code = this.getCodeFromForm();
 
@@ -205,4 +209,5 @@ export class SignUp implements OnInit {
   goToSignIn(): void {
     this.router.navigate(['/sign_in'], { queryParams: this.preservedParams });
   }
+  // #endregion
 }

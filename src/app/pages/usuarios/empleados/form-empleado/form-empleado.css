@@ -1,11 +1,7 @@
-/* ========================= */
-/* CREAR / EDITAR EMPLEADO   */
-/* ========================= */
-
 .form-creacion-empleado {
   padding: 40px 50px;
   max-width: 720px;
-  margin: 10px auto 40px;        /* respeta header fijo */
+  margin: 10px auto 40px;
   background: var(--color-surface);
   border-radius: 24px;
   border: 1px solid var(--color-border);
@@ -30,7 +26,7 @@
   display: block;
 }
 
-/* inputs / selects sobre el tema global */
+/* inputs/selects del tema */
 .form-creacion-empleado input,
 .form-creacion-empleado select {
   width: 100%;
@@ -150,7 +146,7 @@
   font-size: 1.6rem;
   line-height: 1;
   cursor: pointer;
-  color: #f1c36f;           /* tu color dorado */
+  color: #f1c36f;
   padding: 0.2rem 0.4rem;
   border-radius: 999px;
   transition: background 0.2s, transform 0.1s;

@@ -1,9 +1,8 @@
-// src/app/pages/usuario/perfil-usuario.ts
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import User from '../../../models/User';
-import { UserService } from '../../../services/user-service';
+import { Component, OnInit, inject }  from '@angular/core';
+import { CommonModule }               from '@angular/common';
+import { Router }                     from '@angular/router';
+import   User                         from '../../../models/User';
+import { UserService }                from '../../../services/user-service';
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -29,6 +28,4 @@ export class PerfilUsuario implements OnInit {
   editar(): void {
     this.router.navigate(['/editar_perfil']);
   }
-
-  
 }

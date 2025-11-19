@@ -30,11 +30,11 @@ header {
 .nav_list {
   transform: var(--transform-menu-show);
   position: fixed;
-  top: var(--header-h);                            /* antes 65px */
+  top: var(--header-h);                          
   left: 0;
-  height: calc(100vh - var(--header-h));          /* ocupa todo el alto bajo el header */
-  width: 260px;                                   /* ancho fijo razonable */
-  max-width: 80vw;                                /* pero no más del 80% de la pantalla */
+  height: calc(100vh - var(--header-h));        
+  width: 260px;                                 
+  max-width: 80vw;                            
   gap: 30px;
   display: flex;
   flex-direction: column;
@@ -130,7 +130,7 @@ a:hover {
 }
 
 .submenu.open {
-  max-height: 200px; /* ajusta según el tamaño de tus submenús */
+  max-height: 200px;
   opacity: 1;
 }
 
@@ -169,12 +169,10 @@ a:hover {
 
 /* Empuja las acciones a la derecha */
 .nav_actions{
-  margin-left: auto;          /* ← clave */
+  margin-left: auto;    
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  /* opcional si el menú lateral las tapa al abrirse: */
-  /* z-index: 1001; */
 }
 .user-menu {
   position: relative;
@@ -206,7 +204,7 @@ a:hover {
 /* Dropdown */
 .user-menu-dropdown {
   position: absolute;
-  top: 100%;          /* pegado al botón, SIN gap */
+  top: 100%;      
   right: 0;
   background-color: var(--color-h-f);
   border-radius: 8px;
@@ -219,11 +217,6 @@ a:hover {
   z-index: 1100;
 }
 
-/* Se abre si:
-   - Angular pone la clase .open (click)
-   - o el mouse está sobre el botón
-   - o el mouse está sobre el propio menú
-*/
 .user-menu-dropdown.open,
 .user-menu-btn:hover + .user-menu-dropdown,
 .user-menu-dropdown:hover {
@@ -276,25 +269,24 @@ a:hover {
 
 .nav_logo {
   display: block;
-  height: 48px;   /* o el alto que estés usando */
+  height: 48px; 
   cursor: pointer;
 }
-/* Overlay que ocupa toda la pantalla cuando el menú está abierto */
+
 .nav_overlay {
   position: fixed;
-  inset: 0; /* top/right/bottom/left: 0 */
+  inset: 0; 
   opacity: 0;
   pointer-events: none;
   background: transparent;
-  z-index: 900;          /* por debajo del menú (1000) */
+  z-index: 900;       
   transition: opacity 0.3s ease, background 0.3s ease;
 }
 
-/* Cuando el checkbox está marcado, activamos el overlay */
 .nav_container:has(.nav_input:checked) .nav_overlay {
   opacity: 1;
   pointer-events: auto;
-  background: rgba(0, 0, 0, 0.35);  /* si querés oscurecer el fondo */
+  background: rgba(0, 0, 0, 0.35);  
 }
 .theme-toggle {
   background: transparent;
@@ -312,10 +304,9 @@ a:hover {
 .theme-toggle:hover {
   background-color: var(--color-surface);
 }
-/* Ajustes específicos para mobile */
+
 @media (max-width: 768px) {
 
-  /* Sacar el "Bienvenido, X" en mobile */
   .user-greeting {
     display: none;
   }
@@ -324,32 +315,26 @@ a:hover {
     padding: 0 12px;
   }
 
-  /* Que el toggle no empuje tanto al resto */
   .nav_toggle {
-    margin-right: 12px;   /* antes 70px */
+    margin-right: 12px; 
   }
 
-  /* Reducir un poco el espacio reservado al logo
-     y centrarlo visualmente */
   .nav_figure {
-    width: 180px;         /* antes 270px */
+    width: 180px;      
     justify-content: center;
   }
 
   .nav_logo {
-    height: 40px;         /* tamaño cómodo en mobile */
+    height: 40px;    
   }
 
-  /* Menos espacio entre acciones (modo oscuro + usuario) */
   .nav_actions {
     gap: 6px;
   }
 }
-/* ============================= */
-/* ICONOS MENÚ SEGÚN EL TEMA    */
-/* ============================= */
+/* ICONOS MENÚ SEGÚN EL TEMA */
 
-/* Tema oscuro: (podés usar los defaults de arriba, esto es opcional) */
+/* Tema oscuro */
 :host-context([data-theme="dark"]) .nav_toggle {
   background-image: url("../../../assets/icons/menu-open.png");
 }
@@ -358,7 +343,7 @@ a:hover {
   background-image: url("../../../assets/icons/menu-close.png");
 }
 
-/* Tema claro: versión light */
+/* Tema claro */
 :host-context([data-theme="light"]) .nav_toggle {
   background-image: url("../../../assets/icons/menu-open-light.png");
 }

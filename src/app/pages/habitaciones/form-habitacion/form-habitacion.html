@@ -1,7 +1,7 @@
 <h1 class="gest-habs" routerLink="/gestion_habitaciones">Gestión de habitaciones</h1>
-    <h1>></h1>
-    <h1>Crear habitación</h1>
-    <main class="page-habitacion">
+<h1>></h1>
+<h1>Crear habitación</h1>
+<main class="page-habitacion">
   <section class="form-card">
     <h2>{{ editMode ? 'Editar habitación' : 'Nueva habitación' }}</h2>
 
@@ -17,17 +17,14 @@
           } @else {
             <input id="numeroHab" type="number" formControlName="numero" min="1" max="999" placeholder="Ej: 101" />
           }
-          <!-- MENSAJE DE VERIFICACION -->
           @if (form.get('numero')?.pending && isAdmin) {
             <small class="hint">Verificando disponibilidad...</small>
           }
 
-          <!-- MENSAJE EN CASO DE VALIDO -->
           @if (form.get('numero')?.valid && (form.get('numero')?.touched || form.get('numero')?.dirty) && !form.get('numero')?.pending && isAdmin) {
             <small class="success">✓ Número disponible</small>
           }
 
-          <!-- MENSAJES EN CASO DE ERROR -->
           @if (form.get('numero')?.touched && form.get('numero')?.invalid && !form.get('numero')?.pending) {
             <div class="errors-container">
               @if (form.get('numero')?.hasError('required')) {
@@ -54,13 +51,9 @@
           } @else {
             <input id="pisoHab" type="number" formControlName="piso" min="1" max="4" placeholder="1-4" />
           }
-
-          <!-- MENSAJE EN CASO DE VALIDO -->
           @if (form.get('piso')?.valid && (form.get('piso')?.dirty || form.get('piso')?.touched) && isAdmin) {
             <small class="success">✓ Piso válido</small>
           }
-
-          <!-- MENSAJES EN CASO DE ERROR -->
           @if (form.get('piso')?.touched && form.get('piso')?.invalid) {
             <div class="errors-container">
               @if (form.get('piso')?.hasError('required')) {
@@ -84,13 +77,9 @@
           } @else {
             <input id="capacHab" type="number" formControlName="capacidad" min="1" max="5" placeholder="1-5" />
           }
-
-          <!-- MENSAJE EN CASO DE VALIDO -->
           @if (form.get('capacidad')?.valid && (form.get('capacidad')?.dirty || form.get('capacidad')?.touched) && isAdmin) {
             <small class="success">✓ Capacidad válida</small>
           }
-
-          <!-- MENSAJES EN CASO DE ERROR -->
           @if (form.get('capacidad')?.invalid && (form.get('capacidad')?.dirty || form.get('capacidad')?.touched)) {
             <div class="errors-container">
               @if (form.get('capacidad')?.hasError('required')) {
@@ -114,13 +103,9 @@
           } @else {
             <input id="camasHab" type="number" formControlName="cantCamas" min="1" max="4" placeholder="1-4" />
           }
-
-          <!-- MENSAJE EN CASO DE VALIDO -->
           @if (form.get('cantCamas')?.valid && (form.get('cantCamas')?.dirty || form.get('cantCamas')?.touched) && isAdmin) {
             <small class="success">✓ Cantidad de camas válida</small>
           }
-
-          <!-- MENSAJES EN CASO DE ERROR -->
           @if (form.get('cantCamas')?.invalid && (form.get('cantCamas')?.dirty || form.get('cantCamas')?.touched)) {
             <div class="errors-container">
               @if (form.get('cantCamas')?.hasError('required')) {
@@ -144,13 +129,9 @@
           } @else {
             <input id="precioHab" type="number" formControlName="precioNoche" min="0.01" max="999999999.99" step="0.01" placeholder="$" />
           }
-
-          <!-- MENSAJE EN CASO DE VALIDO -->
           @if (form.get('precioNoche')?.valid && (form.get('precioNoche')?.dirty || form.get('precioNoche')?.touched) && isAdmin) {
             <small class="success">✓ Precio válido</small>
           }
-
-          <!-- MENSAJES EN CASO DE ERROR -->
           @if (form.get('precioNoche')?.invalid && (form.get('precioNoche')?.dirty || form.get('precioNoche')?.touched)) {
             <div class="errors-container">
               @if (form.get('precioNoche')?.hasError('required')) {
@@ -171,7 +152,6 @@
           <label>Estado</label>
           <select formControlName="estado">
 
-            <!-- MANEJO DE ESTADO -->
             @for (estado of estadosPermitidos; track estado) {
               <option [value]="estado">{{ estado | titlecase }}</option>
             }
@@ -223,7 +203,6 @@
             <label class="non_comment">Sin comentario</label>
           }
         }
-        <!-- MENSAJES EN CASO DE ERROR -->
         @if (form.get('comentario')?.hasError('maxlength') && (form.get('comentario')?.dirty || form.get('comentario')?.touched)) {
           <small class="error">
             El comentario es muy largo (máximo 255 caracteres). 

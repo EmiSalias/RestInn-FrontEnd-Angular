@@ -1,8 +1,7 @@
-// src/app/components/header/header.ts
-import { Component, ElementRef, ViewChild, HostListener, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Component, ElementRef, ViewChild, HostListener, OnInit } from '@angular/core'; 
+import { Router, RouterLink }                                     from '@angular/router';
+import { CommonModule }                                           from '@angular/common';
+import { FontAwesomeModule }                                      from '@fortawesome/angular-fontawesome';
 import {
   faChevronDown,
   faUser,
@@ -14,11 +13,11 @@ import {
   faBroom,
   faKey,
   faConciergeBell
-} from '@fortawesome/free-solid-svg-icons';
-import { AuthService } from '../../services/auth-service';
-import { Observable, map, shareReplay, switchMap, of } from 'rxjs';
-import { MENU, MenuItem } from '../menu/menu.config';
-import { UserService } from '../../services/user-service';
+}                                                                 from '@fortawesome/free-solid-svg-icons';
+import { AuthService }                                            from '../../services/auth-service';
+import { Observable, map, shareReplay, switchMap, of }            from 'rxjs';
+import { MENU, MenuItem }                                         from '../menu/menu.config';
+import { UserService }                                            from '../../services/user-service';
 
 @Component({
   selector: 'app-header',
@@ -37,7 +36,6 @@ export class Header implements OnInit {
   private readonly iconClient = faUserTie;
   private readonly iconEmployee = faUserGear;
 
-  // 🔔 Recepcionista, 🔑 Conserje, 🧹 Limpieza
   private readonly iconReceptionist = faConciergeBell;
   private readonly iconConserje = faKey;
   private readonly iconLimpieza = faBroom;
@@ -48,7 +46,7 @@ export class Header implements OnInit {
   openLabel: string | null = null;
   userMenuOpen = false;
 
-  isDarkTheme = true; // estado actual de tema
+  isDarkTheme = true;
 
   menu$!: Observable<MenuItem[]>;
   isLoggedIn$!: Observable<boolean>;
@@ -88,7 +86,6 @@ export class Header implements OnInit {
     );
   }
 
-  // === THEME ===
   ngOnInit(): void {
     const stored = localStorage.getItem('theme');
     const prefersDark =
@@ -114,7 +111,6 @@ export class Header implements OnInit {
     localStorage.setItem('theme', theme);
   }
 
-  // ==== MENÚ LATERAL ====
   toggle(label: string) {
     this.openLabel = this.openLabel === label ? null : label;
   }
@@ -171,7 +167,7 @@ export class Header implements OnInit {
     if (r === 'CONSERJE') return this.iconConserje;
     if (r === 'LIMPIEZA') return this.iconLimpieza;
 
-    // EMPLEADO genérico (por si en algún lado usan "EMPLEADO")
+    // EMPLEADO genérico
     if (r === 'EMPLEADO') return this.iconEmployee;
 
     // CLIENTE
@@ -182,7 +178,6 @@ export class Header implements OnInit {
   }
 }
 
-// helpers iguales que ya tenías
 function canSee(item: MenuItem, roles: string[], isLogged: boolean) {
   if (item.allowedRoles === 'PUBLIC') return true;
   if (!item.allowedRoles) return false;

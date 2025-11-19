@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component }    from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
 })
 export class Nosotros {
   
-  // Nombres de los integrantes
   equipo = [
     { 
       nombre: 'Emiliano Salias', 

@@ -1,33 +1,27 @@
 <div class="home-wrapper">
 
-  <!-- HOME ESPECIAL LIMPIEZA: listado de habitaciones -->
   @if (isCleaningPanel) {
 
     <app-listado-habitaciones></app-listado-habitaciones>
 
   } @else {
 
-    <!-- HERO TIPO ANGULAR SOLO PARA PÚBLICO/CLIENTE (NO STAFF) -->
     @if (!isStaffPanel) {
       <section class="restinn-hero" #restinnHero>
 
-        <!-- SHAPES DE FONDO -->
         <div class="restinn-hero__shapes">
           <div class="restinn-hero__shape restinn-hero__shape--left"></div>
           <div class="restinn-hero__shape restinn-hero__shape--right"></div>
         </div>
 
-        <!-- CONTENIDO CENTRAL -->
         <div class="restinn-hero__content">
           <div class="restinn-hero__logo">
-            <!-- Logo para tema oscuro -->
             <img
               class="hero-logo hero-logo--dark"
               src="assets/logos/logo-header.png"
               alt="RestInn · Gestión Hotelera"
             />
 
-            <!-- Logo para tema claro -->
             <img
               class="hero-logo hero-logo--light"
               src="assets/logos/logo-header-claro.png"
@@ -46,13 +40,10 @@
       </section>
     }
 
-    <!-- VISTA PÚBLICO / CLIENTE   -->
     @if (!isStaffPanel) {
 
-      <!-- HERO / BIENVENIDA -->
       <section class="hero">
 
-        <!-- BLOQUES VERTICALES QUE APARECEN AL SCROLLEAR -->
         <div class="hero-scroll">
           <div
             class="hero-step"
@@ -65,13 +56,11 @@
             tabindex="0"
           >
 
-            <!-- imagen: alterna izquierda/derecha según el índice -->
             <div
               class="hero-step__image"
               [style.backgroundImage]="'url(' + section.imageUrl + ')'"
             ></div>
 
-            <!-- contenido textual (lado opuesto a la imagen) -->
             <div class="hero-step__content">
               <span class="hero-step__tag">{{ section.tag }}</span>
               <h3 class="hero-step__title">{{ section.title }}</h3>
@@ -80,7 +69,6 @@
                 {{ section.description }}
               </p>
 
-              <!-- tip typewriter SOLO para el bloque activo -->
               <p class="hero-step__tip" *ngIf="currentHeroKey === section.key">
                 {{ typedHeroText }}
               </p>
@@ -92,7 +80,6 @@
 
     } @else {
 
-      <!-- VISTA PANEL INTERNO (ADMIN / RECEPCIONISTA) -->
       <section class="admin-home">
 
         <header class="hero-header admin-header">
@@ -104,7 +91,6 @@
           </p>
         </header>
 
-        <!-- ICONOS "SUELTOS" -->
         <div class="admin-actions">
 
           <!-- Gestión de usuarios -->
@@ -207,7 +193,6 @@
 
         </div>
 
-        <!-- TIP dinámico solo para panel interno -->
         <div class="hero-dynamic">
           <span class="hero-dynamic__prefix">
             {{ currentHeroKey === 'default' ? 'Tip' : (currentHeroKey | titlecase) }}
