@@ -27,14 +27,22 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
   habitacionesFiltradas: Habitacion[] = [];
 
   filtrosVisibles = false;
-  rangeError = false;
+  filtrosValidos = true;
   loading = false;
   errorMsg = '';
+
+  // Variables de error por campo
+  numeroError: string | null = null;
+  pisoError: string | null = null;
+  capacidadError: string | null = null;
+  precioError: string | null = null;
   
   // Flags de permisos
   isCliente = false;
   isAdmin = false;
   isRecepcionista = false;
+  isConserje = false;
+  isLimpieza = false;
   puedeGestionarHabitaciones = false; // Admin + Empleados
 
   tiposHabitacion = Object.values(H_Tipo);
@@ -63,6 +71,8 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
       this.isCliente = logged && roles.includes('CLIENTE');
       this.isAdmin = logged && roles.includes('ADMINISTRADOR');
       this.isRecepcionista = logged && roles.includes('RECEPCIONISTA');
+      this.isConserje = logged && roles.includes('CONSERJE');
+      this.isLimpieza = logged && roles.includes('LIMPIEZA');
       
       this.puedeGestionarHabitaciones = logged && roles.some(r =>
         ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA'].includes(r)
@@ -110,7 +120,10 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
       tipo: ''
     };
     this.errorMsg = '';
-    this.rangeError = false;
+    this.numeroError = null;
+    this.pisoError = null;
+    this.capacidadError = null;
+    this.precioError = null;
     this.habitacionesFiltradas = [...this.habitaciones];
     this.orden = 'Numero asc';
     this.ordenarHabitaciones();
@@ -125,14 +138,23 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
     this.errorMsg = '';
 
     // Solo ADMIN llama a 'listarTodasIncluidasInactivas'.
-    // Recepcionistas y demás usan 'getHabitaciones' (solo activas).
+    // Otros: Trae solo ACTIVAS (el backend filtra el borrado lógico)
     const endpoint$ = this.isAdmin
       ? this.habService.listarTodasIncluidasInactivas() 
       : this.habService.getHabitaciones();
 
     endpoint$.subscribe({
       next: (data) => {
-        this.habitaciones = data;
+        if (!this.puedeGestionarHabitaciones) {
+           // CLIENTE o PÚBLICO:
+           // NO pueden ver: MANTENIMIENTO (ni inactivas, que ya las filtró el backend)
+           this.habitaciones = data.filter(h => 
+             ['DISPONIBLE', 'OCUPADA', 'LIMPIEZA'].includes(h.estado)
+           );
+        } else {
+           // ADMIN y EMPLEADOS: Ven todo lo que trajo el endpoint
+           this.habitaciones = data;
+        }
         this.aplicarFiltros();
         this.loading = false;
       },
@@ -148,55 +170,104 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
     });
   }
 
+  // Valida y actualiza los mensajes de error
+  validarFiltros(): boolean {
+    // Reiniciar todos los errores individuales
+    this.numeroError = null;
+    this.pisoError = null;
+    this.capacidadError = null;
+    this.precioError = null;
+
+    const f = this.filtros;
+    let esValido = true;
+
+    // Validar Número
+    if (f.numero !== null) {
+      if (f.numero < 1) {
+        this.numeroError = 'Mínimo 1.';
+        esValido = false;
+      } else if (f.numero > 9999) {
+        this.numeroError = 'Máximo 9999.';
+        esValido = false;
+      }
+    }
+
+    // Validar Piso
+    if (f.piso !== null) {
+      if (f.piso < 1) {
+        this.pisoError = 'Mínimo 1.';
+        esValido = false;
+      } else if (f.piso > 4) {
+        this.pisoError = 'Máximo 4.';
+        esValido = false;
+      }
+    }
+
+    // Validar Capacidad
+    if (f.capacidadMin !== null && (f.capacidadMin < 1 || f.capacidadMin > 5)) {
+      this.capacidadError = 'Debe ser entre 1 y 5.';
+      esValido = false;
+    } 
+    else if (f.capacidadMax !== null && (f.capacidadMax < 1 || f.capacidadMax > 5)) {
+      this.capacidadError = 'Debe ser entre 1 y 5.';
+      esValido = false;
+    }
+    else if (f.capacidadMin !== null && f.capacidadMax !== null && f.capacidadMin > f.capacidadMax) {
+      this.capacidadError = 'Mínimo mayor que máximo.';
+      esValido = false;
+    }
+
+    // Validar Precios
+    const minPrice = 0.01;
+    const maxPrice = 999999999.99;
+
+    if (f.precioMin !== null && (f.precioMin < minPrice || f.precioMin > maxPrice)) {
+      this.precioError = 'Mínimo inválido (0.01 - 999M).';
+      esValido = false;
+    } 
+    else if (f.precioMax !== null && (f.precioMax < minPrice || f.precioMax > maxPrice)) {
+      this.precioError = 'Máximo inválido (0.01 - 999M).';
+      esValido = false;
+    }
+    else if (f.precioMin !== null && f.precioMax !== null && f.precioMin > f.precioMax) {
+      this.precioError = 'Mínimo mayor que máximo.';
+      esValido = false;
+    }
+
+    this.filtrosValidos = esValido;
+    
+    return esValido;
+  }
+
   aplicarFiltros() {
     this.loading = true;
     this.errorMsg = '';
-    this.rangeError = false;
 
-    // 1. Filtro de Fechas (Backend)
-    if (this.filtros.fechaDesde && this.filtros.fechaHasta) {
-      if (new Date(this.filtros.fechaHasta) < new Date(this.filtros.fechaDesde)) {
-        this.rangeError = true;
-        this.loading = false;
-        return;
-      }
-
-      this.habService.getHabitacionesDisponibles(this.filtros.fechaDesde, this.filtros.fechaHasta).subscribe({
-        next: (data) => {
-          this.habitacionesFiltradas = data;
-          this.ordenarHabitaciones();
-          this.loading = false;
-          Swal.fire('Filtro por Fechas', 'Mostrando habitaciones disponibles. Se ignoraron los otros filtros.', 'info');
-        },
-        error: (err) => {
-          this.errorMsg = err.message || 'Error al filtrar por fechas. ¿Iniciaste sesión?';
-          this.loading = false;
-        }
-      });
-      return;
+    // Llamamos a la validación. Si falla, cortamos aquí.
+    if (!this.validarFiltros()) {
+      this.loading = false;
+      return; 
     }
 
-    // 2. Filtros Locales (Client-side)
+    // Si NO hay fechas, filtramos en memoria lo que ya tenemos
     const f = this.filtros;
+    
     this.habitacionesFiltradas = this.habitaciones.filter(h => {
-
       // Filtro Activo/Inactivo
       if (f.filtroActivo === 'activas' && !h.activo) return false;
       if (f.filtroActivo === 'inactivas' && h.activo) return false;
       
-      // Filtros de Atributos
+      // Atributos exactos
       if (f.estado && h.estado !== f.estado) return false;
-      
+      if (f.numero != null && h.numero !== f.numero) return false;
+      if (f.piso != null && h.piso !== f.piso) return false;
+      if (f.tipo && h.tipo !== f.tipo) return false;
+
       // Rangos numéricos
       if (f.capacidadMin !== null && h.capacidad < f.capacidadMin) return false;
       if (f.capacidadMax !== null && h.capacidad > f.capacidadMax) return false;
       if (f.precioMin !== null && h.precioNoche < f.precioMin) return false;
       if (f.precioMax !== null && h.precioNoche > f.precioMax) return false;
-      
-      // Filtros exactos
-      if (f.numero != null && h.numero !== f.numero) return false;
-      if (f.piso != null && h.piso !== f.piso) return false;
-      if (f.tipo && h.tipo !== f.tipo) return false;
       
       return true;
     });
