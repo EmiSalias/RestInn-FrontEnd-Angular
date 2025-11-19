@@ -129,6 +129,38 @@ p{
   color: var(--color-text);
 }
 
+.habitacion-card__badge {
+  display: inline-block; 
+  position: static; 
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  margin-bottom: 1rem;
+  align-self: flex-start;
+}
+
+/* --- COLORES DE ESTADO --- */
+/* Disponible: Verde */
+.habitacion-card__badge.disponible {
+  background-color: var(--color-success); 
+}
+
+/* Ocupada - Mantenimiento: Rojo */
+.habitacion-card__badge.ocupada,
+.habitacion-card__badge.mantenimiento {
+  background-color: var(--color-error); 
+}
+
+/* Limpieza: Amarillo */
+.habitacion-card__badge.limpieza {
+  background-color: var(--color-warning);
+}
+
 /* 1. Encabezado (Título + Piso) */
 .card-header {
   border-bottom: 1px solid var(--color-border);
