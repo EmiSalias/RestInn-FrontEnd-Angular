@@ -1,14 +1,16 @@
+
+  <h1 id="first_h1_empleados" class="gest-empleados" routerLink="/gestion_empleados">Gestión de empleados</h1>
+  <h1>></h1>
+  <h1 class="gest-empleados" routerLink="/listado_empleados">Listado de clientes</h1>
+  <h1>></h1>
+  @if (isEditing) {
+    <h1>Editar Empleado</h1>
+  } @else {
+    <h1>Crear nuevo empleado</h1>
+  }
+
 <section class="form-creacion-empleado">
-  <button type="button" class="back-arrow" (click)="goBack()">
-    ←
-  </button>
-
-  <div class="form-header">
-    <h1>{{ isEditing ? 'Editar empleado' : 'Crear nuevo empleado' }}</h1>
-  </div>
-
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
-
     @if (errorMsg) {
       <div class="error">{{ errorMsg }}</div>
     }
@@ -76,7 +78,6 @@
       @if (isEditing) {
         <button
           type="button"
-          class="btn-reset-password"
           (click)="resetPassword()">
           Restablecer contraseña (admin)
         </button>
@@ -91,17 +92,11 @@
 
     <!-- Botones activar / desactivar -->
     @if (form.value.activo) {
-      <button
-        type="button"
-        (click)="markAsInactive()"
-        class="btn btn-danger">
+      <button type="button" (click)="markAsInactive()">
         Marcar como Inactivo
       </button>
     } @else {
-      <button
-        type="button"
-        (click)="markAsActive()"
-        class="btn btn-success">
+      <button type="button" (click)="markAsActive()" class="btn btn-success">
         Marcar como Activo
       </button>
     }
