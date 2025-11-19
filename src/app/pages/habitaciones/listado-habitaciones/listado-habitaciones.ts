@@ -8,6 +8,7 @@ import { AuthService }                          from '../../../services/auth-ser
 import { Subscription }                         from 'rxjs';
 import   Swal                                   from 'sweetalert2';
 import { H_Tipo }                               from '../../../models/enums/H_Tipo';
+import { EmpleadoService } from '../../../services/empleado-service';
 
 @Component({
   selector: 'app-listado-habitaciones',
@@ -18,6 +19,7 @@ import { H_Tipo }                               from '../../../models/enums/H_Ti
 })
 export class ListadoHabitaciones implements OnInit, OnDestroy {
   private habService = inject(HabitacionService);
+  private empleadoService = inject(EmpleadoService);
   private router = inject(Router);
   private auth = inject(AuthService);
 
@@ -368,5 +370,60 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
 
   detailHabitacion(hab: Habitacion) {
     this.router.navigate(['/habitacion', hab.id]);
+  }
+
+
+  isToggleChecked(hab: Habitacion): boolean {
+    return hab.estado !== 'DISPONIBLE';
+  }
+
+  isToggleDisabled(hab: Habitacion): boolean {
+    if (this.isLimpieza) {
+      return hab.estado === 'OCUPADA' || hab.estado === 'MANTENIMIENTO';
+    }
+    if (this.isConserje) {
+      return hab.estado === 'OCUPADA' || hab.estado === 'LIMPIEZA';
+    }
+    return false;
+  }
+
+  onToggleChange(hab: Habitacion, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    if (checked) {
+      if (this.isLimpieza) {
+        this.empleadoService.cambiarEstadoLimpieza(hab.id).subscribe({
+          next: (res) => { hab.estado = res.estado; },
+          error: (err) => { Swal.fire('Error', err.message || 'No se pudo cambiar a LIMPIEZA.', 'error'); }
+        });
+      } else if (this.isConserje) {
+        this.empleadoService.cambiarEstadoMantenimiento(hab.id).subscribe({
+          next: (res) => { hab.estado = res.estado; },
+          error: (err) => { Swal.fire('Error', err.message || 'No se pudo cambiar a MANTENIMIENTO.', 'error'); }
+        });
+      }
+    } else {
+      if (this.isLimpieza) {
+        this.empleadoService.restaurarEstado(hab.id).subscribe({
+          next: (res) => {
+            hab.estado = res.estado;
+            Swal.fire('Estado actualizado', 'La habitación volvió a su estado anterior.', 'success');
+          },
+          error: (err) => {
+            Swal.fire('Error', err.message || 'No se pudo restaurar el estado.', 'error');
+          }
+        });
+      } else if (this.isConserje) {
+        this.empleadoService.ponerDisponible(hab.id).subscribe({
+          next: (res) => {
+            hab.estado = res.estado;
+            Swal.fire('Estado actualizado', 'La habitación ahora está DISPONIBLE.', 'success');
+          },
+          error: (err) => {
+            Swal.fire('Error', err.message || 'No se pudo poner en DISPONIBLE.', 'error');
+          }
+        });
+      }
+    }
   }
 }
