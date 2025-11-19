@@ -393,12 +393,17 @@ export class ListadoHabitaciones implements OnInit, OnDestroy {
     if (checked) {
       if (this.isLimpieza) {
         this.empleadoService.cambiarEstadoLimpieza(hab.id).subscribe({
-          next: (res) => { hab.estado = res.estado; },
-          error: (err) => { Swal.fire('Error', err.message || 'No se pudo cambiar a LIMPIEZA.', 'error'); }
+          next: (res) => {
+            hab.estado = res.estado;
+            Swal.fire('Estado actualizado','La habitación ahora está en LIMPIEZA.', 'success');},
+          error: (err) => {
+            Swal.fire('Error', err.message || 'No se pudo cambiar a LIMPIEZA.', 'error'); }
         });
       } else if (this.isConserje) {
         this.empleadoService.cambiarEstadoMantenimiento(hab.id).subscribe({
-          next: (res) => { hab.estado = res.estado; },
+          next: (res) => {
+            hab.estado = res.estado;
+            Swal.fire('Estado actualizado','La habitación ahora está en MANTENIMIENTO.', 'success');},
           error: (err) => { Swal.fire('Error', err.message || 'No se pudo cambiar a MANTENIMIENTO.', 'error'); }
         });
       }

@@ -59,11 +59,18 @@ export class FormHabitacion implements OnInit, OnDestroy {
       return todos.filter(e => e !== 'OCUPADA');
     }
 
-    if (this.userRole === 'ADMINISTRADOR' || this.userRole === 'RECEPCIONISTA') {
+    if (this.userRole === 'ADMINISTRADOR') {
       if (['DISPONIBLE', 'MANTENIMIENTO', 'LIMPIEZA'].includes(estadoActual)) {
         return ['DISPONIBLE', 'MANTENIMIENTO', 'LIMPIEZA'];
       }
       if (estadoActual === 'OCUPADA') return ['OCUPADA'];
+    }
+
+    if (this.userRole === 'RECEPCIONISTA') {
+      if (estadoActual === 'OCUPADA') return ['OCUPADA'];
+      if (estadoActual === 'DISPONIBLE') return ['DISPONIBLE', 'MANTENIMIENTO','LIMPIEZA'];
+      if (estadoActual === 'MANTENIMIENTO') return ['MANTENIMIENTO', 'DISPONIBLE'];
+      if (estadoActual === 'LIMPIEZA') return ['LIMPIEZA', 'DISPONIBLE'];
     }
 
     if (this.userRole === 'CONSERJE') {
@@ -131,54 +138,105 @@ export class FormHabitacion implements OnInit, OnDestroy {
     this.authSub?.unsubscribe();
   }
 
+  /**
+   * Se ejecuta cuando el usuario cambia el valor del desplegable "Estado".
+   * Maneja la lógica para actualizar el estado de la habitación en el backend,
+   * diferenciando entre Administradores (actualización completa) y Empleados (transiciones de estado).
+   */
   onEstadoChange(event: Event) {
+    // 1. Obtener el valor nuevo que seleccionó el usuario en el HTML
     const nuevoEstado = (event.target as HTMLSelectElement).value;
 
+    // 2. Obtener el ID de la habitación actual para saber qué estamos modificando
     const id = this.form.get('id')?.value;
-    const estadoActual = this.habitacionOriginal?.estado || this.form.get('estado')?.value;
 
+    // 3. Guardar el estado ANTERIOR (el que tenía antes de cambiar).
+    // Esto es crucial: si la petición al servidor falla, necesitamos este valor
+    // para "revertir" el select y que no quede visualmente en un estado incorrecto.
+    const estadoActual = this.habitacionOriginal?.estado;
+
+    // 4. Validaciones básicas:
+    // - Si no hay ID, es una creación nueva, no un cambio de estado en vivo.
+    // - Si el usuario eligió el mismo estado que ya tenía, no hacemos nada.
     if (!id || nuevoEstado === estadoActual) return;
 
+    // ==============================================================================
+    // LÓGICA PARA ADMINISTRADOR
+    // ==============================================================================
+    // El Admin tiene permiso total. Usamos el servicio de 'update' general que
+    // actualiza toda la entidad, no solo el estado.
     if (this.userRole === 'ADMINISTRADOR') {
+      // Preparamos el objeto completo con los datos del formulario
       const habitacionActualizada: Habitacion = { ...this.form.value, id };
+      
       this.habService.updateHabitacion(habitacionActualizada).subscribe({
         next: (res) => {
+          // Éxito: Confirmamos el cambio visualmente y actualizamos la data original
           this.form.get('estado')?.setValue(res.estado);
           if (this.habitacionOriginal) this.habitacionOriginal.estado = res.estado;
           Swal.fire('Actualizado', `Estado cambiado a ${res.estado}`, 'success');
         },
         error: (err) => {
+          // Error: IMPORTANTE - Revertimos el select al valor original
+          this.form.get('estado')?.setValue(estadoActual);
           Swal.fire('Error', err.message || 'No se pudo actualizar el estado.', 'error');
         }
       });
-      return;
+      return; // Salimos, el Admin termina acá.
     }
 
-    const acciones: Record<string, (id: number) => Observable<Habitacion>> = {
-      'DISPONIBLE': this.empleadoService.ponerDisponible.bind(this.empleadoService),
-      'MANTENIMIENTO': this.empleadoService.cambiarEstadoMantenimiento.bind(this.empleadoService),
-      'LIMPIEZA': this.empleadoService.cambiarEstadoLimpieza.bind(this.empleadoService)
-    };
+    // ==============================================================================
+    // LÓGICA PARA EMPLEADOS (Recepcionista, etc.)
+    // ==============================================================================
+    // Los empleados no usan el 'update' genérico. Usan endpoints específicos
+    // que disparan reglas de negocio (ej. ponerDisponible, cambiarAMantenimiento).
+    
+    let accion: Observable<Habitacion> | null = null;
 
-    const accion = acciones[nuevoEstado];
+    // 5. Mapeamos la opción elegida por el usuario a la función del servicio correspondiente.
+    if (nuevoEstado === 'DISPONIBLE') {
+        accion = this.empleadoService.ponerDisponible(id);
+    } else if (nuevoEstado === 'MANTENIMIENTO') {
+        accion = this.empleadoService.cambiarEstadoMantenimiento(id);
+    } else if (nuevoEstado === 'LIMPIEZA') {
+        accion = this.empleadoService.cambiarEstadoLimpieza(id);
+    }
+
+    // 6. Validación de seguridad interna:
+    // Si por alguna razón llegó un estado que no tiene acción asociada (ej. 'OCUPADA'),
+    // bloqueamos la operación y revertimos.
     if (!accion) {
-      Swal.fire('Error', 'Estado no reconocido.', 'error');
-      return;
+        Swal.fire('Error', 'Estado no permitido o acción desconocida.', 'error');
+        this.form.get('estado')?.setValue(estadoActual); // Revertir visualmente
+        return;
     }
 
-    accion(id).subscribe({
-      next: (res) => {
-        this.form.get('estado')?.setValue(res.estado);
-        if (this.habitacionOriginal) this.habitacionOriginal.estado = res.estado;
-        Swal.fire('Actualizado', `La habitación está en ${res.estado}.`, 'success');
-      },
-      error: (err) => {
-        Swal.fire('Error', err.message || `No se pudo cambiar a ${nuevoEstado}.`, 'error');
-      }
+    // 7. Ejecutamos la llamada al backend
+    this.loading = true; // Opcional: mostrar spinner
+    
+    accion.subscribe({
+        next: (res) => {
+            this.loading = false;
+            // ÉXITO: El backend confirmó el cambio.
+            // Actualizamos el control del formulario con el estado real que devolvió la API.
+            this.form.get('estado')?.setValue(res.estado);
+            
+            // Actualizamos nuestra referencia 'original' para que futuras comparaciones sean correctas.
+            if (this.habitacionOriginal) this.habitacionOriginal.estado = res.estado;
+            
+            Swal.fire('Actualizado', `Estado cambiado a ${res.estado}`, 'success');
+        },
+        error: (err) => {
+            this.loading = false;
+            // ERROR: El backend rechazó el cambio (ej. reglas de negocio, error de red).
+            // Revertimos el select al 'estadoActual' que guardamos al principio.
+            // Así el usuario ve que el cambio NO se aplicó.
+            this.form.get('estado')?.setValue(estadoActual); 
+            
+            Swal.fire('Error', err.message || 'No se pudo cambiar el estado.', 'error');
+        }
     });
   }
-
-
 
   cargarHabitacion(id: number) {
     this.loading = true;
@@ -375,12 +433,12 @@ export class FormHabitacion implements OnInit, OnDestroy {
       return;
     }
 
-    // Empleados (RECEPCIONISTA / LIMPIEZA / CONSERJE): solo cambio de estado
+    // RECEPCIONISTA: solo cambio de estado
     const acciones: Record<string, (id: number) => Observable<Habitacion>> = {
       'DISPONIBLE': this.empleadoService.ponerDisponible.bind(this.empleadoService),
       'MANTENIMIENTO': this.empleadoService.cambiarEstadoMantenimiento.bind(this.empleadoService),
       'LIMPIEZA': this.empleadoService.cambiarEstadoLimpieza.bind(this.empleadoService)
-    };
+    }
 
     const accion = acciones[nuevoEstado];
     if (!accion) {
