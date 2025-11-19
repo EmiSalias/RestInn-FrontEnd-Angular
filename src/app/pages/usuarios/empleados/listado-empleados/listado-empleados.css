@@ -1,5 +1,5 @@
 .empleados-page {
-  padding: 10px 40px 40px;        /* espacio por header fijo */
+  padding: 10px 40px 40px;
   color: var(--color-text);
 }
 
@@ -43,7 +43,7 @@ h1 {
 }
 
 .tabla-empleados tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.03);  /* leve zebra en ambos temas */
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .tabla-empleados tbody tr:hover {
@@ -64,14 +64,14 @@ h1 {
 
 /* ACTIVO: verde */
 .tabla-empleados .estado.activo {
-  color: #2e7d32; /* verde letra */
+  color: #2e7d32;
   background-color: rgba(76, 175, 80, 0.12);
   border-color: rgba(76, 175, 80, 0.7);
 }
 
 /* INACTIVO: rojo */
 .tabla-empleados .estado.inactivo {
-  color: #c62828; /* rojo letra */
+  color: #c62828;
   background-color: rgba(244, 67, 54, 0.12);
   border-color: rgba(244, 67, 54, 0.7);
 }

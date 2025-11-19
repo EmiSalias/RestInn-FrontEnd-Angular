@@ -1,22 +1,15 @@
-// src/app/pages/usuarios/empleados/check-in-out/check-in-out.ts
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import {
-  ReservasService,
-  ReservaResponse
-} from '../../../../services/reservas-service';
-import {
-  FacturasService,
-  FacturaReservaInfoDTO
-} from '../../../../services/facturas-service';
-import { AuthService } from '../../../../services/auth-service';
-import Swal from 'sweetalert2';
+import { Component, OnInit, inject }              from '@angular/core';
+import { CommonModule }                           from '@angular/common';
+import { Router, RouterLink }                     from '@angular/router';
+import { ReservaResponse, ReservasService }                        from '../../../../services/reservas-service';
+import { FacturasService, FacturaReservaInfoDTO } from '../../../../services/facturas-service';
+import { AuthService }                            from '../../../../services/auth-service';
+import   Swal                                     from 'sweetalert2';
 
 @Component({
   selector: 'app-check-in-out',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './check-in-out.html',
   styleUrls: ['./check-in-out.css']
 })
@@ -24,21 +17,20 @@ export class CheckInOut implements OnInit {
 
   private reservasSrv = inject(ReservasService);
   private facturasSrv = inject(FacturasService);
-  private auth = inject(AuthService);
-  private router = inject(Router);
+  private auth        = inject(AuthService);
+  private router      = inject(Router);
 
-  cargando = true;
-  errorMsg: string | null = null;
-  sinPermisos = false;
-
-  pendientesCheckIn: ReservaResponse[] = [];
+  cargando                              = true;
+  errorMsg: string | null               = null;
+  sinPermisos                           = false;
+  pendientesCheckIn: ReservaResponse[]  = [];
   pendientesCheckOut: ReservaResponse[] = [];
 
-  // ==========================
-  //  INIT
-  // ==========================
   ngOnInit(): void {
-    if (!this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) {
+    if (!this.auth.hasAnyRole([
+      'ADMINISTRADOR',
+      'RECEPCIONISTA'
+    ])) {
       this.sinPermisos = true;
       this.cargando = false;
       return;
@@ -47,9 +39,7 @@ export class CheckInOut implements OnInit {
     this.cargarTareas();
   }
 
-  // ==========================
-  //  CARGA Y ORDEN
-  // ==========================
+  // #region CARGA Y ORDEN
   private cargarTareas(): void {
     this.cargando = true;
     this.errorMsg = null;
@@ -67,7 +57,6 @@ export class CheckInOut implements OnInit {
           }
         });
 
-        // Ordenamos priorizando atrasadas
         this.pendientesCheckIn  = this.ordenarCheckIn(checkIn);
         this.pendientesCheckOut = this.ordenarCheckOut(checkOut);
 
@@ -93,14 +82,14 @@ export class CheckInOut implements OnInit {
     return this.normalizarFecha(hoy);
   }
 
-  // -------- PRIORIDAD CHECK-IN --------
+  // PRIORIDAD CHECK-IN
   private prioridadCheckIn(r: ReservaResponse): number {
     const hoy = this.hoyDia();
     const ingreso = this.normalizarFecha(r.fechaIngreso);
 
-    if (hoy > ingreso) return 0;   // atrasado
-    if (hoy === ingreso) return 1; // hoy
-    return 2;                      // futuro
+    if (hoy > ingreso) return 0;
+    if (hoy === ingreso) return 1;
+    return 2;
   }
 
   private ordenarCheckIn(arr: ReservaResponse[]): ReservaResponse[] {
@@ -115,14 +104,14 @@ export class CheckInOut implements OnInit {
     });
   }
 
-  // -------- PRIORIDAD CHECK-OUT --------
+  // PRIORIDAD CHECK-OUT
   private prioridadCheckOut(r: ReservaResponse): number {
     const hoy = this.hoyDia();
     const salida = this.normalizarFecha(r.fechaSalida);
 
-    if (hoy > salida) return 0;   // atrasado
-    if (hoy === salida) return 1; // hoy
-    return 2;                    // futuro (anticipado)
+    if (hoy > salida) return 0;
+    if (hoy === salida) return 1;
+    return 2;
   }
 
   private ordenarCheckOut(arr: ReservaResponse[]): ReservaResponse[] {
@@ -136,10 +125,9 @@ export class CheckInOut implements OnInit {
       return fa - fb;
     });
   }
+  // #endregion
 
-  // ==========================
-  //  HELPERS DE ESTADO / CSS
-  // ==========================
+  // #region HELPERS DE ESTADO / CSS
   get totalTareas(): number {
     return this.pendientesCheckIn.length + this.pendientesCheckOut.length;
   }
@@ -155,7 +143,7 @@ export class CheckInOut implements OnInit {
     }
   }
 
-  // --- check-in ---
+  // check-in
   esCheckInAtrasado(r: ReservaResponse): boolean {
     return this.prioridadCheckIn(r) === 0;
   }
@@ -171,7 +159,7 @@ export class CheckInOut implements OnInit {
     };
   }
 
-  // --- check-out ---
+  // check-out
   esCheckOutAtrasado(r: ReservaResponse): boolean {
     return this.prioridadCheckOut(r) === 0;
   }
@@ -186,19 +174,17 @@ export class CheckInOut implements OnInit {
       'row-warning': this.esCheckOutHoy(r)
     };
   }
+  // #endregion
 
-  // ==========================
-  //  NAVEGACIÓN
-  // ==========================
+  // #region NAVEGACIÓN
   irADetalleReserva(r: ReservaResponse): void {
     this.router.navigate(['/reserva', r.id], {
       queryParams: { returnTo: '/check_in_out' }
     });
   }
+  // #endregion
 
-  // ==========================
-  //  CHECK-IN
-  // ==========================
+  // #region CHECK-IN
   hacerCheckIn(r: ReservaResponse): void {
     Swal.fire({
       title: `Check-in reserva #${r.id}`,
@@ -230,10 +216,9 @@ export class CheckInOut implements OnInit {
       });
     });
   }
+  // #endregion
 
-  // ==========================
-  //  CHECK-OUT con advertencias
-  // ==========================
+  // #region CHECK-OUT con advertencias
   hacerCheckOut(r: ReservaResponse): void {
     const hoy = new Date();
     const salida = new Date(r.fechaSalida);
@@ -291,7 +276,6 @@ export class CheckInOut implements OnInit {
     ].join('');
 
     if (tieneFacturaImpaga && info) {
-      // Caso con factura impaga → Ver factura / Continuar
       Swal.fire({
         title: `Check-out reserva #${r.id}`,
         html,
@@ -348,5 +332,5 @@ export class CheckInOut implements OnInit {
       }
     });
   }
-
+  // #endregion
 }

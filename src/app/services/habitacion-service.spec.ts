@@ -1,5 +1,5 @@
-import { TestBed } from '@angular/core/testing';
-import { HabitacionService } from './habitacion-service';
+import { TestBed }            from '@angular/core/testing';
+import { HabitacionService }  from './habitacion-service';
 
 
 describe('HabitacionesServices', () => {

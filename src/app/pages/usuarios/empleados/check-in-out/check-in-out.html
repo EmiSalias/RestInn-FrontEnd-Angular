@@ -1,7 +1,9 @@
 <section class="check-page">
 
   <div class="header-row">
-    <h2>Check-in / Check-out</h2>
+    <h1 class="gest-reservas" routerLink="/gestion_reservas">Gestión de reservas</h1>
+    <h1>></h1>
+    <h1>Check-in / Check-out</h1>
     <span class="rol-badge">Panel de recepción</span>
   </div>
 
@@ -22,8 +24,6 @@
     }
 
     @if (!cargando && !errorMsg) {
-
-      <!-- RESUMEN SUPERIOR -->
       <section class="summary-cards">
         <article class="summary-card">
           <p class="summary-label">Tareas totales</p>
@@ -50,7 +50,6 @@
         </article>
       </section>
 
-      <!-- LAYOUT DOS COLUMNAS -->
       <div class="check-layout">
 
         <!-- PENDIENTES CHECK-IN -->

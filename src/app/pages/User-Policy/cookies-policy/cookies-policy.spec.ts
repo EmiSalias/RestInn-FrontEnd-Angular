@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CookiesPolicy } from './cookies-policy';
+import { ComponentFixture, TestBed }  from '@angular/core/testing';
+import { CookiesPolicy }              from './cookies-policy';
 
 describe('CookiesPolicy', () => {
   let component: CookiesPolicy;

@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { GestionReservas } from './gestion-reservas';
+import { ComponentFixture, TestBed }  from '@angular/core/testing';
+import { GestionReservas }            from './gestion-reservas';
 
 describe('GestionReservas', () => {
   let component: GestionReservas;

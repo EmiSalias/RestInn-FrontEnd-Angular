@@ -1,22 +1,23 @@
 import { Component, OnInit, inject, OnDestroy } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { HabitacionService } from '../../../services/habitacion-service';
-import { ImagenService } from '../../../services/imagen-service';
-import { ReservasService } from '../../../services/reservas-service';
-import Habitacion from '../../../models/Habitacion';
-import { CommonModule } from '@angular/common';
-import Swal from 'sweetalert2';
-import { AuthService } from '../../../services/auth-service';
-import { Subscription, Observable, of, timer } from 'rxjs';
-import { map, switchMap, catchError } from 'rxjs/operators';
-
-// Interface para manejar las imágenes de forma más limpia
-interface ImagenPreview {
-  id: number | null;
-  url: string;
-  file: File | null;
-}
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink }   from '@angular/router';
+import { HabitacionService }                    from '../../../services/habitacion-service';
+import { ImagenService }                        from '../../../services/imagen-service';
+import   Habitacion                             from '../../../models/Habitacion';
+import { CommonModule }                         from '@angular/common';
+import   Swal                                   from 'sweetalert2';
+import { AuthService }                          from '../../../services/auth-service';
+import { Subscription, Observable, of, timer }  from 'rxjs';
+import { map, switchMap, catchError }           from 'rxjs/operators';
+import ImagenPreview                            from '../../../models/ImagenPreview';
 
 @Component({
   selector: 'app-form-habitacion',
@@ -35,9 +36,8 @@ export class FormHabitacion implements OnInit, OnDestroy {
   
   imagenesPreview: ImagenPreview[] = [];
   imageError: string | null = null;
-  isDragging = false; // para poder cargar imagenes arrastrandolas
+  isDragging = false;
   
-  // Manejo de roles
   puedeGestionarHabitaciones = false;
   userRole: string = '';
   private authSub: Subscription | null = null;
@@ -57,8 +57,6 @@ export class FormHabitacion implements OnInit, OnDestroy {
     if (!this.editMode || !estadoActual) {
       return todos.filter(e => e !== 'OCUPADA');
     }
-
-    // --- REGLAS POR ROL ---
 
     // ADMINISTRADOR: Mantiene la lógica que tenías (la original tuya)
     if (this.userRole === 'ADMINISTRADOR' || this.userRole === 'RECEPCIONISTA') {
@@ -107,14 +105,14 @@ export class FormHabitacion implements OnInit, OnDestroy {
     this.authSub = this.auth.state$.subscribe(state => {
       const roles = state.roles || [];
       
-      // Detectamos el rol principal
+      // Detecta el rol principal
       if (roles.includes('ADMINISTRADOR')) this.userRole = 'ADMINISTRADOR';
       else if (roles.includes('RECEPCIONISTA')) this.userRole = 'RECEPCIONISTA';
       else if (roles.includes('CONSERJE')) this.userRole = 'CONSERJE';
       else if (roles.includes('LIMPIEZA')) this.userRole = 'LIMPIEZA';
       else this.userRole = 'CLIENTE';
 
-      // Validamos permiso general de acceso al componente
+      // Valida permiso general de acceso al componente
       this.puedeGestionarHabitaciones = ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA'].includes(this.userRole);
 
       // Si es CLIENTE, afuera
@@ -130,7 +128,7 @@ export class FormHabitacion implements OnInit, OnDestroy {
       this.habitacionId = Number(idParam);
       this.cargarHabitacion(this.habitacionId);
     } else {
-      // Si NO hay ID (estamos creando), validamos que sea ADMIN
+      // Si NO hay ID (esta creando), valida que sea ADMIN
       if (this.userRole !== 'ADMINISTRADOR') {
         Swal.fire('Acceso denegado', 'Solo los administradores pueden crear habitaciones.', 'error');
         this.router.navigate(['/listado_habitaciones']);
@@ -147,16 +145,16 @@ export class FormHabitacion implements OnInit, OnDestroy {
     
     // Solo el ADMIN usa el endpoint que ve inactivas
     const endpoint$ = (this.userRole === 'ADMINISTRADOR')
-      ? this.habService.getHabitacionAdmin(id) // Carga activas e inactivas
-      : this.habService.getHabitacion(id);     // Carga solo activas (dará error si está inactiva)
+      ? this.habService.getHabitacionAdmin(id)
+      : this.habService.getHabitacion(id);
 
     endpoint$.subscribe({
       next: (data) => {
-        this.habitacionOriginal = data; // Guardamos el estado original
+        this.habitacionOriginal = data;
         this.form.patchValue(data);
         this.loading = false;
 
-        // Convertimos las imágenes del backend a nuestro formato de preview
+        // Convierte las imágenes del backend a nuestro formato de preview
         if (data.imagenes?.length) {
           this.imagenesPreview = data.imagenes.map(img => ({
             id: img.id,
@@ -167,7 +165,6 @@ export class FormHabitacion implements OnInit, OnDestroy {
       },
       error: () => {
         this.loading = false;
-        // Mensaje específico si no es admin y la habitación está inactiva (404 o similar)
         Swal.fire('Error', 'No se pudo cargar la habitación (o no tienes permisos para verla si está inactiva).', 'error');
         this.router.navigate(['/listado_habitaciones']);
       }
@@ -250,7 +247,6 @@ export class FormHabitacion implements OnInit, OnDestroy {
 
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       const files = Array.from(event.dataTransfer.files);
-      // Filtramos solo imágenes por seguridad
       const imageFiles = files.filter(file => file.type.startsWith('image/'));
       
       if (imageFiles.length < files.length) {
@@ -279,9 +275,9 @@ export class FormHabitacion implements OnInit, OnDestroy {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.imagenesPreview.push({
-          id: null,          // Es nueva
-          url: e.target.result, // Base64 para mostrar en <img>
-          file: file         // Archivo real para enviar al backend
+          id: null,
+          url: e.target.result,
+          file: file
         });
       };
       reader.readAsDataURL(file);
@@ -292,7 +288,7 @@ export class FormHabitacion implements OnInit, OnDestroy {
   numeroUnicoValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       if (!control.value) {
-        return of(null); // Si está vacío, dejamos que Validators.required se encargue
+        return of(null);
       }
 
       return timer(500).pipe(
@@ -301,22 +297,16 @@ export class FormHabitacion implements OnInit, OnDestroy {
         }),
         map(habitaciones => {
           const numeroIngresado = Number(control.value);
-          
-          // Buscamos si alguna habitación ya tiene ese número
           const existe = habitaciones.find(h => h.numero === numeroIngresado);
-
           if (existe) {
-            // Si estamos editando y el número encontrado es el de ESTA habitación, es válido.
             if (this.editMode && this.habitacionId && existe.id === this.habitacionId) {
               return null;
             }
-            // Si encontramos otra habitación con el mismo número, devolvemos error
             return { numeroDuplicado: true };
           }
-          
-          return null; // No existe, es válido
+          return null;
         }),
-        catchError(() => of(null)) // Si falla la API, no bloqueamos la validación
+        catchError(() => of(null))
       );
     };
   }

@@ -108,7 +108,7 @@ footer {
   margin-top: 0.5rem;
   color: var(--color-text-secondary);
 }
-/* --- Footer: ajuste dropdown en móviles --- */
+
 @media (max-width: 768px) {
   .footer-links {
     flex-wrap: wrap;
@@ -120,14 +120,13 @@ footer {
   }
 
   .dropdown-content {
-    top: 115%;              /* debajo del título */
-    left: 50%;              /* centrado respecto a "Políticas" */
+    top: 115%;         
+    left: 50%;          
     transform: translate(-50%, 0);
     min-width: 200px;
-    margin-left: 0;         /* pisamos el -4px anterior */
+    margin-left: 0;     
   }
 
-  /* opcional: animación hacia abajo en lugar de derecha */
   .dropdown:hover .dropdown-content {
     animation: slideDown 0.2s ease-in-out;
   }

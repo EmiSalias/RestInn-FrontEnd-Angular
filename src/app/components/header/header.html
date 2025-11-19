@@ -2,18 +2,14 @@
   <nav class="nav">
     <div class="nav_container">
 
-      <!-- Checkbox de control del menú -->
       <input type="checkbox" id="menu_input" class="nav_input" #menuInput>
 
-      <!-- Botón hamburguesa / cruz -->
       <label class="nav_toggle" for="menu_input"></label>
 
-      <!-- Menú lateral -->
       <ul class="nav_list">
         @for (item of (menu$ | async); track item.label) {
         <li class="nav_item">
 
-          <!-- Item sin hijos -->
           @if (!item.children) {
           <a [routerLink]="item.link" class="nav_link" (click)="onMenuItemClick()">
             @if (item.icon) {
@@ -23,7 +19,6 @@
           </a>
           }
 
-          <!-- Item con hijos -->
           @if (item.children) {
           <button class="nav_link" (click)="toggle(item.label)" [attr.aria-expanded]="openLabel === item.label">
             @if (item.icon) {

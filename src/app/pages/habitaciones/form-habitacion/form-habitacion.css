@@ -285,14 +285,13 @@ button:disabled {
   font-size: 1.1rem;
 }
 
-/* Texto "o arrastrá..." */
 .upload-hint {
   font-size: 0.85rem;
   color: var(--color-text-muted);
   font-style: italic;
 }
 
-/* Responsive: en móviles, apilar verticalmente */
+/* Responsive */
 @media (max-width: 480px) {
   .upload-container {
     flex-direction: column;

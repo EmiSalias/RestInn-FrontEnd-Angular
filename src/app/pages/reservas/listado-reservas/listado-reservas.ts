@@ -1,13 +1,12 @@
-// src/app/pages/reservas/listado-reservas/listado-reservas.ts
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, inject }          from '@angular/core';
+import { CommonModule }                       from '@angular/common';
+import { FormsModule }                        from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
-import { ReservasService, ReservaResponse } from '../../../services/reservas-service';
-import Habitacion from '../../../models/Habitacion';
-import { HabitacionService } from '../../../services/habitacion-service';
-import { AuthService } from '../../../services/auth-service';
-import Swal from 'sweetalert2';
+import { ReservasService, ReservaResponse }   from '../../../services/reservas-service';
+import   Habitacion                           from '../../../models/Habitacion';
+import { HabitacionService }                  from '../../../services/habitacion-service';
+import { AuthService }                        from '../../../services/auth-service';
+import   Swal                                 from 'sweetalert2';
 
 @Component({
   selector: 'app-listado-reservas',
@@ -18,15 +17,14 @@ import Swal from 'sweetalert2';
 })
 export class ListadoReservas implements OnInit {
 
-  private habSrv = inject(HabitacionService);
+  private habSrv      = inject(HabitacionService);
   private reservasSrv = inject(ReservasService);
-  private auth = inject(AuthService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private auth        = inject(AuthService);
+  private route       = inject(ActivatedRoute);
+  private router      = inject(Router);
 
-  // modo de uso
   modoAdmin = false;
-  titulo = '';
+  titulo    = '';
   subtitulo = '';
 
   habitacionesMap = new Map<number, Habitacion>();
@@ -38,7 +36,7 @@ export class ListadoReservas implements OnInit {
   loading = false;
   errorMsg: string | null = null;
 
-  // Combo de clientes únicos (solo tiene sentido en admin)
+  // Combo de clientes únicos
   clientesUnicos: { id: number; nombre: string }[] = [];
 
   filtros = {
@@ -52,9 +50,7 @@ export class ListadoReservas implements OnInit {
 
   orden: 'ingresoDesc' | 'ingresoAsc' | 'estado' = 'ingresoDesc';
 
-  // =======================
-  //  HELPER ERRORES
-  // =======================
+  // #region HELPER ERRORES
   private getBackendErrorMessage(err: any, fallback: string): string {
     const httpErr = err as any;
 
@@ -80,17 +76,15 @@ export class ListadoReservas implements OnInit {
 
     return fallback;
   }
+  // #endregion
 
-  // =======================
-  //       INIT
-  // =======================
+  // #region INIT
   ngOnInit(): void {
     const modoRuta = this.route.snapshot.data['modo'] as 'admin' | 'cliente' | undefined;
 
     const esAdminRecep = this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA']);
     const esCliente = this.auth.hasAnyRole(['CLIENTE']);
 
-    // 1) Si la ruta fuerza modo admin/cliente, validamos rol
     if (modoRuta === 'admin') {
       if (!esAdminRecep) {
         return this.irUnauthorized();
@@ -108,7 +102,6 @@ export class ListadoReservas implements OnInit {
       this.subtitulo = 'Revisá el estado de tus reservas y consultá el detalle.';
       this.cargarMisReservas();
     } else {
-      // 2) Sin modo en la ruta: decidimos según rol
       if (esAdminRecep) {
         this.modoAdmin = true;
         this.titulo = 'Reservas';
@@ -120,25 +113,21 @@ export class ListadoReservas implements OnInit {
         this.subtitulo = 'Revisá el estado de tus reservas y consultá el detalle.';
         this.cargarMisReservas();
       } else {
-        // 3) No es admin, ni recepcionista, ni cliente => fuera
         return this.irUnauthorized();
       }
     }
-
-    // Solo llegamos acá si el usuario está autorizado
+    // Solo llega acá si el usuario está autorizado
     this.cargarHabitaciones();
   }
+  // #endregion
 
-  // =======================
-  //  REDIRECCIÓN UNAUTHORIZED
-  // =======================
+  // #region REDIRECCIÓN UNAUTHORIZED
   private irUnauthorized(): void {
     this.router.navigate(['/unauthorized']);
   }
+  // #endregion
 
-  // =======================
-  //    ADMIN / RECEPCIÓN
-  // =======================
+  // #region  ADMINISTRADOR/RECEPCIÓNISTA
   private cargarReservasAdmin(): void {
     this.loading = true;
     this.errorMsg = null;
@@ -157,10 +146,9 @@ export class ListadoReservas implements OnInit {
       }
     });
   }
+  // #endregion
 
-  // =======================
-  //        CLIENTE
-  // =======================
+  // #region CLIENTE
   private cargarMisReservas(): void {
     this.loading = true;
     this.errorMsg = null;
@@ -178,11 +166,9 @@ export class ListadoReservas implements OnInit {
       }
     });
   }
+  // #endregion
 
-  // =======================
-  //   FILTROS / ORDEN
-  // =======================
-
+  // #region FILTROS / ORDEN
   private armarClientesUnicos(): void {
     const mapa = new Map<number, string>();
 
@@ -310,11 +296,9 @@ export class ListadoReservas implements OnInit {
     if (!role) return '';
     return role.trim().toUpperCase().replace(/^ROLE_/, '');
   }
+  // #endregion
 
-  // =======================
-  //  CANCELACIÓN CLIENTE
-  // =======================
-
+  // #region CANCELACIÓN CLIENTE
   puedeCancelar(r: ReservaResponse): boolean {
     if (this.modoAdmin) return false;
     return r.estado === 'PENDIENTE';
@@ -363,11 +347,10 @@ export class ListadoReservas implements OnInit {
       });
     });
   }
+  // #endregion
 
-  // =======================
-  //  HABITACIONES / IMG
-  // =======================
 
+  // #region HABITACIONES / IMG
   private cargarHabitaciones(): void {
     this.habSrv.getHabitaciones().subscribe({
       next: (habs) => {
@@ -395,6 +378,7 @@ export class ListadoReservas implements OnInit {
 
     return `data:${primera.tipo};base64,${primera.datosBase64}`;
   }
+  // #endregion
 
   onImgError(ev: Event): void {
     (ev.target as HTMLImageElement).src = this.defaultRoomImg;

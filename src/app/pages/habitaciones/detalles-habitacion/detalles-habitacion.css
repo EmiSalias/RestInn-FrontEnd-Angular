@@ -40,10 +40,7 @@
   justify-content: center;
 }
 
-/* ========================================= */
-/* CARRUSEL                    */
-/* (Esta sección se mantiene igual a tu código) */
-/* ========================================= */
+/* CARRUSEL */
 .carousel-wrapper {
   position: relative;
   width: 100%;
@@ -118,15 +115,12 @@
 }
 
 
-/* ========================================= */
-/* DETALLES (SECCIÓN MEJORADA)        */
-/* ========================================= */
-
+/* DETALLES (SECCIÓN MEJORADA) */
 .habitacion-card__body {
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* Espacio vertical entre secciones */
+  gap: 1.5rem;
   color: var(--color-text);
 }
 
@@ -160,7 +154,7 @@
 /* 2. Grilla de Especificaciones (Capacidad y Camas) */
 .habitacion-card__specs {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Dos columnas */
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
 }
 
@@ -203,14 +197,14 @@
 .price-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-secondary); /* O usar un verde tipo #81c784 para resaltar éxito/dinero */
+  color: var(--color-secondary);
   letter-spacing: 0.02em;
 }
 
 /* 4. Bloque de Nota / Comentario */
 .detail-row {
   margin-top: 1rem;
-  background-color: rgba(241, 195, 111, 0.1); /* Un tono dorado muy suave */
+  background-color: rgba(241, 195, 111, 0.1);
   border-left: 4px solid var(--color-primary);
   padding: 1rem;
   border-radius: 0 8px 8px 0;
@@ -232,18 +226,14 @@
   color: var(--color-text-secondary);
 }
 
-
-/* ========================================= */
-/* BOTONES                    */
-/* ========================================= */
-
+/* BOTONES */
 .buttons {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
   padding: 1.5rem 2rem;
-  background-color: rgba(0, 0, 0, 0.2); /* Fondo ligeramente más oscuro */
+  background-color: rgba(0, 0, 0, 0.2);
   border-top: 1px solid var(--color-border);
 }
 

@@ -1,6 +1,5 @@
-/* Contenedor principal (igual que habitaciones-hub) */
 .user-hub {
-  padding: 10px 40px 40px;        /* espacio por el header fijo */
+  padding: 10px 40px 40px;
   color: var(--color-text);
 }
 
@@ -24,7 +23,7 @@
   gap: 24px;
 }
 
-/* Cada card es un “botón grande” */
+/* Cada card es un botón grande */
 .card {
   background-color: var(--color-surface);
   border-radius: 24px;
@@ -52,7 +51,7 @@
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-/* Icono grande ocupando casi toda la card */
+/* Icono grande que ocupa casi toda la card */
 .icon-wrapper {
   width: 140px;
   height: 140px;
@@ -72,11 +71,10 @@
   color: var(--color-bg);
 }
 
-/* Efecto hover directo sobre el icono */
 .card:hover .icon-wrapper,
 .card:focus-visible .icon-wrapper {
   transform: scale(1.05);
-  box-shadow: 0 0 22px rgba(241, 195, 111, 0.9); /* glow dorado */
+  box-shadow: 0 0 22px rgba(241, 195, 111, 0.9);
 }
 
 .card h2 {

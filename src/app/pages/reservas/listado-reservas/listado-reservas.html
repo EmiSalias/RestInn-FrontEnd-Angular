@@ -1,8 +1,14 @@
 <section class="admin-reservations-page">
-    <h1>{{ titulo }}</h1>
-    <p class="subtitle">
-        {{ subtitulo }}
-    </p>
+    @if (modoAdmin) {
+        <h1 class="gest-reservas" routerLink="/gestion_reservas">Gestión de reservas</h1>
+        <h1>></h1>
+        <h1>Historial de reservas</h1>
+    } @else {
+        <h1>{{ titulo }}</h1>
+        <p class="subtitle">
+            {{ subtitulo }}
+        </p>
+    }
 
     <!-- FILTROS -->
     <div class="filters-panel">

@@ -1,18 +1,12 @@
-// src/app/pages/reservas/detalles-reserva/detalles-reserva.ts
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ReservasService, ReservaResponse } from '../../../services/reservas-service';
-import { HabitacionService } from '../../../services/habitacion-service';
-import Habitacion from '../../../models/Habitacion';
-import { AuthService } from '../../../services/auth-service';
-import {
-  FacturasService,
-  FacturaResponseDTO,
-  FacturaReservaInfoDTO
-} from '../../../services/facturas-service';
-
-import Swal from 'sweetalert2';
+import { Component, OnInit, inject }                                  from '@angular/core';
+import { CommonModule }                                               from '@angular/common';
+import { ActivatedRoute, Router }                                     from '@angular/router';
+import { ReservasService, ReservaResponse }                           from '../../../services/reservas-service';
+import { HabitacionService }                                          from '../../../services/habitacion-service';
+import   Habitacion                                                   from '../../../models/Habitacion';
+import { AuthService }                                                from '../../../services/auth-service';
+import { FacturasService, FacturaResponseDTO, FacturaReservaInfoDTO } from '../../../services/facturas-service';
+import   Swal                                                         from 'sweetalert2';
 
 @Component({
   selector: 'app-detalle-reserva',
@@ -23,31 +17,27 @@ import Swal from 'sweetalert2';
 })
 export class DetallesReserva implements OnInit {
 
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private route       = inject(ActivatedRoute);
+  private router      = inject(Router);
   private reservasSrv = inject(ReservasService);
-  private habSrv = inject(HabitacionService);
-  private auth = inject(AuthService);
+  private habSrv      = inject(HabitacionService);
+  private auth        = inject(AuthService);
   private facturasSrv = inject(FacturasService);
 
   reserva?: ReservaResponse;
   habitacion?: Habitacion;
   facturaReserva?: FacturaResponseDTO | null;
-
   loading = false;
   errorMsg: string | null = null;
-
   defaultRoomImg = 'assets/images/habitaciones/placeholder-room.jpg';
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     const id = idParam ? Number(idParam) : NaN;
-
     if (!id) {
       this.errorMsg = 'Reserva no encontrada.';
       return;
     }
-
     this.cargarDetalle(id);
   }
 
@@ -67,7 +57,6 @@ export class DetallesReserva implements OnInit {
           });
         }
 
-        // cargar factura asociada a la reserva
         this.cargarFacturaReserva(res.id);
       },
       error: (err) => {
@@ -134,10 +123,7 @@ export class DetallesReserva implements OnInit {
     );
   }
 
-  // ======================
   //  VOLVER
-  // ======================
-
   private rutaListado(): string {
     if (this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) {
       return '/listado_reservas';
@@ -158,10 +144,7 @@ export class DetallesReserva implements OnInit {
     return `data:${primera.tipo};base64,${primera.datosBase64}`;
   }
 
-  // ======================
   //  CONFIRMAR RESERVA
-  // ======================
-
   get puedeConfirmarReserva(): boolean {
     if (!this.reserva) return false;
     if (!this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) return false;
@@ -206,10 +189,7 @@ export class DetallesReserva implements OnInit {
     });
   }
 
-  // ======================
   //  CHECK-IN
-  // ======================
-
   get puedeCheckIn(): boolean {
     if (!this.reserva) return false;
     if (!this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) return false;
@@ -254,10 +234,7 @@ export class DetallesReserva implements OnInit {
     });
   }
 
-  // ======================
   //  CHECK-OUT (con advertencias)
-  // ======================
-
   get puedeCheckOut(): boolean {
     if (!this.reserva) return false;
     if (!this.auth.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA'])) return false;
@@ -273,8 +250,6 @@ export class DetallesReserva implements OnInit {
     const hoyDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()).getTime();
     const salidaDia = new Date(salida.getFullYear(), salida.getMonth(), salida.getDate()).getTime();
     const checkoutAnticipado = hoyDia < salidaDia;
-
-    // Consultamos info rápida de la factura de RESERVA (SP)
     this.facturasSrv.getInfoFacturaReserva(r.id).subscribe({
       next: (info: FacturaReservaInfoDTO) => {
         this.mostrarConfirmacionCheckout(r, checkoutAnticipado, info);
@@ -323,7 +298,6 @@ export class DetallesReserva implements OnInit {
     ].join('');
 
     if (tieneFacturaImpaga && info) {
-      // Mismo UX que en CheckInOut: Ver factura / Continuar
       Swal.fire({
         title: `Check-out reserva #${r.id}`,
         html,
@@ -336,7 +310,6 @@ export class DetallesReserva implements OnInit {
         reverseButtons: true
       }).then(result => {
         if (result.isConfirmed) {
-          // Desde acá queremos volver al detalle de ESTA reserva
           this.router.navigate(
             ['/detalle_factura', info.facturaId],
             { queryParams: { returnTo: `/detalle_reserva/${r.id}` } }
@@ -346,7 +319,6 @@ export class DetallesReserva implements OnInit {
         }
       });
     } else {
-      // Sin factura impaga: confirm estándar
       Swal.fire({
         title: `Check-out reserva #${r.id}`,
         html,

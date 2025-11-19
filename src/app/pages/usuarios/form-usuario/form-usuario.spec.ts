@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FormUsuario } from './form-usuario';
+import { ComponentFixture, TestBed }  from '@angular/core/testing';
+import { FormUsuario }                from './form-usuario';
 
 describe('FormUsuario', () => {
   let component: FormUsuario;

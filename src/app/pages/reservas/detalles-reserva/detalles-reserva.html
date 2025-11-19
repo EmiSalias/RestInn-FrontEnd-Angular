@@ -28,7 +28,6 @@
   </header>
 
   <div class="detail-layout">
-    <!-- Columna principal -->
     <div class="detail-main">
       <section class="detail-block">
         <h2>Estadía</h2>
@@ -86,7 +85,6 @@
       </section>
     </div>
 
-    <!-- Columna lateral -->
     <aside class="detail-sidebar">
       <div class="room-card">
         <div class="room-img-wrapper">
@@ -101,7 +99,6 @@
             Estado: {{ estadoLabel(r.estado) }}
           </div>
 
-          <!-- Botones debajo de la foto -->
           <div class="detail-header-actions">
             @if (puedeConfirmarReserva) {
             <button class="btn" (click)="confirmarReserva()">
@@ -122,7 +119,6 @@
         </div>
       </div>
 
-      <!-- NUEVA SECCIÓN: FACTURACIÓN -->
       <section class="detail-block factura-panel">
         <h2>Facturación</h2>
 
@@ -144,7 +140,6 @@
         </p>
         }
       </section>
-      <!-- FIN FACTURACIÓN -->
 
     </aside>
   </div>

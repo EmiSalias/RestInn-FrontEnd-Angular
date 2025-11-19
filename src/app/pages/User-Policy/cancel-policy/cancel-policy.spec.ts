@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CancelPolicy } from './cancel-policy';
+import { ComponentFixture, TestBed }  from '@angular/core/testing';
+import { CancelPolicy }               from './cancel-policy';
 
 describe('CancelPolicy', () => {
   let component: CancelPolicy;

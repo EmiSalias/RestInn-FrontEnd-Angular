@@ -1,6 +1,5 @@
 <main class="page-reserva-buscar">
 
-    <!-- CARD de fechas -->
     <section class="buscar-card">
         <h2>Crear reserva</h2>
         <p class="subtitle">
@@ -9,7 +8,6 @@
         </p>
 
         <div class="date-selectors">
-            <!-- Check-in -->
             <div class="date-tile" (click)="openPicker(checkInInput, $event)">
                 <i class="fa-regular fa-calendar-check icon"></i>
                 <div class="date-text">
@@ -23,7 +21,6 @@
 
             </div>
 
-            <!-- Check-out -->
             <div class="date-tile" (click)="openPicker(checkOutInput, $event)">
                 <i class="fa-regular fa-calendar-minus icon"></i>
                 <div class="date-text">
@@ -44,7 +41,6 @@
         }
     </section>
 
-    <!-- RESULTADOS -->
     @if (fechaIngreso && fechaSalida) {
       <section class="result-section">
 

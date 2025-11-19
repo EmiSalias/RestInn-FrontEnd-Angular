@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
 
-import { CommonModule} from '@angular/common';
-
-
 @Component({
   selector: 'app-cookies-banner',
   templateUrl: './cookies-banner.html',

@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faEnvelope, faPhone, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { Component, inject }                                        from '@angular/core';
+import { CommonModule }                                             from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule }  from '@angular/forms';
+import { FontAwesomeModule }                                        from '@fortawesome/angular-fontawesome';
+import { faEnvelope, faPhone, faMapMarkerAlt }                      from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-contact',
@@ -12,19 +12,13 @@ import { faEnvelope, faPhone, faMapMarkerAlt } from '@fortawesome/free-solid-svg
   styleUrl: './contact.css'
 })
 export class Contact {
+  private fb      = inject(FormBuilder);
+  faEnvelope      = faEnvelope;
+  faPhone         = faPhone;
+  faMapMarkerAlt  = faMapMarkerAlt;
+  loading         = false;
+  submitted       = false;
 
-  private fb = inject(FormBuilder);
-
-  // Iconos
-  faEnvelope = faEnvelope;
-  faPhone = faPhone;
-  faMapMarkerAlt = faMapMarkerAlt;
-
-  // Estados del formulario
-  loading = false;
-  submitted = false;
-
-  // EL FORMULARIO NO SE ENCUENTRA EN FUNCIONAMIENTO PORQUE NO LO IMPLEMENTAMOS EN EL BACK
   contactForm: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],

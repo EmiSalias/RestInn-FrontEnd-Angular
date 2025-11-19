@@ -1,44 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  CommonModule,
-  DatePipe,
-  CurrencyPipe,
-  AsyncPipe
-} from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { combineLatest, of, BehaviorSubject } from 'rxjs';
-import { catchError, map, shareReplay, startWith } from 'rxjs/operators';
-import {
-  FacturasService,
-  FacturaResponseDTO,
-  ResumenFacturacionClienteDTO
-} from '../../../services/facturas-service';
-import { AuthService } from '../../../services/auth-service';
-import { Router } from '@angular/router';
-
-type SortField =
-  | 'id'
-  | 'fechaEmision'
-  | 'clienteNombre'
-  | 'reservaId'
-  | 'habitacionNumero'
-  | 'tipoFactura'
-  | 'estado'
-  | 'totalFinal';
-
-interface SortState {
-  field: SortField;
-  dir: 'asc' | 'desc';
-}
-
-interface ResumenAdminFacturacion {
-  totalFacturado: number;
-  totalPagado: number;
-  totalPendiente: number;
-  facturasPendientes: number;
-  facturasPagadas: number;
-  porcentajeCobro: number;
-}
+import { Component, OnInit }                                                  from '@angular/core';
+import { CommonModule, DatePipe, CurrencyPipe, AsyncPipe }                    from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule }                        from '@angular/forms';
+import { combineLatest, of, BehaviorSubject }                                 from 'rxjs';
+import { catchError, map, shareReplay, startWith }                            from 'rxjs/operators';
+import { FacturasService, FacturaResponseDTO, ResumenFacturacionClienteDTO }  from '../../../services/facturas-service';
+import { AuthService }                                                        from '../../../services/auth-service';
+import { Router }                                                             from '@angular/router';
+import   ResumenAdminFacturacion                                              from '../../../models/ResumenAdminFacturacion';
+import { SortField, SortState }                                               from '../../../models/SortState';
 
 @Component({
   selector: 'app-listado-facturas',
@@ -66,11 +35,9 @@ export class ListadoFacturas implements OnInit {
 
   resumenCliente: ResumenFacturacionClienteDTO | null = null;
 
-  // ---- estado de orden ----
   sortState: SortState = { field: 'fechaEmision', dir: 'asc' };
   private sortSubject = new BehaviorSubject<SortState>(this.sortState);
   sort$ = this.sortSubject.asObservable();
-  // -------------------------
 
   constructor(
     private facturasService: FacturasService,
@@ -91,7 +58,6 @@ export class ListadoFacturas implements OnInit {
   ngOnInit(): void {
     this.isAdminOrRecep = this.authService.hasAnyRole(['ADMINISTRADOR', 'RECEPCIONISTA']);
 
-    // si es CLIENTE → traigo resumen
     if (!this.isAdminOrRecep) {
       this.facturasService.resumenMias().subscribe({
         next: (r) => this.resumenCliente = r,
@@ -205,7 +171,7 @@ export class ListadoFacturas implements OnInit {
     switch (estado) {
       case 'EMITIDA':
       case 'EN_PROCESO':
-        return 0;     // impagas primero
+        return 0;
       case 'PAGADA':
         return 1;
       case 'ANULADA':

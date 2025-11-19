@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CrearReservaBusqueda } from './crear-reserva-busqueda';
+import { ComponentFixture, TestBed }  from '@angular/core/testing';
+import { CrearReservaBusqueda }       from './crear-reserva-busqueda';
 
 describe('CrearReservaBusqueda', () => {
   let component: CrearReservaBusqueda;

@@ -1,16 +1,22 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject }        from '@angular/core';
+import { CommonModule }                     from '@angular/common';
 import {
-  FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
   ValidatorFn
-} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ReservasService, ReservaRequest } from '../../../services/reservas-service';
-import Habitacion from '../../../models/Habitacion';
-import { HabitacionService } from '../../../services/habitacion-service';
-import { ImagenService } from '../../../services/imagen-service';
-import Swal from 'sweetalert2';
-
+}                                           from '@angular/forms';
+import { ActivatedRoute, Router }           from '@angular/router';
+import { ReservasService }  from '../../../services/reservas-service';
+import   Habitacion                         from '../../../models/Habitacion';
+import { HabitacionService }                from '../../../services/habitacion-service';
+import { ImagenService }                    from '../../../services/imagen-service';
+import   Swal                               from 'sweetalert2';
+import { AuthService } from '../../../services/auth-service';
+import ReservaRequest from '../../../models/ReservaRequest';
 
 function rangoFechasValidator(group: AbstractControl) {
   const fi = group.get('fechaIngreso')?.value as string | null;
@@ -18,7 +24,7 @@ function rangoFechasValidator(group: AbstractControl) {
   if (!fi || !fs) return null;
   return fs > fi ? null : { rangoInvalido: true };
 }
-// validator: no superar capacidad
+
 function arrayMaxLength(maxProvider: () => number): ValidatorFn {
   return (control: AbstractControl) => {
     const arr = control as FormArray;
@@ -37,12 +43,13 @@ function arrayMaxLength(maxProvider: () => number): ValidatorFn {
   styleUrl: './form-reserva.css'
 })
 export class FormReserva implements OnInit {
-  private fb = inject(FormBuilder);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private fb          = inject(FormBuilder);
+  private route       = inject(ActivatedRoute);
+  private router      = inject(Router);
   private reservasSrv = inject(ReservasService);
-  private habSrv = inject(HabitacionService);
-  private imgSrv = inject(ImagenService);
+  private habSrv      = inject(HabitacionService);
+  private imgSrv      = inject(ImagenService);
+  private auth        = inject(AuthService);
 
   form: FormGroup = this.fb.group({
     habitacionId: [null, Validators.required],
@@ -51,15 +58,13 @@ export class FormReserva implements OnInit {
     huespedes: this.fb.array([this.nuevoHuesped()], { validators: Validators.minLength(1) })
   }, { validators: rangoFechasValidator });
 
-  loading = false;
+  loading                 = false;
   errorMsg: string | null = null;
-  todayStr = new Date().toISOString().slice(0, 10);
-
-  // datos para la galería
-  hab: Habitacion | null = null;
-  imgUrls: string[] = [];
-  selectedIdx = 0;
-  capacidadMax = Number.MAX_SAFE_INTEGER;
+  todayStr                = new Date().toISOString().slice(0, 10);
+  hab: Habitacion | null  = null;
+  imgUrls: string[]       = [];
+  selectedIdx             = 0;
+  capacidadMax            = Number.MAX_SAFE_INTEGER;
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(qp => {
@@ -79,7 +84,6 @@ export class FormReserva implements OnInit {
       // Setea capacidad al toque si viene por query
       if (capStr && !Number.isNaN(+capStr)) {
         this.capacidadMax = +capStr;
-        // si ya me pasé, recorto
         while (this.huespedesFA.length > this.capacidadMax) {
           this.huespedesFA.removeAt(this.huespedesFA.length - 1);
         }
@@ -89,7 +93,7 @@ export class FormReserva implements OnInit {
       // Carga data de respaldo/confirmación desde API
       const habitacionId = +(habitacionIdStr || this.form.get('habitacionId')?.value || 0);
       if (habitacionId) {
-        this.cargarHabitacion(habitacionId);    // esto reafirma capacidad
+        this.cargarHabitacion(habitacionId);
         this.cargarImagenes(habitacionId);
       }
     });
@@ -130,8 +134,6 @@ export class FormReserva implements OnInit {
       next: (h) => {
         this.hab = h;
         this.capacidadMax = Number(h?.capacidad ?? Number.MAX_SAFE_INTEGER);
-
-        // si me pasé, recorto
         while (this.huespedesFA.length > this.capacidadMax) {
           this.huespedesFA.removeAt(this.huespedesFA.length - 1);
         }
@@ -227,7 +229,7 @@ export class FormReserva implements OnInit {
       next: (res) => {
         this.loading = false;
 
-        // Popup de éxito + luego navegación al detalle
+        // Popup de éxito y luego navegación al detalle
         Swal.fire({
           icon: 'success',
           title: 'Reserva creada',
