@@ -66,7 +66,7 @@ h1 {
 }
 
 .filtros.activo {
-  max-height: 600px;
+  max-height: 2000px;
   opacity: 1;
   padding: 1.5rem;
 }
@@ -138,10 +138,11 @@ h1 {
 .filtros-bottom button {
   border: none;
   border-radius: 6px;
-  padding: 0.4rem 1rem;
+  padding: 0.7rem 2rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 120px;
 }
 
 .filtros-bottom button:hover {
@@ -153,6 +154,17 @@ h1 {
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+@media (max-width: 480px) {
+  .filtros-bottom {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filtros-bottom button {
+    width: 100%;
+  }
 }
 
 /* Toggle de Mantenimiento y Limpieza */
