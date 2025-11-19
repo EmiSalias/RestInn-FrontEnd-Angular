@@ -2,61 +2,10 @@ import { Injectable }               from '@angular/core';
 import { HttpClient, HttpHeaders }  from '@angular/common/http';
 import { Observable }               from 'rxjs';
 import { environment }              from '../../environments/environment';
-
-export interface ConsumoResponseDTO {
-  id: number;
-  descripcion: string;
-  cantidad: number;
-  precioUnitario: number;
-  subtotal: number;
-}
-
-export interface ResumenFacturacionClienteDTO {
-  saldoPendiente: number;
-  saldoPagado: number;
-  facturasPendientes: number;
-  facturasPagadas: number;
-}
-
-// Info resumida de factura de RESERVA para una reserva concreta
-export interface FacturaReservaInfoDTO {
-  reservaId: number;
-  fechaIngreso: string;
-  fechaSalida: string;
-  estadoReserva: string;
-  facturaId: number;
-  estadoFactura: string;
-  tipoFactura: string;
-  totalFinal: number;
-  clienteNombre: string;
-  clienteApellido: string;
-  clienteEmail: string;
-  clienteDni: string;
-}
-
-export interface FacturaResponseDTO {
-  id: number;
-  clienteNombre: string;
-  ingreso: string;
-  salida: string;
-  habitacionNumero: string;
-  reservaId: number;
-  fechaEmision: string;
-  tipoFactura: string;
-  estado: string;
-  subtotal: number;
-  metodoPago: string;
-  cuotas: number;
-  descuento: number;
-  interes: number;
-  totalFinal: number;
-  consumos?: ConsumoResponseDTO[];
-}
-
-export interface FacturaPagarRequestDTO {
-  metodoPago: 'EFECTIVO' | 'CREDITO';
-  cuotas: number;
-}
+import FacturaResponseDTO from '../models/FacturaResponseDTO';
+import FacturaPagarRequestDTO from '../models/FacturaPagarRequestDTO';
+import ResumenFacturacionClienteDTO from '../models/ResumenFacturacionClienteDTO';
+import FacturaReservaInfoDTO from '../models/FacturaReservaInfoDTO';
 
 @Injectable({ providedIn: 'root' })
 export class FacturasService {

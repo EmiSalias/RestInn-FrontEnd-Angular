@@ -1,10 +1,11 @@
 import { Component, OnInit, inject }            from '@angular/core';
 import { CommonModule }                         from '@angular/common';
 import { ActivatedRoute, Router, RouterLink }   from '@angular/router';
-import { FacturasService, FacturaResponseDTO }  from '../../../services/facturas-service';
+import { FacturasService }                      from '../../../services/facturas-service';
 import { AuthService }                          from '../../../services/auth-service';
-import   Swal                                   from 'sweetalert2';
 import { Location }                             from '@angular/common';
+import   Swal                                   from 'sweetalert2';
+import   FacturaResponseDTO                     from '../../../models/FacturaResponseDTO';
 
 @Component({
   selector: 'app-detalle-factura',

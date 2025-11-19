@@ -2,7 +2,8 @@ import { Component, OnInit, inject }                                            
 import { CommonModule }                                                               from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, }  from '@angular/forms';
 import { Router, ActivatedRoute }                                                     from '@angular/router';
-import { AuthService, UsuarioRequest }                                                from '../../../services/auth-service';
+import { AuthService }                                                                from '../../../services/auth-service';
+import   UsuarioRequest                                                               from '../../../models/UsuarioRequest';
 
 function samePassword(group: AbstractControl) {
   const p = group.get('password')?.value;

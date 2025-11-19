@@ -1,13 +1,15 @@
-import { Component, OnInit }                                                  from '@angular/core';
-import { CommonModule, DatePipe, CurrencyPipe, AsyncPipe }                    from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule }                        from '@angular/forms';
-import { combineLatest, of, BehaviorSubject }                                 from 'rxjs';
-import { catchError, map, shareReplay, startWith }                            from 'rxjs/operators';
-import { FacturasService, FacturaResponseDTO, ResumenFacturacionClienteDTO }  from '../../../services/facturas-service';
-import { AuthService }                                                        from '../../../services/auth-service';
-import { Router }                                                             from '@angular/router';
-import   ResumenAdminFacturacion                                              from '../../../models/ResumenAdminFacturacion';
-import { SortField, SortState }                                               from '../../../models/SortState';
+import { Component, OnInit }                                from '@angular/core';
+import { CommonModule, DatePipe, CurrencyPipe, AsyncPipe }  from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule }      from '@angular/forms';
+import { combineLatest, of, BehaviorSubject }               from 'rxjs';
+import { catchError, map, shareReplay, startWith }          from 'rxjs/operators';
+import { FacturasService }                                  from '../../../services/facturas-service';
+import { AuthService }                                      from '../../../services/auth-service';
+import { Router }                                           from '@angular/router';
+import { SortField, SortState }                             from '../../../models/SortState';
+import   ResumenAdminFacturacion                            from '../../../models/ResumenAdminFacturacion';
+import   FacturaResponseDTO                                 from '../../../models/FacturaResponseDTO';
+import   ResumenFacturacionClienteDTO                       from '../../../models/ResumenFacturacionClienteDTO';
 
 @Component({
   selector: 'app-listado-facturas',

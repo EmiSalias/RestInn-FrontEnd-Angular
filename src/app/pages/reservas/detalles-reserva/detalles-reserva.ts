@@ -1,12 +1,14 @@
-import { Component, OnInit, inject }                                  from '@angular/core';
-import { CommonModule }                                               from '@angular/common';
-import { ActivatedRoute, Router }                                     from '@angular/router';
-import { ReservasService, ReservaResponse }                           from '../../../services/reservas-service';
-import { HabitacionService }                                          from '../../../services/habitacion-service';
-import   Habitacion                                                   from '../../../models/Habitacion';
-import { AuthService }                                                from '../../../services/auth-service';
-import { FacturasService, FacturaResponseDTO, FacturaReservaInfoDTO } from '../../../services/facturas-service';
-import   Swal                                                         from 'sweetalert2';
+import { Component, OnInit, inject }        from '@angular/core';
+import { CommonModule }                     from '@angular/common';
+import { ActivatedRoute, Router }           from '@angular/router';
+import { ReservasService, ReservaResponse } from '../../../services/reservas-service';
+import { HabitacionService }                from '../../../services/habitacion-service';
+import { AuthService }                      from '../../../services/auth-service';
+import { FacturasService }                  from '../../../services/facturas-service';
+import   Habitacion                         from '../../../models/Habitacion';
+import   Swal                               from 'sweetalert2';
+import   FacturaResponseDTO                 from '../../../models/FacturaResponseDTO';
+import   FacturaReservaInfoDTO              from '../../../models/FacturaReservaInfoDTO';
 
 @Component({
   selector: 'app-detalle-reserva',

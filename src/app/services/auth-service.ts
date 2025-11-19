@@ -4,29 +4,9 @@ import { BehaviorSubject, Observable, map, tap }  from 'rxjs';
 import { Router }                                 from '@angular/router';
 import { jwtDecode }                              from 'jwt-decode';
 import { environment }                            from '../../environments/environment';
-
-export type UsuarioRequest = {
-  nombre: string;
-  apellido: string;
-  nombreLogin: string;
-  email: string;
-  password: string;
-  dni?: string;
-  phoneNumber?: string;
-  cuit?: string;
-};
-
-export interface AuthState {
-  isLoggedIn: boolean;
-  roles: Role[];
-  userId?: string | number;
-  token?: string;
-}
-
-export type PasswordResetDTO = { code: string; newPassword: string };
-
-const ALL_ROLES = ['ADMINISTRADOR','RECEPCIONISTA','CONSERJE','LIMPIEZA','CLIENTE'] as const;
-export type Role = typeof ALL_ROLES[number];
+import UsuarioRequest                             from '../models/UsuarioRequest';
+import AuthState, { Role } from '../models/AuthState';
+import PasswordResetDTO from '../models/PasswordResetDTO';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -148,7 +128,13 @@ export class AuthService {
       .filter(Boolean)
       .map(r => String(r).replace(/^ROLE_/, '').toUpperCase());
 
-    const valid = new Set<string>(ALL_ROLES as unknown as string[]);
+    const valid = new Set<string>([
+      'ADMINISTRADOR',
+      'RECEPCIONISTA',
+      'CONSERJE',
+      'LIMPIEZA',
+      'CLIENTE'
+    ] as unknown as string[]);
     return cleaned.filter(r => valid.has(r)) as Role[];
   }
   // #endregion
