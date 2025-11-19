@@ -8,16 +8,17 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink }   from '@angular/router';
-import { HabitacionService }                    from '../../../services/habitacion-service';
-import { ImagenService }                        from '../../../services/imagen-service';
-import   Habitacion                             from '../../../models/Habitacion';
-import { CommonModule }                         from '@angular/common';
-import   Swal                                   from 'sweetalert2';
-import { AuthService }                          from '../../../services/auth-service';
-import { Subscription, Observable, of, timer }  from 'rxjs';
-import { map, switchMap, catchError }           from 'rxjs/operators';
-import ImagenPreview                            from '../../../models/ImagenPreview';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { HabitacionService } from '../../../services/habitacion-service';
+import { ImagenService } from '../../../services/imagen-service';
+import Habitacion from '../../../models/Habitacion';
+import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
+import { AuthService } from '../../../services/auth-service';
+import { Subscription, Observable, of, timer, forkJoin } from 'rxjs';
+import { map, switchMap, catchError } from 'rxjs/operators';
+import ImagenPreview from '../../../models/ImagenPreview';
+import { EmpleadoService } from '../../../services/empleado-service';
 
 @Component({
   selector: 'app-form-habitacion',
@@ -27,17 +28,16 @@ import ImagenPreview                            from '../../../models/ImagenPrev
   styleUrls: ['./form-habitacion.css']
 })
 export class FormHabitacion implements OnInit, OnDestroy {
-
   form!: FormGroup;
   editMode = false;
   loading = false;
   habitacionId?: number;
   isAdmin = false;
-  
+
   imagenesPreview: ImagenPreview[] = [];
   imageError: string | null = null;
   isDragging = false;
-  
+
   puedeGestionarHabitaciones = false;
   userRole: string = '';
   private authSub: Subscription | null = null;
@@ -47,6 +47,7 @@ export class FormHabitacion implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private habService = inject(HabitacionService);
+  private empleadoService = inject(EmpleadoService);
   private imgService = inject(ImagenService);
   private auth = inject(AuthService);
 
@@ -58,40 +59,51 @@ export class FormHabitacion implements OnInit, OnDestroy {
       return todos.filter(e => e !== 'OCUPADA');
     }
 
-    // ADMINISTRADOR: Mantiene la lógica que tenías (la original tuya)
     if (this.userRole === 'ADMINISTRADOR' || this.userRole === 'RECEPCIONISTA') {
-        if (estadoActual === 'DISPONIBLE') return ['DISPONIBLE', 'MANTENIMIENTO', 'LIMPIEZA'];
-        if (estadoActual === 'MANTENIMIENTO') return ['MANTENIMIENTO', 'DISPONIBLE', 'LIMPIEZA'];
-        if (estadoActual === 'OCUPADA') return ['OCUPADA'];
-        if (estadoActual === 'LIMPIEZA') return ['LIMPIEZA', 'MANTENIMIENTO', 'DISPONIBLE'];
+      if (['DISPONIBLE', 'MANTENIMIENTO', 'LIMPIEZA'].includes(estadoActual)) {
+        return ['DISPONIBLE', 'MANTENIMIENTO', 'LIMPIEZA'];
+      }
+      if (estadoActual === 'OCUPADA') return ['OCUPADA'];
     }
 
-    // CONSERJE: Restricciones específicas
     if (this.userRole === 'CONSERJE') {
-        if (estadoActual === 'OCUPADA') return ['OCUPADA'];
-        if (estadoActual === 'DISPONIBLE') return ['DISPONIBLE', 'MANTENIMIENTO'];
-        if (estadoActual === 'MANTENIMIENTO') return ['MANTENIMIENTO', 'DISPONIBLE'];
+      if (estadoActual === 'OCUPADA') return ['OCUPADA'];
+      if (estadoActual === 'DISPONIBLE') return ['DISPONIBLE', 'MANTENIMIENTO'];
+      if (estadoActual === 'MANTENIMIENTO') return ['MANTENIMIENTO', 'DISPONIBLE'];
     }
 
-    // LIMPIEZA: Restricciones específicas
     if (this.userRole === 'LIMPIEZA') {
-        if (estadoActual === 'OCUPADA') return ['OCUPADA'];
-        if (estadoActual === 'DISPONIBLE') return ['DISPONIBLE', 'LIMPIEZA'];
-        if (estadoActual === 'LIMPIEZA') return ['LIMPIEZA', 'DISPONIBLE'];
+      if (estadoActual === 'OCUPADA') return ['OCUPADA'];
+      if (estadoActual === 'DISPONIBLE') return ['DISPONIBLE', 'LIMPIEZA'];
+      if (estadoActual === 'LIMPIEZA') return ['LIMPIEZA', 'DISPONIBLE'];
     }
 
     return [estadoActual];
   }
 
   ngOnInit(): void {
-    const s = this.auth.state$.subscribe(state => {
+    this.authSub = this.auth.state$.subscribe(state => {
       const roles = state.roles ?? [];
       const logged = state.isLoggedIn;
       this.isAdmin = logged && roles.includes('ADMINISTRADOR');
+
+      if (roles.includes('ADMINISTRADOR')) this.userRole = 'ADMINISTRADOR';
+      else if (roles.includes('RECEPCIONISTA')) this.userRole = 'RECEPCIONISTA';
+      else if (roles.includes('CONSERJE')) this.userRole = 'CONSERJE';
+      else if (roles.includes('LIMPIEZA')) this.userRole = 'LIMPIEZA';
+      else this.userRole = 'CLIENTE';
+
+      this.puedeGestionarHabitaciones = ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA'].includes(this.userRole);
+
+      if (!this.puedeGestionarHabitaciones) {
+        this.router.navigate(['/unauthorized']);
+        return;
+      }
     });
 
     this.form = this.fb.group({
-      numero: [null, [Validators.required,Validators.min(1),Validators.max(9999)],[this.numeroUnicoValidator()]],
+      id: [null],
+      numero: [null, [Validators.required, Validators.min(1), Validators.max(9999)], [this.numeroUnicoValidator()]],
       piso: [null, [Validators.required, Validators.min(1), Validators.max(4)]],
       capacidad: [null, [Validators.required, Validators.min(1), Validators.max(5)]],
       cantCamas: [null, [Validators.required, Validators.min(1), Validators.max(4)]],
@@ -102,33 +114,12 @@ export class FormHabitacion implements OnInit, OnDestroy {
       activo: [true]
     });
 
-    this.authSub = this.auth.state$.subscribe(state => {
-      const roles = state.roles || [];
-      
-      // Detecta el rol principal
-      if (roles.includes('ADMINISTRADOR')) this.userRole = 'ADMINISTRADOR';
-      else if (roles.includes('RECEPCIONISTA')) this.userRole = 'RECEPCIONISTA';
-      else if (roles.includes('CONSERJE')) this.userRole = 'CONSERJE';
-      else if (roles.includes('LIMPIEZA')) this.userRole = 'LIMPIEZA';
-      else this.userRole = 'CLIENTE';
-
-      // Valida permiso general de acceso al componente
-      this.puedeGestionarHabitaciones = ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA'].includes(this.userRole);
-
-      // Si es CLIENTE, afuera
-      if (!this.puedeGestionarHabitaciones) {
-        this.router.navigate(['/unauthorized']);
-        return;
-      }
-    });
-
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.editMode = true;
       this.habitacionId = Number(idParam);
       this.cargarHabitacion(this.habitacionId);
     } else {
-      // Si NO hay ID (esta creando), valida que sea ADMIN
       if (this.userRole !== 'ADMINISTRADOR') {
         Swal.fire('Acceso denegado', 'Solo los administradores pueden crear habitaciones.', 'error');
         this.router.navigate(['/listado_habitaciones']);
@@ -140,21 +131,78 @@ export class FormHabitacion implements OnInit, OnDestroy {
     this.authSub?.unsubscribe();
   }
 
+  onEstadoChange(event: Event) {
+    const nuevoEstado = (event.target as HTMLSelectElement).value;
+
+    const id = this.form.get('id')?.value;
+    const estadoActual = this.habitacionOriginal?.estado || this.form.get('estado')?.value;
+
+    if (!id || nuevoEstado === estadoActual) return;
+
+    if (this.userRole === 'ADMINISTRADOR') {
+      const habitacionActualizada: Habitacion = { ...this.form.value, id };
+      this.habService.updateHabitacion(habitacionActualizada).subscribe({
+        next: (res) => {
+          this.form.get('estado')?.setValue(res.estado);
+          if (this.habitacionOriginal) this.habitacionOriginal.estado = res.estado;
+          Swal.fire('Actualizado', `Estado cambiado a ${res.estado}`, 'success');
+        },
+        error: (err) => {
+          Swal.fire('Error', err.message || 'No se pudo actualizar el estado.', 'error');
+        }
+      });
+      return;
+    }
+
+    const acciones: Record<string, (id: number) => Observable<Habitacion>> = {
+      'DISPONIBLE': this.empleadoService.ponerDisponible.bind(this.empleadoService),
+      'MANTENIMIENTO': this.empleadoService.cambiarEstadoMantenimiento.bind(this.empleadoService),
+      'LIMPIEZA': this.empleadoService.cambiarEstadoLimpieza.bind(this.empleadoService)
+    };
+
+    const accion = acciones[nuevoEstado];
+    if (!accion) {
+      Swal.fire('Error', 'Estado no reconocido.', 'error');
+      return;
+    }
+
+    accion(id).subscribe({
+      next: (res) => {
+        this.form.get('estado')?.setValue(res.estado);
+        if (this.habitacionOriginal) this.habitacionOriginal.estado = res.estado;
+        Swal.fire('Actualizado', `La habitación está en ${res.estado}.`, 'success');
+      },
+      error: (err) => {
+        Swal.fire('Error', err.message || `No se pudo cambiar a ${nuevoEstado}.`, 'error');
+      }
+    });
+  }
+
+
+
   cargarHabitacion(id: number) {
     this.loading = true;
-    
-    // Solo el ADMIN usa el endpoint que ve inactivas
-    const endpoint$ = (this.userRole === 'ADMINISTRADOR')
+    const endpoint$ = this.userRole === 'ADMINISTRADOR'
       ? this.habService.getHabitacionAdmin(id)
       : this.habService.getHabitacion(id);
 
     endpoint$.subscribe({
       next: (data) => {
         this.habitacionOriginal = data;
-        this.form.patchValue(data);
-        this.loading = false;
 
-        // Convierte las imágenes del backend a nuestro formato de preview
+        this.form.patchValue({
+          id: data.id,
+          numero: data.numero,
+          piso: data.piso,
+          capacidad: data.capacidad,
+          cantCamas: data.cantCamas,
+          precioNoche: data.precioNoche,
+          estado: (data.estado || 'DISPONIBLE').toUpperCase(),
+          tipo: data.tipo,
+          comentario: data.comentario,
+          activo: data.activo
+        });
+
         if (data.imagenes?.length) {
           this.imagenesPreview = data.imagenes.map(img => ({
             id: img.id,
@@ -162,37 +210,52 @@ export class FormHabitacion implements OnInit, OnDestroy {
             file: null
           }));
         }
+
+        this.loading = false;
       },
       error: () => {
         this.loading = false;
-        Swal.fire('Error', 'No se pudo cargar la habitación (o no tienes permisos para verla si está inactiva).', 'error');
+        Swal.fire('Error', 'No se pudo cargar la habitación.', 'error');
         this.router.navigate(['/listado_habitaciones']);
       }
     });
   }
 
-  // METODO PARA LA CARGA DE IMAGENES
+  numeroUnicoValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      if (!control.value) return of(null);
+
+      return timer(500).pipe(
+        switchMap(() => this.habService.listarTodasIncluidasInactivas()),
+        map(habitaciones => {
+          const numeroIngresado = Number(control.value);
+          const existe = habitaciones.find(h => h.numero === numeroIngresado);
+          if (existe && (!this.editMode || existe.id !== this.habitacionId)) {
+            return { numeroDuplicado: true };
+          }
+          return null;
+        }),
+        catchError(() => of(null))
+      );
+    };
+  }
+
   onFilesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    
     if (input.files && input.files.length > 0) {
       const files = Array.from(input.files);
-      
       this.processFiles(files);
     }
-
     input.value = '';
   }
 
-  // METODO PARA ELIMINAR IMAGENES EN EL FORM
   removeImage(index: number) {
     const imagenARemover = this.imagenesPreview[index];
-    
-    if (imagenARemover.id !== null) {
-      
+
+    if (imagenARemover.id !== null && imagenARemover.id !== undefined) {
       if (!this.habitacionId) return;
-    
-      const imagenIdParaBorrar = imagenARemover.id; 
+
+      const imagenIdParaBorrar = imagenARemover.id;
 
       Swal.fire({
         title: '¿Eliminar imagen?',
@@ -224,22 +287,19 @@ export class FormHabitacion implements OnInit, OnDestroy {
     }
   }
 
-  // DRAG & DROP
-  // 1. Detectar cuando entra un archivo arrastrado
+  // Drag & Drop
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
     this.isDragging = true;
   }
 
-  // 2. Detectar cuando sale
   onDragLeave(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
     this.isDragging = false;
   }
 
-  // 3. Detectar cuando se suelta (DROP)
   onDrop(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -248,69 +308,41 @@ export class FormHabitacion implements OnInit, OnDestroy {
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       const files = Array.from(event.dataTransfer.files);
       const imageFiles = files.filter(file => file.type.startsWith('image/'));
-      
+
       if (imageFiles.length < files.length) {
         Swal.fire('Aviso', 'Algunos archivos no eran imágenes y fueron ignorados.', 'info');
       }
-      
+
       this.processFiles(imageFiles);
     }
   }
 
   processFiles(newFiles: File[]) {
-    // 1. Reiniciamos error
     this.imageError = null;
 
-    // 2. Validamos cantidad máxima (5)
     const totalEstimado = this.imagenesPreview.length + newFiles.length;
-    
     if (totalEstimado > 5) {
       this.imageError = `Máximo 5 imágenes. Intentaste agregar ${newFiles.length} y ya tenías ${this.imagenesPreview.length}.`;
       return;
     }
 
-    // 3. Procesamos cada archivo para mostrar la preview
     for (const file of newFiles) {
+      if (!file.type.startsWith('image/')) {
+        this.imageError = 'Solo se permiten archivos de imagen.';
+        continue;
+      }
 
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.imagenesPreview.push({
           id: null,
           url: e.target.result,
-          file: file
+          file
         });
       };
       reader.readAsDataURL(file);
     }
   }
-
-  // METODO PARA VALIDAR QUE EL NUMERO INGRESADO NO EXISTA
-  numeroUnicoValidator(): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      if (!control.value) {
-        return of(null);
-      }
-
-      return timer(500).pipe(
-        switchMap(() => {
-          return this.habService.listarTodasIncluidasInactivas();
-        }),
-        map(habitaciones => {
-          const numeroIngresado = Number(control.value);
-          const existe = habitaciones.find(h => h.numero === numeroIngresado);
-          if (existe) {
-            if (this.editMode && this.habitacionId && existe.id === this.habitacionId) {
-              return null;
-            }
-            return { numeroDuplicado: true };
-          }
-          return null;
-        }),
-        catchError(() => of(null))
-      );
-    };
-  }
-
 
   onSubmit() {
     if (this.form.invalid) {
@@ -318,19 +350,54 @@ export class FormHabitacion implements OnInit, OnDestroy {
       return;
     }
 
+    const id: number | null = this.form.get('id')?.value ?? null;
+    const nuevoEstado: string = this.form.get('estado')?.value;
+
     this.loading = true;
     const habitacion: Habitacion = {
       id: this.editMode ? this.habitacionId! : 0,
       ...this.form.value,
+      activo: this.form.get('activo')?.value ?? true,
       imagenes: []
     };
-
-    if (this.editMode && this.habitacionId) {
-      this.handleUpdate(habitacion);
-    } else {
-      this.handleCreate(habitacion);
+    
+    // Caso edición (hay id)
+    if (this.userRole === 'ADMINISTRADOR') {
+      const habitacionActualizada: Habitacion = { ...this.form.value, id };
+      this.habService.updateHabitacion(habitacionActualizada).subscribe({
+        next: (res) => {
+          this.form.patchValue({ estado: res.estado });
+          if (this.habitacionOriginal) this.habitacionOriginal.estado = res.estado;
+          Swal.fire('Actualizado', `Estado cambiado a ${res.estado}`, 'success');
+        },
+        error: (err) => Swal.fire('Error', err.message || 'No se pudo actualizar la habitación.', 'error')
+      });
+      return;
     }
-  }
+
+    // Empleados (RECEPCIONISTA / LIMPIEZA / CONSERJE): solo cambio de estado
+    const acciones: Record<string, (id: number) => Observable<Habitacion>> = {
+      'DISPONIBLE': this.empleadoService.ponerDisponible.bind(this.empleadoService),
+      'MANTENIMIENTO': this.empleadoService.cambiarEstadoMantenimiento.bind(this.empleadoService),
+      'LIMPIEZA': this.empleadoService.cambiarEstadoLimpieza.bind(this.empleadoService)
+    };
+
+    const accion = acciones[nuevoEstado];
+    if (!accion) {
+      Swal.fire('Error', 'Estado no reconocido.', 'error');
+      return;
+    }
+
+    if (!id) return;
+    accion(id).subscribe({
+      next: (res) => {
+        this.form.patchValue({ estado: res.estado });
+        if (this.habitacionOriginal) this.habitacionOriginal.estado = res.estado;
+        Swal.fire('Actualizado', `La habitación está en ${res.estado}.`, 'success');
+      },
+      error: (err) => Swal.fire('Error', err.message || `No se pudo cambiar a ${nuevoEstado}.`, 'error')
+    });
+}
 
   handleCreate(habitacion: Habitacion) {
     this.habService.postHabitacion(habitacion).subscribe({
@@ -347,18 +414,38 @@ export class FormHabitacion implements OnInit, OnDestroy {
 
   handleUpdate(habitacion: Habitacion) {
     const estaReactivando = this.habitacionOriginal?.activo === false && habitacion.activo === true;
-
-    let updateObs$: Observable<any>;
+    const estaDesactivando = this.habitacionOriginal?.activo === true && habitacion.activo === false;
 
     if (estaReactivando) {
-      updateObs$ = this.habService.reactivarHabitacion(habitacion.id);
-    } else {
-      updateObs$ = this.habService.updateHabitacion(habitacion);
+      this.habService.reactivarHabitacion(habitacion.id).subscribe({
+        next: () => this.subirImagenes(habitacion.id),
+        error: (err) => {
+          this.loading = false;
+          Swal.fire('Error', err.message || 'No se pudo reactivar la habitación.', 'error');
+        }
+      });
+      return;
     }
 
-    updateObs$.subscribe({
-      next: () => {
-        this.subirImagenes(habitacion.id);
+    if (estaDesactivando) {
+      this.habService.inhabilitarHabitacion(habitacion.id).subscribe({
+        next: () => this.finalizarGuardado(),
+        error: (err) => {
+          this.loading = false;
+          Swal.fire('Error', err.message || 'No se pudo inhabilitar la habitación.', 'error');
+        }
+      });
+      return;
+    }
+
+    this.habService.updateHabitacion(habitacion).subscribe({
+      next: (res) => {
+        if (res && res.id === habitacion.id) {
+          this.subirImagenes(habitacion.id);
+        } else {
+          this.loading = false;
+          Swal.fire('Error', 'El servidor no aplicó los cambios.', 'error');
+        }
       },
       error: (err) => {
         this.loading = false;
@@ -375,23 +462,19 @@ export class FormHabitacion implements OnInit, OnDestroy {
       return;
     }
 
-    let subidas = 0;
-    for (const img of imagenesNuevas) {
-      this.imgService.postImagen(habitacionId, img.file!).subscribe({
-        next: () => {
-          subidas++;
-          if (subidas === imagenesNuevas.length) {
-            this.finalizarGuardado();
-          }
-        },
-        error: (err) => {
-          this.loading = false;
-          console.error('Error al subir imagen:', err);
-          Swal.fire('Error', 'Se guardaron los datos, pero falló la subida de una o más imágenes.', 'warning');
-          this.router.navigate(['/listado_habitaciones']);
-        }
-      });
-    }
+    const uploadRequests = imagenesNuevas.map(img =>
+      this.imgService.postImagen(habitacionId, img.file!)
+    );
+
+    forkJoin(uploadRequests).subscribe({
+      next: () => this.finalizarGuardado(),
+      error: (err) => {
+        this.loading = false;
+        console.error('Error al subir imagen:', err);
+        Swal.fire('Error', 'Se guardaron los datos, pero falló la subida de una o más imágenes.', 'warning');
+        this.router.navigate(['/listado_habitaciones']);
+      }
+    });
   }
 
   finalizarGuardado() {

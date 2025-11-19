@@ -151,13 +151,12 @@
         <div class="field">
           <label>Estado</label>
           <select formControlName="estado">
-
             @for (estado of estadosPermitidos; track estado) {
               <option [value]="estado">{{ estado | titlecase }}</option>
             }
           </select>
         </div>
-        
+
         <!-- CAMPO TIPO -->
         <div class="field">
           <label>Tipo</label>

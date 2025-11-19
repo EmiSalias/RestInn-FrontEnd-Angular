@@ -148,14 +148,12 @@ textarea {
   background: var(--color-error);
 }
 
-
 .field-toggle {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 0.5rem;
 }
-
 .field-toggle label[for="activo"] {
   font-weight: 600;
   color: var(--color-text);
