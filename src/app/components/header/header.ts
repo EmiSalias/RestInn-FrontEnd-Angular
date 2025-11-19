@@ -10,7 +10,10 @@ import {
   faUserSecret,
   faUserGear,
   faMoon,
-  faSun
+  faSun,
+  faBroom,
+  faKey,
+  faConciergeBell
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../../services/auth-service';
 import { Observable, map, shareReplay, switchMap, of } from 'rxjs';
@@ -33,6 +36,11 @@ export class Header implements OnInit {
   private readonly iconAdmin = faUserSecret;
   private readonly iconClient = faUserTie;
   private readonly iconEmployee = faUserGear;
+
+  // 🔔 Recepcionista, 🔑 Conserje, 🧹 Limpieza
+  private readonly iconReceptionist = faConciergeBell;
+  private readonly iconConserje = faKey;
+  private readonly iconLimpieza = faBroom;
 
   @ViewChild('menuInput') menuInput?: ElementRef<HTMLInputElement>;
   @ViewChild('userMenu') userMenuRef?: ElementRef<HTMLDivElement>;
@@ -155,10 +163,21 @@ export class Header implements OnInit {
   getRoleIcon(roleRaw: string | null | undefined) {
     const r = (roleRaw || '').toUpperCase();
 
+    // ADMINISTRADOR
     if (r === 'ADMIN' || r === 'ADMINISTRADOR') return this.iconAdmin;
+
+    // EMPLEADOS ESPECÍFICOS
+    if (r === 'RECEPCIONISTA') return this.iconReceptionist;
+    if (r === 'CONSERJE') return this.iconConserje;
+    if (r === 'LIMPIEZA') return this.iconLimpieza;
+
+    // EMPLEADO genérico (por si en algún lado usan "EMPLEADO")
     if (r === 'EMPLEADO') return this.iconEmployee;
+
+    // CLIENTE
     if (r === 'CLIENTE' || r === 'USER') return this.iconClient;
 
+    // fallback
     return this.faUser;
   }
 }
