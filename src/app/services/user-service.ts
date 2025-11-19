@@ -1,16 +1,16 @@
-import { Injectable, inject }     from '@angular/core';
-import { HttpClient }             from '@angular/common/http';
-import { Observable, switchMap }  from 'rxjs';
-import   User                     from '../models/User';
-import { environment }            from '../../environments/environment';
-import { tap }                    from 'rxjs/operators';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, switchMap } from 'rxjs';
+import User from '../models/User';
+import { environment } from '../../environments/environment';
+import { tap } from 'rxjs/operators';
 
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private           http          = inject(HttpClient);
-  private readonly  baseUrl       = environment.API_BASE_URL + '/api/usuarios';
-  private readonly  adminBaseUrl  = environment.API_BASE_URL + '/api/admin/usuarios';
+  private http = inject(HttpClient);
+  private readonly baseUrl = environment.API_BASE_URL + '/api/usuarios';
+  private readonly adminBaseUrl = environment.API_BASE_URL + '/api/admin/usuarios';
 
   // Obtiene el usuario actualmente autenticado
   getCurrentUser(): Observable<User> {
@@ -77,5 +77,14 @@ export class UserService {
   updateEmployee(id: string, data: any): Observable<User> {
     return this.http.put<User>(`${this.adminBaseUrl}/empleados/${id}`, data);
   }
+  // src/app/services/user-service.ts
+
+  resetEmployeePassword(id: string | number, newPassword: string): Observable<void> {
+    return this.http.put<void>(`${this.adminBaseUrl}/empleados/${id}/reset-password`, {
+      newPassword
+    });
+  }
+
+  
 
 }

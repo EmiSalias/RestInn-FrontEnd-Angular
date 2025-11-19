@@ -1,11 +1,11 @@
-import { Component, OnInit }                                        from '@angular/core';
-import { CommonModule }                                             from '@angular/common';
-import { Router }                                                   from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule }  from '@angular/forms';
-import { UserService }                                              from '../../../../services/user-service';
-import { RolEmpleado }                                              from '../../../../models/enums/E_Rol';
-import   Swal                                                       from 'sweetalert2';
-import { ActivatedRoute }                                           from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { UserService } from '../../../../services/user-service';
+import { RolEmpleado } from '../../../../models/enums/E_Rol';
+import Swal from 'sweetalert2';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-form-empleado',
@@ -16,11 +16,11 @@ import { ActivatedRoute }                                           from '@angul
 })
 export class FormEmpleado implements OnInit {
   form: FormGroup;
-  roles                     = Object.values(RolEmpleado);
-  errorMsg: string | null   = null;
-  showAdditionalFields      = false;
+  roles = Object.values(RolEmpleado);
+  errorMsg: string | null = null;
+  showAdditionalFields = false;
   employeeId: string | null = null;
-  isEditing                 = false;
+  isEditing = false;
 
   constructor(
     private fb: FormBuilder,
@@ -37,20 +37,25 @@ export class FormEmpleado implements OnInit {
       dni: ['', [Validators.required]],
       phoneNumber: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', []],  // Contraseña nueva
-      oldPassword: ['', []],  // Contraseña actual, si se quiere cambiar
-      activo: [true]  // Por defecto
+      password: [''],      // sin validators acá
+      activo: [true]
     });
+
   }
 
   ngOnInit(): void {
-    // Obtener el ID del empleado de la URL
     this.employeeId = this.route.snapshot.paramMap.get('id');
+
     if (this.employeeId) {
       this.isEditing = true;
       this.loadEmployeeData(this.employeeId);
+    } else {
+      const passCtrl = this.form.get('password');
+      passCtrl?.setValidators([Validators.required, Validators.minLength(8)]);
+      passCtrl?.updateValueAndValidity();
     }
   }
+
 
   // Función para cargar los datos del empleado
   loadEmployeeData(id: string) {
@@ -65,8 +70,7 @@ export class FormEmpleado implements OnInit {
           phoneNumber: employee.phoneNumber,
           email: employee.email,
           activo: employee.activo,
-          password: '',
-          oldPassword: ''
+          password: ''
         });
       },
       error: (err) => {
@@ -108,15 +112,42 @@ export class FormEmpleado implements OnInit {
           confirmButtonText: 'Aceptar',
           confirmButtonColor: '#f1c36f'
         }).then(() => {
-          this.router.navigate(['/empleados']);  // Redirige al listado de empleados
+          this.router.navigate(['/empleados']);
         });
       },
       error: (err) => {
-        this.errorMsg = 'No se pudo crear el empleado.';
+        console.error('Error al crear empleado', err);
+
+        let msg = 'No se pudo crear el empleado.';
+
+        // 🔹 Error de red
+        if (err.status === 0) {
+          msg = 'No se pudo contactar al servidor. Verificá tu conexión.';
+        }
+        // 🔹 Errores que vienen del GlobalExceptionHandler
+        else if (err.error) {
+
+          // Mensaje principal (ResponseStatusException, DataIntegrity, etc.)
+          if (err.error.mensaje) {
+            msg = err.error.mensaje;
+          } else if (err.error.message) {
+            msg = err.error.message;
+          }
+
+          // Errores de validación con mapa de campos (MethodArgumentNotValidException)
+          if (err.status === 400 && err.error.errores) {
+            const detalles = Object.values(err.error.errores as { [k: string]: string })
+              .join('\n');
+            msg = `${msg}\n${detalles}`;
+          }
+        }
+
+        this.errorMsg = msg;
+
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: this.errorMsg,
+          html: msg.replace(/\n/g, '<br>'),
           confirmButtonText: 'Aceptar',
           confirmButtonColor: '#ff6b6b'
         });
@@ -124,16 +155,11 @@ export class FormEmpleado implements OnInit {
     });
   }
 
+
   // Actualiza los datos de un empleado
   updateEmployee() {
-    const employeeData = { ...this.form.value };
+    const employeeData: any = { ...this.form.value };
 
-    // Si está vacía, no se envía al backend
-    if (!employeeData.oldPassword) {
-      delete employeeData.oldPassword;
-    }
-
-    // Si está vacía, no se envía al backend
     if (!employeeData.password) {
       delete employeeData.password;
     }
@@ -251,8 +277,80 @@ export class FormEmpleado implements OnInit {
     });
   }
 
-    goBack(): void {
+  goBack(): void {
     this.router.navigate(['/empleados']);
+  }
+
+
+  resetPassword() {
+    if (!this.employeeId) {
+      return;
+    }
+
+    Swal.fire({
+      title: 'Restablecer contraseña',
+      html: `
+      <input type="password" id="swal-new-pass" class="swal2-input" placeholder="Nueva contraseña">
+      <input type="password" id="swal-new-pass2" class="swal2-input" placeholder="Confirmar contraseña">
+    `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#f1c36f',
+      preConfirm: () => {
+        const p1 = (document.getElementById('swal-new-pass') as HTMLInputElement).value;
+        const p2 = (document.getElementById('swal-new-pass2') as HTMLInputElement).value;
+
+        if (!p1 || !p2) {
+          Swal.showValidationMessage('Completá ambos campos');
+          return;
+        }
+
+        if (p1 !== p2) {
+          Swal.showValidationMessage('Las contraseñas no coinciden');
+          return;
+        }
+
+        if (p1.length < 8) {
+          Swal.showValidationMessage('La contraseña debe tener al menos 8 caracteres');
+          return;
+        }
+
+        return p1;
+      }
+    }).then(result => {
+      if (result.isConfirmed && result.value) {
+        this.userSrv.resetEmployeePassword(this.employeeId!, result.value).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Contraseña actualizada',
+              text: 'La contraseña del empleado se actualizó correctamente.',
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#f1c36f'
+            });
+          },
+          error: (err) => {
+            let msg = 'No se pudo actualizar la contraseña.';
+
+            if (err.status === 0) {
+              msg = 'No se pudo contactar al servidor.';
+            } else if (err.error?.mensaje) {
+              msg = err.error.mensaje;
+            }
+
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: msg,
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#ff6b6b'
+            });
+          }
+        });
+      }
+    });
   }
 
 }

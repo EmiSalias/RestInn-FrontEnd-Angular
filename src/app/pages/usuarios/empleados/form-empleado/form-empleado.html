@@ -2,61 +2,109 @@
   <button type="button" class="back-arrow" (click)="goBack()">
     ←
   </button>
+
   <div class="form-header">
-
-
     <h1>{{ isEditing ? 'Editar empleado' : 'Crear nuevo empleado' }}</h1>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
     @if (errorMsg) {
       <div class="error">{{ errorMsg }}</div>
     }
 
+    <!-- ROL -->
     <label for="rolEmpleado">Rol</label>
-    <select id="rolEmpleado" formControlName="rolEmpleado" (change)="onRoleChange()" required>
+    <select
+      id="rolEmpleado"
+      formControlName="rolEmpleado"
+      (change)="onRoleChange()"
+      required>
       @for (rol of roles; track rol) {
         <option [value]="rol">{{ rol }}</option>
       }
     </select>
 
     <div class="additional-fields">
+      <!-- NOMBRE -->
       <label for="nombre">Nombre</label>
       <input id="nombre" formControlName="nombre" required>
 
+      <!-- APELLIDO -->
       <label for="apellido">Apellido</label>
       <input id="apellido" formControlName="apellido" required>
 
+      <!-- USUARIO -->
       <label for="nombreLogin">Nombre de usuario</label>
       <input id="nombreLogin" formControlName="nombreLogin" required>
 
+      <!-- DNI -->
       <label for="dni">DNI</label>
       <input id="dni" formControlName="dni" required>
 
+      <!-- TELÉFONO -->
       <label for="phoneNumber">Teléfono</label>
       <input id="phoneNumber" formControlName="phoneNumber" required>
 
+      <!-- EMAIL -->
       <label for="email">Email</label>
       <input id="email" formControlName="email" type="email" required>
 
-      <label for="password">Contraseña</label>
-      <input id="password" formControlName="password" type="password">
+      <!-- CONTRASEÑA (solo al crear empleado) -->
+      @if (!isEditing) {
+        <label for="password">Contraseña inicial</label>
+        <input
+          id="password"
+          formControlName="password"
+          type="password"
+          required
+        >
 
-      <label for="oldPassword">Contraseña actual</label>
-      <input id="oldPassword" formControlName="oldPassword" type="password">
+        @if (form.get('password')?.touched && form.get('password')?.invalid) {
+          <div class="errors-container">
+            @if (form.get('password')?.hasError('required')) {
+              <small class="error">La contraseña es obligatoria.</small>
+            }
+            @if (form.get('password')?.hasError('minlength')) {
+              <small class="error">La contraseña debe tener al menos 8 caracteres.</small>
+            }
+          </div>
+        }
+      }
+
+      <!-- Botón de reset (solo en edición) -->
+      @if (isEditing) {
+        <button
+          type="button"
+          class="btn-reset-password"
+          (click)="resetPassword()">
+          Restablecer contraseña (admin)
+        </button>
+      }
+
     </div>
 
-    <button type="submit" [disabled]="form.invalid">{{ isEditing ? 'Actualizar Emlado' : 'Crear Empleado' }}</button>
+    <!-- BOTÓN PRINCIPAL -->
+    <button type="submit" [disabled]="form.invalid">
+      {{ isEditing ? 'Actualizar empleado' : 'Crear empleado' }}
+    </button>
 
-    <!-- Botón para activar o desactivar -->
+    <!-- Botones activar / desactivar -->
     @if (form.value.activo) {
-      <button type="button" (click)="markAsInactive()" class="btn btn-danger">
+      <button
+        type="button"
+        (click)="markAsInactive()"
+        class="btn btn-danger">
         Marcar como Inactivo
       </button>
     } @else {
-      <button type="button" (click)="markAsActive()" class="btn btn-success">
+      <button
+        type="button"
+        (click)="markAsActive()"
+        class="btn btn-success">
         Marcar como Activo
       </button>
     }
+
   </form>
 </section>

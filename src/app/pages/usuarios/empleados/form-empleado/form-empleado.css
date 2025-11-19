@@ -156,3 +156,17 @@
   background: rgba(241, 195, 111, 0.15);
   transform: translateX(-2px);
 }
+/* form-empleado.css */
+.btn-reset-password {
+  margin-top: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #f1c36f;
+  background: transparent;
+  color: #f1c36f;
+  cursor: pointer;
+}
+
+.btn-reset-password:hover {
+  background: rgba(241, 195, 111, 0.12);
+}
