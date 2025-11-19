@@ -17,10 +17,6 @@
         </span>
         }
       </div>
-
-      <span class="habitacion-card__badge" [ngClass]="selectedHab.estado.toLowerCase()">
-        {{ selectedHab.estado }}
-      </span>
     </div>
     } @else {
     <div class="habitacion-card__image--placeholder">
@@ -29,16 +25,20 @@
     }
 
     <div class="habitacion-card__body">
-      
+
       <div class="card-header">
         <div class="habitacion-card__title">
           Hab. {{ selectedHab.numero }} <span class="separator">·</span> {{ selectedHab.tipo }}
           @if (isAdmin && !selectedHab.activo) {
-            <span class="badge-inactiva">(INACTIVA)</span>
+          <span class="badge-inactiva">(INACTIVA)</span>
           }
         </div>
         <div class="habitacion-card__sub">Piso {{ selectedHab.piso }}</div>
       </div>
+
+      @if (puedeGestionarHabitaciones) {
+      <span class="habitacion-card__badge" [ngClass]="selectedHab.estado.toLowerCase()">{{ selectedHab.estado }}</span>
+      }
 
       <div class="habitacion-card__specs">
         <div class="spec-item">
@@ -65,25 +65,25 @@
     </div>
 
     <div class="buttons">
-      
+
       @if (!isConserje && !isLimpieza) {
-        @if (selectedHab.activo) {
-           <button class="btn-reserva" (click)="reservarHabitacion(selectedHab)">Reservar</button>
-        } @else {
-           <button class="btn-reserva-block" [disabled]="true" title="Habitación inactiva">Reservar</button>
-        }
+      @if (selectedHab.activo) {
+      <button class="btn-reserva" (click)="reservarHabitacion(selectedHab)">Reservar</button>
+      } @else {
+      <button class="btn-reserva-block" [disabled]="true" title="Habitación inactiva">Reservar</button>
+      }
       }
 
       @if (puedeGestionarHabitaciones) {
-        <button class="btn-edit" (click)="editHabitacion(selectedHab)">Editar</button>
-        
-        @if (isAdmin) {
-          @if (selectedHab.activo) {
-            <button class="btn-danger" (click)="inhabilitarHabitacion(selectedHab)">Inhabilitar</button>
-          } @else {
-            <button class="btn-reactivate" (click)="reactivarHabitacion(selectedHab)">Reactivar</button>
-          }
-        }
+      <button class="btn-edit" (click)="editHabitacion(selectedHab)">Editar</button>
+
+      @if (isAdmin) {
+      @if (selectedHab.activo) {
+      <button class="btn-danger" (click)="inhabilitarHabitacion(selectedHab)">Inhabilitar</button>
+      } @else {
+      <button class="btn-reactivate" (click)="reactivarHabitacion(selectedHab)">Reactivar</button>
+      }
+      }
       }
 
       <button class="btn-back" (click)="volver()">Volver</button>
