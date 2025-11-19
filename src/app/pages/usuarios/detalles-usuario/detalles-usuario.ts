@@ -1,14 +1,14 @@
-import { CommonModule }               from '@angular/common';
-import { Component, OnInit, inject }  from '@angular/core';
-import { ActivatedRoute, Router }     from '@angular/router';
-import { AuthService }                from '../../../services/auth-service';
-import { UserService }                from '../../../services/user-service';
-import   User                         from '../../../models/User';
+import { CommonModule }                       from '@angular/common';
+import { Component, OnInit, inject }          from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AuthService }                        from '../../../services/auth-service';
+import { UserService }                        from '../../../services/user-service';
+import   User                                 from '../../../models/User';
 
 @Component({
   selector: 'app-detalles-usuario',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './detalles-usuario.html',
   styleUrls: ['./detalles-usuario.css'],
 })
