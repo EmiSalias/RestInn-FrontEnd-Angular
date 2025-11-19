@@ -14,6 +14,7 @@ import { FormEmpleado } from './pages/usuarios/empleados/form-empleado/form-empl
 // region EMPLEADOS       - IMPORTS
 import { FormCliente } from './pages/usuarios/clientes/form-cliente/form-cliente';
 import { ListadoClientes } from './pages/usuarios/clientes/listado-clientes/listado-clientes';
+import { CheckInOut } from './pages/usuarios/empleados/check-in-out/check-in-out';
 // #endregion
 
 // region Habitaciones   - IMPORTS
@@ -209,6 +210,15 @@ export const routes: Routes = [
         }
     },
 
+    {
+        path: 'check_in_out',
+        component: CheckInOut,
+        canActivate: [AuthGuard],
+        data: {
+            roles: ['ADMINISTRADOR', 'RECEPCIONISTA']
+        }
+    },
+
     // === ADMIN / RECEPCIONISTA: historial (listado reactivo) ===
     {
         path: 'listado_reservas',
@@ -324,7 +334,7 @@ export const routes: Routes = [
     },
 
     {
-        path: 'factura/:id',
+        path: 'detalle_factura/:id',
         component: DetalleFactura,
         canActivate: [AuthGuard],
         data: {

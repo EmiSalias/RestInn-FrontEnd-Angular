@@ -1,0 +1,287 @@
+/* === Contenedor general === */
+.factura-wrapper {
+  padding: 10px 40px 40px;        /* espacio por el header fijo */
+  max-width: 1100px;
+  margin: 0 auto;
+  color: var(--color-text);
+}
+
+/* Link volver */
+/* src/app/pages/facturas/detalle-factura/detalle-factura.css */
+
+/* ...dejá todo lo que ya tenés... y al final agregá/ajustá esto: */
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 2rem;
+  padding: 0.55rem 1.4rem;
+  border-radius: 9999px;
+
+  background: transparent;                  /* NO fondo oscuro */
+  border: 1px solid var(--color-primary);   /* borde dorado */
+  color: var(--color-primary);              /* texto dorado */
+
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.back-link:hover {
+  background-color: rgba(203, 178, 106, 0.12);  /* dorado suave */
+  color: var(--color-text);                     /* texto claro */
+  box-shadow: 0 0 0 1px rgba(203, 178, 106, 0.3);
+  transform: translateY(-1px);
+}
+
+
+/* === Header === */
+.factura-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.factura-header h1 {
+  margin: 0;
+  font-size: 1.9rem;
+}
+
+.factura-subtitle {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+/* Estado arriba a la derecha */
+.factura-status .badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--color-border);
+}
+
+/* Colores por estado (usa [ngClass]="f.estado") */
+.badge.EMITIDA {
+  background: rgba(214, 184, 90, 0.15);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.badge.PAGADA {
+  background: rgba(76, 175, 80, 0.18);
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.badge.EN_PROCESO {
+  background: rgba(203, 178, 106, 0.16);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.badge.ANULADA {
+  background: rgba(229, 115, 115, 0.18);
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+/* === Layout principal === */
+.factura-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* Columnas */
+.factura-col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Tarjetas */
+.factura-card {
+  background-color: var(--color-surface);
+  border-radius: 24px;
+  padding: 24px 24px 20px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65);
+}
+
+.factura-card h2 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+
+/* Cliente */
+.cliente-nombre {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.cliente-estadia {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* Totales */
+.tot-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.tot-row span:first-child {
+  color: var(--color-text-muted);
+}
+
+.tot-row .amount {
+  font-variant-numeric: tabular-nums;
+}
+
+.tot-row.total {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+  font-weight: 600;
+}
+
+.metodo-pago {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* Tabla de consumos */
+.tabla-consumos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+.tabla-consumos thead {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.45),
+    rgba(0, 0, 0, 0.25)
+  );
+}
+
+.tabla-consumos th,
+.tabla-consumos td {
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.tabla-consumos th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tabla-consumos td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.tabla-consumos tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.18);
+}
+
+.tabla-consumos th:last-child,
+.tabla-consumos td:last-child {
+  text-align: right;
+}
+
+/* === Acciones === */
+.factura-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary {
+  font-size: 0.9rem;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.1s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-secondary);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-primary);
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* === Estados de carga / error === */
+.factura-loading,
+.factura-error {
+  padding: 110px 40px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* === Responsive === */
+@media (max-width: 900px) {
+  .factura-wrapper {
+    padding: 100px 16px 24px;
+  }
+
+  .factura-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .factura-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .factura-actions {
+    justify-content: flex-start;
+  }
+}

@@ -1,1 +1,123 @@
-<p>detalle-factura works!</p>
+<!-- src/app/pages/facturas/detalle-factura/detalle-factura.html -->
+
+<section class="factura-wrapper">
+
+    @if (loading) {
+    <div class="factura-loading">Cargando factura...</div>
+    } @else {
+
+    <button class="back-link" (click)="volver()">← Volver</button>
+
+    @if (factura; as f) {
+
+    <header class="factura-header">
+        <div>
+            <h1>Factura #{{ f.id }}</h1>
+            <p class="factura-subtitle">
+                Reserva #{{ f.reservaId }} · Habitación {{ f.habitacionNumero }}
+            </p>
+        </div>
+
+        <div class="factura-status">
+            <span class="badge" [ngClass]="f.estado">
+                {{ estadoLabel(f.estado) }}
+            </span>
+        </div>
+    </header>
+
+    <div class="factura-layout">
+        <!-- Columna izquierda -->
+        <div class="factura-col">
+            <article class="factura-card">
+                <h2>Cliente</h2>
+                <p class="cliente-nombre">{{ f.clienteNombre }}</p>
+
+                @if (f.ingreso && f.salida) {
+                <p class="cliente-estadia">
+                    Estadía: {{ f.ingreso | date:'dd/MM/yyyy' }}
+                    – {{ f.salida | date:'dd/MM/yyyy' }}
+                </p>
+                }
+            </article>
+
+            <article class="factura-card">
+                <h2>Totales</h2>
+
+                <div class="tot-row">
+                    <span>Subtotal</span>
+                    <span class="amount">$ {{ f.subtotal | number:'1.2-2' }}</span>
+                </div>
+
+                <div class="tot-row">
+                    <span>IVA (10%)</span>
+                    <span class="amount">$ {{ ivaMonto | number:'1.2-2' }}</span>
+                </div>
+
+                <div class="tot-row total">
+                    <span>Total</span>
+                    <span class="amount">$ {{ f.totalFinal | number:'1.2-2' }}</span>
+                </div>
+
+                <p class="metodo-pago">
+                    Método de pago: {{ f.metodoPago }}
+                    @if (f.cuotas && f.cuotas > 1) {
+                    · {{ f.cuotas }} cuotas
+                    }
+                </p>
+            </article>
+
+        </div>
+
+        <!-- Columna derecha: consumos + acciones -->
+        <div class="factura-col">
+            <article class="factura-card">
+                <h2>Consumos</h2>
+
+                @if (!f.consumos?.length) {
+                <p>No hay consumos registrados para esta reserva.</p>
+                } @else {
+                <table class="tabla-consumos">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Cant.</th>
+                            <th>Precio</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (c of f.consumos; track c.id) {
+                        <tr>
+                            <td>{{ c.descripcion }}</td>
+                            <td>{{ c.cantidad }}</td>
+                            <td>\${{ c.precioUnitario | number:'1.2-2' }}</td>
+                            <td>\${{ c.subtotal | number:'1.2-2' }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                }
+            </article>
+
+            <div class="factura-actions">
+                <button class="btn-secondary" type="button" (click)="descargarPdf()">
+                    Descargar PDF
+                </button>
+
+                @if (puedeMarcarPagada) {
+                <button class="btn-primary" type="button" (click)="marcarPagada()">
+                    Marcar como pagada
+                </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    } @else {
+    <div class="factura-error">
+        {{ errorMsg || 'No se pudo cargar la factura.' }}
+    </div>
+    }
+
+    }
+</section>

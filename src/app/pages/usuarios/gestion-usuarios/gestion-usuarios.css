@@ -1,7 +1,6 @@
-/* src/app/pages/usuarios/gestion-usuarios/gestion-usuarios.css */
-
+/* Contenedor principal (igual que habitaciones-hub) */
 .user-hub {
-  padding: 110px 40px 40px; /* espacio por el header fijo */
+  padding: 10px 40px 40px;        /* espacio por el header fijo */
   color: var(--color-text);
 }
 
@@ -14,17 +13,17 @@
 .user-hub .subtitle {
   margin-bottom: 24px;
   font-size: 14px;
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
 }
 
-/* layout de las dos cards */
+/* Layout de las cards */
 .cards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 
-/* cada card es un “botón grande” */
+/* Cada card es un “botón grande” */
 .card {
   background-color: var(--color-surface);
   border-radius: 24px;
@@ -34,9 +33,9 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  border: 1px solid var(--color-border);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
   cursor: pointer;
+  border: 1px solid var(--color-border);
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease,
@@ -44,19 +43,20 @@
     border-color 0.18s ease;
 }
 
-.card:hover {
+.card:hover,
+.card:focus-visible {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
-  background-color: var(--color-h-f);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
   border-color: var(--color-primary);
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
-/* icono grande ocupando casi toda la card */
+/* Icono grande ocupando casi toda la card */
 .icon-wrapper {
   width: 140px;
   height: 140px;
   border-radius: 32px;
-  background: linear-gradient(135deg, #f1c36f, #e09b3a); /* mantiene el dorado de marca */
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,24 +68,24 @@
 
 .icon-wrapper fa-icon {
   font-size: 64px;
-  color: #2b2219;
+  color: var(--color-bg);
 }
 
-/* efecto hover directo sobre el icono */
-.card:hover .icon-wrapper {
+/* Efecto hover directo sobre el icono */
+.card:hover .icon-wrapper,
+.card:focus-visible .icon-wrapper {
   transform: scale(1.05);
-  box-shadow: 0 0 22px rgba(241, 195, 111, 0.9);
+  box-shadow: 0 0 22px rgba(241, 195, 111, 0.9); /* glow dorado */
 }
 
 .card h2 {
   font-size: 20px;
   margin-bottom: 6px;
-  color: var(--color-primary);
 }
 
 .card p {
   font-size: 14px;
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
 }
 
 /* Responsive */

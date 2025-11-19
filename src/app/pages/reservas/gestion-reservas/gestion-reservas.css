@@ -1,7 +1,7 @@
 /* src/app/pages/reservas/gestion-reservas/gestion-reservas.css */
 
 .reservas-hub {
-  padding: 110px 40px 40px; /* espacio por el header fijo */
+  padding: 10px 40px 40px; /* espacio por el header fijo */
   color: var(--color-text);
 }
 

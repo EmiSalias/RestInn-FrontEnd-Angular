@@ -7,6 +7,142 @@
     }
   </div>
 
+  <!-- RESUMEN ADMIN / RECEP -->
+  @if (isAdminOrRecep) {
+  @if (resumenAdmin$ | async; as resumenAdmin) {
+  <section class="facturacion-resumen facturacion-resumen--admin">
+
+    <div class="facturacion-resumen__status facturacion-resumen__status--admin">
+      <p class="pill-estado">
+        Resumen del período filtrado
+      </p>
+
+      <h3>Panel de facturación</h3>
+
+      <div class="admin-main-metrics">
+        <div>
+          <p class="saldo-label">Facturado</p>
+          <p class="saldo-value">
+            {{ resumenAdmin.totalFacturado | currency:'ARS':'symbol':'1.0-0' }}
+          </p>
+        </div>
+        <div>
+          <p class="saldo-label">Pendiente de cobro</p>
+          <p class="saldo-value saldo-value--pendiente">
+            {{ resumenAdmin.totalPendiente | currency:'ARS':'symbol':'1.0-0' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="admin-summary-actions">
+        <button type="button" class="btn-pendientes" (click)="togglePendientes()">
+          {{ soloPendientesActivos ? 'Ver todas las facturas' : 'Ver solo pendientes' }}
+        </button>
+
+        <button type="button" class="btn-link" (click)="verReservasImpagas()">
+          Ver reservas finalizadas impagas
+        </button>
+      </div>
+    </div>
+
+    <div class="facturacion-resumen__metrics">
+      <div class="metric-card">
+        <span class="metric-label">Facturas pendientes</span>
+        <span class="metric-value">
+          {{ resumenAdmin.facturasPendientes }}
+        </span>
+        <span class="metric-helper">
+          EMITIDAS y EN_PROCESO
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">Facturas pagadas</span>
+        <span class="metric-value">
+          {{ resumenAdmin.facturasPagadas }}
+        </span>
+        <span class="metric-helper">
+          Cobradas / cerradas
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">% de cobro</span>
+        <span class="metric-value">
+          {{ resumenAdmin.porcentajeCobro | number:'1.0-1' }}%
+        </span>
+        <span class="metric-helper">
+          Total pagado vs facturado
+        </span>
+      </div>
+    </div>
+
+  </section>
+  }
+  }
+
+  <!-- RESUMEN CLIENTE -->
+  @if (!isAdminOrRecep && resumenCliente) {
+  <section class="facturacion-resumen">
+
+    <!-- CARD ESTADO / SALDO -->
+    <div class="facturacion-resumen__status" [ngClass]="resumenCliente.saldoPendiente > 0 ? 'deuda' : 'ok'">
+
+      <p class="pill-estado">
+        {{ resumenCliente.saldoPendiente > 0 ? 'Facturación pendiente' : 'Cuenta al día' }}
+      </p>
+
+      <h3>
+        {{ resumenCliente.saldoPendiente > 0
+        ? 'Tenés facturas pendientes de pago'
+        : '¡Estás al día con tus pagos!' }}
+      </h3>
+
+      <p class="saldo-label">Saldo acumulado</p>
+      <p class="saldo-value">
+        {{ resumenCliente.saldoPendiente | currency:'ARS':'symbol':'1.0-0' }}
+      </p>
+
+      <button type="button" class="btn-pendientes" (click)="togglePendientes()">
+        {{ soloPendientesActivos ? 'Ver todas las facturas' : 'Ver facturas pendientes' }}
+      </button>
+    </div>
+
+    <!-- CARDS DE MÉTRICAS -->
+    <div class="facturacion-resumen__metrics">
+      <div class="metric-card">
+        <span class="metric-label">Facturas pendientes</span>
+        <span class="metric-value">
+          {{ resumenCliente.facturasPendientes }}
+        </span>
+        <span class="metric-helper">
+          Incluye EMITIDAS y EN_PROCESO
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">Facturas pagadas</span>
+        <span class="metric-value">
+          {{ resumenCliente.facturasPagadas }}
+        </span>
+        <span class="metric-helper">
+          Historial de facturas cerradas
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">Total pagado</span>
+        <span class="metric-value">
+          {{ resumenCliente.saldoPagado | currency:'ARS':'symbol':'1.0-0' }}
+        </span>
+        <span class="metric-helper">
+          Suma de facturas marcadas como PAGADA
+        </span>
+      </div>
+    </div>
+  </section>
+  }
+
   <form [formGroup]="filtrosForm" class="filtros">
     @if (!isAdminOrRecep) {
     <input type="text" placeholder="Buscar por reserva u habitación..." formControlName="texto">
@@ -14,6 +150,7 @@
     @else {
     <input type="text" placeholder="Buscar por cliente, reserva u habitación..." formControlName="texto">
     }
+
     <select formControlName="tipo">
       <option value="">Todos los tipos</option>
       <option value="RESERVA">Reserva</option>
@@ -25,6 +162,7 @@
       <option value="EMITIDA">Emitida</option>
       <option value="EN_PROCESO">En proceso</option>
       <option value="ANULADA">Anulada</option>
+      <option value="PAGADA">Pagada</option>
     </select>
 
     <label>
@@ -36,8 +174,14 @@
       Hasta
       <input type="date" formControlName="hasta" [attr.min]="filtrosForm.value.desde || null">
     </label>
-  </form>
 
+    <!-- chip de estado cuando está activo el filtro de pendientes -->
+    @if (soloPendientesActivos) {
+    <button class="chip-activo" type="button" (click)="limpiarPendientes()">
+      Mostrando solo facturas pendientes · Quitar filtro
+    </button>
+    }
+  </form>
 
   @if (error) {
   <div class="estado estado-error">
@@ -51,7 +195,6 @@
   </div>
   }
 
-
   @if (facturas$ | async; as facturas) {
   <table class="tabla-facturas">
     <thead>
@@ -64,6 +207,7 @@
           </span>
           }
         </th>
+
         <th class="sortable" (click)="onSort('fechaEmision')">
           Fecha
           @if (sortState.field === 'fechaEmision') {
@@ -72,6 +216,7 @@
           </span>
           }
         </th>
+
         <th class="sortable" (click)="onSort('clienteNombre')">
           Cliente
           @if (sortState.field === 'clienteNombre') {
@@ -80,6 +225,7 @@
           </span>
           }
         </th>
+
         <th class="sortable" (click)="onSort('reservaId')">
           Reserva
           @if (sortState.field === 'reservaId') {
@@ -88,6 +234,7 @@
           </span>
           }
         </th>
+
         <th class="sortable" (click)="onSort('habitacionNumero')">
           Hab.
           @if (sortState.field === 'habitacionNumero') {
@@ -96,6 +243,7 @@
           </span>
           }
         </th>
+
         <th class="sortable" (click)="onSort('tipoFactura')">
           Tipo
           @if (sortState.field === 'tipoFactura') {
@@ -104,6 +252,7 @@
           </span>
           }
         </th>
+
         <th class="sortable" (click)="onSort('estado')">
           Estado
           @if (sortState.field === 'estado') {
@@ -112,6 +261,7 @@
           </span>
           }
         </th>
+
         <th class="sortable total-col" (click)="onSort('totalFinal')">
           Total
           @if (sortState.field === 'totalFinal') {
@@ -120,11 +270,17 @@
           </span>
           }
         </th>
-        <th class="pdf-col">
-          PDF
+
+        <th class="saldo-col">
+          Saldo
+        </th>
+
+        <th class="accion-col">
+          @if (isAdminOrRecep) { Acciones } @else { Detalle }
         </th>
       </tr>
     </thead>
+
     <tbody>
       @for (f of facturas; track f.id) {
       <tr>
@@ -142,9 +298,18 @@
         <td class="total-col">
           {{ f.totalFinal | currency:'ARS':'symbol':'1.0-0' }}
         </td>
-        <td class="pdf-col">
-          <button class="btn-pdf" type="button" (click)="abrirPdf(f)">
-            Ver PDF
+
+        <td class="saldo-col">
+          {{
+          (f.estado === 'EMITIDA' || f.estado === 'EN_PROCESO'
+          ? f.totalFinal
+          : 0) | currency:'ARS':'symbol':'1.0-0'
+          }}
+        </td>
+
+        <td class="accion-col">
+          <button class="btn-detalle" type="button" (click)="verDetalle(f)">
+            Ver detalle
           </button>
         </td>
       </tr>
@@ -157,13 +322,14 @@
     No hay facturas que coincidan con los filtros.
   </div>
   }
-
-  } @else {
+  }
+  @else {
   @if (!cargando && !error) {
   <div class="estado">
     No hay facturas para mostrar.
   </div>
   }
   }
+
 
 </div>

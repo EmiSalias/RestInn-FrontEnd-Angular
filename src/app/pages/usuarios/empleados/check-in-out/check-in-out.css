@@ -1,0 +1,274 @@
+/* ========================= */
+/* CHECK-IN / CHECK-OUT      */
+/* ========================= */
+
+.check-page {
+  padding: 110px 40px 40px;
+  color: var(--color-text);
+}
+
+/* título + badge de rol */
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.header-row h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.rol-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* ========================= */
+/* RESUMEN SUPERIOR          */
+/* ========================= */
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-card {
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.summary-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.summary-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.summary-helper {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* ========================= */
+/* LAYOUT COLUMNAS           */
+/* ========================= */
+
+.check-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.check-block {
+  background: var(--color-surface);
+  border-radius: 18px;
+  padding: 1.2rem 1.4rem;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+}
+
+.check-block__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.8rem;
+}
+
+.check-block h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.muted {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* ========================= */
+/* TABLA                     */
+/* ========================= */
+
+.check-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.check-table th,
+.check-table td {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.check-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+}
+
+.check-table tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.check-table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.acciones {
+  display: flex;
+  gap: 0.4rem;
+}
+
+/* ========================= */
+/* BOTONES                   */
+/* ========================= */
+
+.btn-link {
+  border: none;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.btn-link:hover {
+  color: var(--color-secondary);
+}
+
+.btn-accion {
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    filter 0.08s ease;
+}
+
+.btn-accion--checkin {
+  background: #2196F3;
+  color: #fff;
+}
+
+.btn-accion--checkout {
+  background: #FF9800;
+  color: #000;
+}
+
+.btn-accion:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.35);
+}
+
+.btn-accion:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ========================= */
+/* ESTADOS / MENSAJES        */
+/* ========================= */
+
+.estado {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.estado-error {
+  color: var(--color-error);
+}
+
+/* ========================= */
+/* FILAS PRIORITARIAS        */
+/* ========================= */
+
+.check-table tbody tr.row-critical {
+  background-color: rgba(211, 47, 47, 0.2);
+}
+
+.check-table tbody tr.row-critical:hover {
+  background-color: rgba(211, 47, 47, 0.28);
+}
+
+.check-table tbody tr.row-warning {
+  background-color: rgba(255, 152, 0, 0.16);
+}
+
+.check-table tbody tr.row-warning:hover {
+  background-color: rgba(255, 152, 0, 0.22);
+}
+
+/* Badges de prioridad */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.35rem;
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.badge-late {
+  background: rgba(244, 67, 54, 0.18);
+  border: 1px solid rgba(244, 67, 54, 0.5);
+  color: #ffb3b3;
+}
+
+.badge-today {
+  background: rgba(255, 152, 0, 0.14);
+  border: 1px solid rgba(255, 152, 0, 0.5);
+  color: #ffd180;
+}
+
+/* ========================= */
+/* RESPONSIVE                */
+/* ========================= */
+
+@media (max-width: 960px) {
+  .check-page {
+    padding: 100px 16px 24px;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .check-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .check-table {
+    font-size: 0.8rem;
+  }
+}
