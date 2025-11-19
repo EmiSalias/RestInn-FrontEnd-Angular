@@ -124,7 +124,6 @@ export class Recovery implements OnInit {
     });
   }
 
-
   // ========= Paso 2: verificar código =========
   onVerifyCode(): void {
     const code = this.getCodeFromForm();
@@ -179,6 +178,20 @@ export class Recovery implements OnInit {
           err?.error?.message || 'No se pudo actualizar la contraseña.';
       }
     });
+  }
+
+  // Mueve el foco al siguiente input si se escribió algo
+  focusNext(current: HTMLInputElement, next: HTMLInputElement | null): void {
+    if (current.value.length > 0 && next) {
+      next.focus();
+    }
+  }
+
+  // Mueve el foco al anterior si se borra en un campo vacío
+  focusPrev(current: HTMLInputElement, prev: HTMLInputElement | null): void {
+    if (current.value.length === 0 && prev) {
+      prev.focus();
+    }
   }
 
   goToSignIn(): void {

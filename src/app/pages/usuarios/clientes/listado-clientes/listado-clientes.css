@@ -5,10 +5,18 @@
   color: var(--color-text);
 }
 
-.clients-page h1 {
+h1 {
+  cursor: default;
+  display: inline-block;
+  padding-right: 10px;
   margin-bottom: 20px;
   font-size: 24px;
   color: var(--color-primary);
+}
+
+.gest-usuarios:hover{
+  cursor: pointer;
+  color: var(--color-primary)-secondary;
 }
 
 .status {

@@ -1,4 +1,4 @@
-# RestInn Front-End 🌐
+# RestInn Front-End
 
 Aplicación web desarrollada en **Angular** para la gestión integral del sistema hotelero **RestInn**.  
 Permite la administración de **clientes**, **reservas**, **habitaciones**, **empleados** y **facturación**, con conexión directa a la **API RESTful** de backend.
@@ -7,7 +7,7 @@ Incluye autenticación con roles, guards de seguridad, operaciones CRUD y un dis
 
 ---
 
-## 🧩 Funcionalidades principales
+## Funcionalidades principales
 - Sistema de **login** con distintos roles de usuario.
 - Implementación de **guards** para proteger rutas según permisos.
 - CRUD completos para:
@@ -22,7 +22,7 @@ Incluye autenticación con roles, guards de seguridad, operaciones CRUD y un dis
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## Tecnologías utilizadas
 - **Framework:** Angular 20  
 - **Lenguajes:** TypeScript, HTML, CSS  
 - **Estructura de interfaz:** FXML / componentes Angular  
@@ -33,7 +33,7 @@ Incluye autenticación con roles, guards de seguridad, operaciones CRUD y un dis
 
 ---
 
-## 🚀 Ejecución del proyecto
+## Ejecución del proyecto
 1. Clonar el repositorio  
    ```bash
    git clone https://github.com/tu-usuario/RestInn-FrontEnd-Angular.git
@@ -46,7 +46,7 @@ Incluye autenticación con roles, guards de seguridad, operaciones CRUD y un dis
 
 ---
 
-## 👥 Integrantes
+## Integrantes
 - [EmiSalias]
 - [ManuJurado]
 - [Lisandstone]

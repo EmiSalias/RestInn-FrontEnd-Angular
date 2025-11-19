@@ -21,7 +21,6 @@ import { CheckInOut } from './pages/usuarios/empleados/check-in-out/check-in-out
 import { ListadoHabitaciones } from './pages/habitaciones/listado-habitaciones/listado-habitaciones';
 import { DetallesHabitacion } from './pages/habitaciones/detalles-habitacion/detalles-habitacion';
 import { FormHabitacion } from './pages/habitaciones/form-habitacion/form-habitacion';
-import { InhabilitarHabitacion } from './pages/habitaciones/inhabilitar-habitacion/inhabilitar-habitacion';
 import { GestionHabitaciones } from './pages/habitaciones/gestion-habitaciones/gestion-habitaciones';
 // #endregion
 // region Reservas       - IMPORTS
@@ -170,7 +169,7 @@ export const routes: Routes = [
         component: FormHabitacion,
         canActivate: [AuthGuard],
         data: {
-            roles: ['ADMINISTRADOR']
+            roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA']
         }
     },
     {
@@ -179,19 +178,6 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
             roles: ['ADMINISTRADOR']
-        }
-    },
-    {
-        path: 'inhabilitar_habitacion/:id',
-        component: InhabilitarHabitacion,
-        canActivate: [AuthGuard],
-        data: {
-            roles: [
-                'ADMINISTRADOR',
-                'RECEPCIONISTA',
-                'CONSERJE',
-                'LIMPIEZA'
-            ]
         }
     },
     // endregion

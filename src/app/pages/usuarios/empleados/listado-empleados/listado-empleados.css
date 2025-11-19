@@ -3,11 +3,25 @@
   color: var(--color-text);
 }
 
+h1 {
+  cursor: default;
+  display: inline-block;
+  padding-right: 10px;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: var(--color-primary);
+}
+
+.gest-usuarios:hover{
+  cursor: pointer;
+  color: var(--color-primary)-secondary;
+}
+
 /* tabla como card */
 .tabla-empleados {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px;
+  margin: 0;
   font-size: 0.9rem;
   background-color: var(--color-surface);
   border-radius: 12px;
@@ -62,6 +76,17 @@
   border-color: rgba(244, 67, 54, 0.7);
 }
 
+.btn-filter {
+  color: var(--color-bg);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
 /* link de acción */
 .btn-link {
@@ -70,6 +95,7 @@
   color: var(--color-primary);
   cursor: pointer;
   font-size: 13px;
+  font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 2px;
 }

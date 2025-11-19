@@ -44,12 +44,23 @@
       </p>
 
       <div class="code-inputs">
-        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d1" />
-        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d2" />
-        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d3" />
-        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d4" />
-        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d5" />
-        <input class="code-box" maxlength="1" inputmode="numeric" formControlName="d6" />
+        <input #txt1 class="code-box" maxlength="1" inputmode="numeric" formControlName="d1"
+          (input)="focusNext(txt1, txt2)" (keydown.backspace)="focusPrev(txt1, null)" />
+
+        <input #txt2 class="code-box" maxlength="1" inputmode="numeric" formControlName="d2"
+          (input)="focusNext(txt2, txt3)" (keydown.backspace)="focusPrev(txt2, txt1)" />
+
+        <input #txt3 class="code-box" maxlength="1" inputmode="numeric" formControlName="d3"
+          (input)="focusNext(txt3, txt4)" (keydown.backspace)="focusPrev(txt3, txt2)" />
+
+        <input #txt4 class="code-box" maxlength="1" inputmode="numeric" formControlName="d4"
+          (input)="focusNext(txt4, txt5)" (keydown.backspace)="focusPrev(txt4, txt3)" />
+
+        <input #txt5 class="code-box" maxlength="1" inputmode="numeric" formControlName="d5"
+          (input)="focusNext(txt5, txt6)" (keydown.backspace)="focusPrev(txt5, txt4)" />
+
+        <input #txt6 class="code-box" maxlength="1" inputmode="numeric" formControlName="d6"
+          (input)="focusNext(txt6, null)" (keydown.backspace)="focusPrev(txt6, txt5)" />
       </div>
 
       @if (codeForm.touched && codeForm.invalid) {
