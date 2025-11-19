@@ -5,123 +5,148 @@
   </button>
 
   @if (loading) {
-    <div class="status">Cargando reserva...</div>
+  <div class="status">Cargando reserva...</div>
   }
   @if (!loading && errorMsg) {
-    <div class="status error">{{ errorMsg }}</div>
+  <div class="status error">{{ errorMsg }}</div>
   }
 
   @if (!loading && !errorMsg && reserva; as r) {
 
-    <header class="detail-header">
-      <div>
-        <h1>Reserva #{{ r.id }}</h1>
-        <p class="subtitle">
-          Habitación {{ r.habitacionNumero || r.habitacionId }}
-          · {{ r.fechaIngreso | date:'dd/MM/yyyy' }} — {{ r.fechaSalida | date:'dd/MM/yyyy' }}
-        </p>
-      </div>
+  <header class="detail-header">
+    <div>
+      <h1>Reserva #{{ r.id }}</h1>
+      <p class="subtitle">
+        Habitación {{ r.habitacionNumero || r.habitacionId }}
+        · {{ r.fechaIngreso | date:'dd/MM/yyyy' }} — {{ r.fechaSalida | date:'dd/MM/yyyy' }}
+      </p>
+    </div>
 
-      <span class="status-chip" [ngClass]="r.estado.toLowerCase()">
-        {{ estadoLabel(r.estado) }}
-      </span>
-    </header>
+    <span class="status-chip" [ngClass]="r.estado.toLowerCase()">
+      {{ estadoLabel(r.estado) }}
+    </span>
+  </header>
 
-    <div class="detail-layout">
-      <!-- Columna principal -->
-      <div class="detail-main">
-        <section class="detail-block">
-          <h2>Estadía</h2>
-          <div class="detail-grid">
-            <div>
-              <div class="label">Ingreso</div>
-              <div class="value">{{ r.fechaIngreso | date:'dd/MM/yyyy' }}</div>
-            </div>
-            <div>
-              <div class="label">Salida</div>
-              <div class="value">{{ r.fechaSalida | date:'dd/MM/yyyy' }}</div>
-            </div>
-            <div>
-              <div class="label">Noches</div>
-              <div class="value">{{ noches }}</div>
-            </div>
+  <div class="detail-layout">
+    <!-- Columna principal -->
+    <div class="detail-main">
+      <section class="detail-block">
+        <h2>Estadía</h2>
+        <div class="detail-grid">
+          <div>
+            <div class="label">Ingreso</div>
+            <div class="value">{{ r.fechaIngreso | date:'dd/MM/yyyy' }}</div>
           </div>
-        </section>
-
-        <section class="detail-block">
-          <h2>Titular de la reserva</h2>
-          <p class="value strong">
-            {{ r.usuario.nombre }} {{ r.usuario.apellido }}
-          </p>
-          @if (r.usuario.email) {
-            <p class="muted">
-              {{ r.usuario.email }}
-            </p>
-          }
-        </section>
-
-        <section class="detail-block">
-          <h2>Huéspedes</h2>
-
-          @if (huespedes.length > 0) {
-            <ul class="guest-list">
-              @for (h of huespedes; track h) { <li>
-                  <div class="guest-name">
-                    {{ h.nombre }} {{ h.apellido }}
-                  </div>
-                  <div class="guest-meta">
-                    @if (h.dni) {
-                      <span>DNI {{ h.dni }}</span>
-                    }
-                  </div>
-                </li>
-              }
-            </ul>
-          } @else {
-            <p class="muted">
-              No se registraron huéspedes adicionales para esta reserva.
-            </p>
-          }
-        </section>
-      </div>
-
-      <!-- Columna lateral -->
-      <aside class="detail-sidebar">
-        <div class="room-card">
-          <div class="room-img-wrapper">
-            <img [src]="getHabitacionImage()" alt="Habitación" />
+          <div>
+            <div class="label">Salida</div>
+            <div class="value">{{ r.fechaSalida | date:'dd/MM/yyyy' }}</div>
           </div>
-
-          <div class="room-body">
-            <div class="room-tag">
-              Habitación {{ r.habitacionNumero || r.habitacionId }}
-            </div>
-            <div class="muted">
-              Estado: {{ estadoLabel(r.estado) }}
-            </div>
-
-            <!-- Botones debajo de la foto -->
-            <div class="detail-header-actions">
-              <!-- Botón de Confirmar solo para ADMIN/RECEPCIONISTA -->
-              @if (puedeConfirmarReserva) {
-                <button class="btn" (click)="confirmarReserva()">
-                  Confirmar reserva
-                </button>
-              }
-              @if (puedeCheckIn) {
-                <button class="btn" (click)="checkIn()">
-                  Realizar check-in
-                </button>
-              }
-              @if (puedeCheckOut) {
-                <button class="btn" (click)="checkOut()">
-                  Realizar check-out
-                </button>
-              }
-            </div>
+          <div>
+            <div class="label">Noches</div>
+            <div class="value">{{ noches }}</div>
           </div>
         </div>
-      </aside>
+      </section>
+
+      <section class="detail-block">
+        <h2>Titular de la reserva</h2>
+        <p class="value strong">
+          {{ r.usuario.nombre }} {{ r.usuario.apellido }}
+        </p>
+        @if (r.usuario.email) {
+        <p class="muted">
+          {{ r.usuario.email }}
+        </p>
+        }
+      </section>
+
+      <section class="detail-block">
+        <h2>Huéspedes</h2>
+
+        @if (huespedes.length > 0) {
+        <ul class="guest-list">
+          @for (h of huespedes; track h) {
+          <li>
+            <div class="guest-name">
+              {{ h.nombre }} {{ h.apellido }}
+            </div>
+            <div class="guest-meta">
+              @if (h.dni) {
+              <span>DNI {{ h.dni }}</span>
+              }
+            </div>
+          </li>
+          }
+        </ul>
+        } @else {
+        <p class="muted">
+          No se registraron huéspedes adicionales para esta reserva.
+        </p>
+        }
+      </section>
     </div>
+
+    <!-- Columna lateral -->
+    <aside class="detail-sidebar">
+      <div class="room-card">
+        <div class="room-img-wrapper">
+          <img [src]="getHabitacionImage()" alt="Habitación" />
+        </div>
+
+        <div class="room-body">
+          <div class="room-tag">
+            Habitación {{ r.habitacionNumero || r.habitacionId }}
+          </div>
+          <div class="muted">
+            Estado: {{ estadoLabel(r.estado) }}
+          </div>
+
+          <!-- Botones debajo de la foto -->
+          <div class="detail-header-actions">
+            @if (puedeConfirmarReserva) {
+            <button class="btn" (click)="confirmarReserva()">
+              Confirmar reserva
+            </button>
+            }
+            @if (puedeCheckIn) {
+            <button class="btn" (click)="checkIn()">
+              Realizar check-in
+            </button>
+            }
+            @if (puedeCheckOut) {
+            <button class="btn" (click)="checkOut()">
+              Realizar check-out
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- NUEVA SECCIÓN: FACTURACIÓN -->
+      <section class="detail-block factura-panel">
+        <h2>Facturación</h2>
+
+        @if (tieneFacturaReserva) {
+        <p class="muted">
+          Estado de la factura:
+          <span class="status-chip factura" [ngClass]="facturaReserva?.estado?.toLowerCase()">
+            {{ estadoFacturaLabel() }}
+          </span>
+
+        </p>
+
+        <button type="button" class="btn" (click)="verFactura()">
+          Ver factura
+        </button>
+        } @else {
+        <p class="muted">
+          No se encontró una factura asociada a esta reserva.
+        </p>
+        }
+      </section>
+      <!-- FIN FACTURACIÓN -->
+
+    </aside>
+  </div>
   }
 </section>

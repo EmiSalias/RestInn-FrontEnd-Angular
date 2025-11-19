@@ -1,17 +1,24 @@
-<div class="cards">
-  <article class="card" [routerLink]="['/listado_clientes']">
-    <div class="icon-wrapper">
-      <fa-icon [icon]="faUserTie"></fa-icon>
-    </div>
-    <h2>Clientes</h2>
-    <p>Ver, buscar y administrar los clientes registrados en RestInn.</p>
-  </article>
+<section class="user-hub">
+  <h1>Gestión de usuarios</h1>
+  <p class="subtitle">
+    Administra, visualiza y gestiona los usuarios de tu sistema.
+  </p>
 
-  <article class="card" [routerLink]="['/listado_empleados']">
-    <div class="icon-wrapper">
-      <fa-icon [icon]="faUserGear"></fa-icon>
-    </div>
-    <h2>Empleados</h2>
-    <p>Administrar administradores, recepcionistas, conserjes y personal de limpieza.</p>
-  </article>
-</div>
+  <div class="cards">
+    <article class="card" [routerLink]="['/listado_clientes']">
+      <div class="icon-wrapper">
+        <fa-icon [icon]="faUserTie"></fa-icon>
+      </div>
+      <h2>Clientes</h2>
+      <p>Ver, buscar y administrar los clientes registrados en RestInn.</p>
+    </article>
+
+    <article class="card" [routerLink]="['/listado_empleados']">
+      <div class="icon-wrapper">
+        <fa-icon [icon]="faUserGear"></fa-icon>
+      </div>
+      <h2>Empleados</h2>
+      <p>Administrar administradores, recepcionistas, conserjes y personal de limpieza.</p>
+    </article>
+  </div>
+</section>
