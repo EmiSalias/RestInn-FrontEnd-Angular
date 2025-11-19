@@ -20,8 +20,13 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
   imagenActualIndex = 0;
   intervaloCarrusel: any;
 
+  // Flags de permisos
   isCliente = false;
-  puedeGestionarHabitaciones = false;
+  isAdmin = false;
+  isRecepcionista = false;
+  isConserje = false;
+  isLimpieza = false;
+  puedeGestionarHabitaciones = false; // Admin + Empleados
 
   private authSub: Subscription | null = null;
 
@@ -35,7 +40,14 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.authSub = this.auth.state$.subscribe(state => {
       const roles = state.roles ?? [];
-      this.isCliente = roles.includes('CLIENTE');
+      const logged = state.isLoggedIn;
+      
+      this.isCliente = logged && roles.includes('CLIENTE');
+      this.isAdmin = logged && roles.includes('ADMINISTRADOR');
+      this.isRecepcionista = logged && roles.includes('RECEPCIONISTA');
+      this.isConserje = logged && roles.includes('CONSERJE');
+      this.isLimpieza = logged && roles.includes('LIMPIEZA');
+      
       this.puedeGestionarHabitaciones = roles.some(r =>
         ['ADMINISTRADOR', 'RECEPCIONISTA', 'CONSERJE', 'LIMPIEZA'].includes(r)
       );
@@ -48,7 +60,9 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
     const habId = Number(this.route.snapshot.paramMap.get('id'));
 
     if (habId) {
-      const endpoint$ = this.puedeGestionarHabitaciones
+      // Solo el ADMIN usa el endpoint privado.
+      // El resto (Recep, Conserje, etc.) usa el público.
+      const endpoint$ = this.isAdmin
         ? this.habService.getHabitacionAdmin(habId)
         : this.habService.getHabitacion(habId);
 
@@ -61,11 +75,12 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Error al cargar habitación:', err);
-          Swal.fire(
-            'Error',
-            'No se pudo cargar la habitación. Es posible que no exista o esté inactiva.',
-            'error'
-          );
+          
+          const msg = (err.status === 403) 
+            ? 'No tienes permiso para ver esta habitación (posiblemente esté inactiva).'
+            : 'No se pudo cargar la habitación.';
+
+          Swal.fire('Error', msg, 'error');
           this.router.navigate(['/listado_habitaciones']);
         }
       });
@@ -77,7 +92,7 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
 
   // --- CARRUSEL DE IMÁGENES ---
   iniciarCarrusel() {
-    this.intervaloCarrusel = setInterval(() => this.siguienteImagen(), 4000);
+    this.intervaloCarrusel = setInterval(() => this.siguienteImagen(), 8000);
   }
 
   siguienteImagen() {
@@ -168,6 +183,10 @@ export class DetallesHabitacion implements OnInit, OnDestroy {
       }
     });
   }
+
+  detailHabitacion(hab: Habitacion) {
+      this.router.navigate(['/habitacion', hab.id]);
+    }
 
   volver() {
     this.router.navigate(['/listado_habitaciones']);
